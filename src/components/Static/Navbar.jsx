@@ -36,13 +36,13 @@ export default function Navbar() {
       external: false,
     },
     {
-      label: "Partner",
+      label: "Partners",
       icon: "fa fa-handshake",
       link: "/partners",
       external: false,
     },
     { label: "Team", icon: "fa fa-users", link: "/team", external: false },
-    { label: "Status", icon: "fa fa-cogs", link: "/status", external: false },
+    { label: "Discord", icon: "fa fa-cogs", link: "https://discord.gg/RPCtG7Em8g", external: false },
   ];
 
   return (
@@ -53,7 +53,7 @@ export default function Navbar() {
             <Link href="/">
               <div className="cursor-pointer col-span-2 flex items-center mr-6">
                 <p className="pointer-events-none text-black dark:text-white font-semibold text-2xl">
-                  DiscordInflux
+                  DscInflux
                 </p>
               </div>
             </Link>

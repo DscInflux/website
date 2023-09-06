@@ -23,21 +23,26 @@ export default function Partners() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col items-center justify-center px-10 3xl:px-0">
         <div className="lg:text-center">
-          <h2 className="mt-2 text-4xl font-bold leading-tight tracking-tight text-cyber-cyan sm:text-5xl">
-            🤝{" "}
-            <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent text-7xl text-center">
-              Our Partners
-            </span>
-          </h2>
-          <p className="mt-4 max-w-2xl text-xl text-neon-blue lg:mx-auto">
-            <span className="bg-gradient-to-r from-orange-600 via-pink-600 to-purple-600 bg-clip-text ">
-              We value our partners at DiscordInflux and appreciate their
-              support.
-            </span>
-          </p>
-        </div>
+        <div className="max-w-7xl w-full">
+          <div className="w-full mt-5">
+            <div className="flex items-center gap-5">
+              <div className="hidden lg:block relative">
+                <i className="fa fa-users hidden lg:block text-5xl text-primary" />
+              </div>
+              <div>
+                <h1 className="text-lg lg:text-3xl text-transparent bg-clip-text bg-gradient-to-tr from-primary to-secondary font-extrabold">
+                  Our Partners
+                </h1>
+                <p
+                  className={`text-sm lg:text-base text-gray-700 $["bold-text"]}`}
+                >
+                  Check out our partners who support DscInflux
+                </p>
+              </div>
+            </div>
+          </div>
         <div className="mt-32 sm:mt-40 md:mt-40 lg:mt-48">
           <div className="space-y-10 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10 md:space-y-0">
             <PartnerCard
@@ -70,6 +75,8 @@ export default function Partners() {
             />
           </div>
         </div>
+      </div>
+      </div>
       </div>
     </>
   );

@@ -115,7 +115,7 @@ const Footer = () => {
                 </div>
                 <div className="mt-12 md:mt-0">
                   <h3 className="text-sm font-semibold tracking-wider text-slate-300 uppercase">
-                    You
+                    Profile
                   </h3>
                   <ul className="mt-4 space-y-4">
                     <li>
@@ -128,7 +128,7 @@ const Footer = () => {
                     </li>
                     <li>
                       <Link
-                        href={"https://beta.discordinflux.xyz/v1/auth/callback"}
+                        href={"https://dscinflux.gg/v1/auth/callback"}
                       >
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaSignInAlt className="mr-2" />
@@ -211,7 +211,7 @@ const Footer = () => {
                   
                   
                   <li>
-                    <Link href={"https://docs.discordinflux.xyz"}>
+                    <Link href={"https://docs.dscinflux.gg"}>
                       <a className="text-white hover:text-red-500 flex items-center">
                         <FaBook className="mr-2" />
                         Documentation

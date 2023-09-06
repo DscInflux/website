@@ -70,7 +70,7 @@ export default function Home({ popularUsers }) {
                     <Input
                       placeholder={"Connor200024"}
                       leftContent={
-                        <p className="text-gray-500 pt-1">Discordinflux/</p>
+                        <p className="text-gray-500 pt-1">DscInflux/</p>
                       }
                       className="px-1 py-1 w-full h-[50px]"
                       name="username"
@@ -79,7 +79,7 @@ export default function Home({ popularUsers }) {
                       variant="default"
                       className="border !border-white/0 w-full lg:w-auto mt-4 lg:mt-0 px-8 h-[50px]"
                     >
-                      Claim
+                      Take
                     </Button>
                   </div>
                 </form>
