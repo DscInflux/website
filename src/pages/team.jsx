@@ -19,7 +19,7 @@ export default function Team() {
     {
       name: "Maya Rose",
       pfp: "https://styles.redditmedia.com/t5_4wr4f2/styles/profileIcon_mp7lvbjw2d281.jpg?width=256&height=256&crop=256:256,smart&s=4ac91e07c3a6b3688b1a8195b60c5835de288756",
-      bio: "Hi, I'm Maya Rose I am a Developer for DscInflux",
+      bio: "Hi, I am Maya, CEO of RSenterprise. Verified bot developer. Passionate about development and programming.",
       link1: "https://discordinflux.xyz/Maya",
       link2: "https://x.com/ranveersoni98",
       link1Title: "DiscordInflux",

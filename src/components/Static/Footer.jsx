@@ -2,13 +2,11 @@ import React from "react";
 import {
   FaGithub,
   FaDiscord,
-  FaInfinity,
   FaCogs,
   FaCompass,
   FaUserCircle,
   FaSignInAlt,
   FaGavel,
-  FaMap,
   FaHammer,
   FaUsers,
   FaHandshake,
@@ -128,7 +126,7 @@ const Footer = () => {
                     </li>
                     <li>
                       <Link
-                        href={"https://dscinflux.gg/v1/auth/callback"}
+                        href={"https://discordinflux.xyz/v1/auth/callback"}
                       >
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaSignInAlt className="mr-2" />
@@ -211,7 +209,7 @@ const Footer = () => {
                   
                   
                   <li>
-                    <Link href={"https://docs.dscinflux.gg"}>
+                    <Link href={"https://docs.discordinflux.xyz"}>
                       <a className="text-white hover:text-red-500 flex items-center">
                         <FaBook className="mr-2" />
                         Documentation
