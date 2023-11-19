@@ -17,8 +17,8 @@ const nextConfig = {
   },
   images: {
     domains: [
-      "cdn.topiclist.xyz",
-      "topiclist.xyz",
+      "cdn.dscinflux.xyz",
+      "dscinflux.xyz",
       "images.unsplash.com",
       "cdn.discordapp.com",
     ],
@@ -27,7 +27,7 @@ const nextConfig = {
     return [
       {
         source: "/:path*",
-        destination: "https://api.discordinflux.xyz/:path*",
+        destination: "https://api.dscinflux.xyz/:path*",
       },
     ];
   },

@@ -28,7 +28,7 @@ const Footer = () => {
             <div className="space-y-5 xl:col-span-1">
               <span>
                 <img
-                  src="https://cdn.topiclist.xyz/images/png/DiscordInflux_logo.png"
+                  src="https://beta.cordx.lol/users/324646179134636043/HIbGfDFk.png"
                   style={{ width: "100px", height: "100px" }}
                   className="favicon w-58 h-58 transform:rotate(360deg)"
                   draggable={false}
@@ -126,7 +126,7 @@ const Footer = () => {
                     </li>
                     <li>
                       <Link
-                        href={"https://discordinflux.xyz/v1/auth/callback"}
+                        href={"https://dscinflux.xyz/v1/auth/callback"}
                       >
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaSignInAlt className="mr-2" />
@@ -199,17 +199,17 @@ const Footer = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/status"}>
+                    <Link href={"https://dscinflux.instatus.com/"}>
                       <a className="text-white hover:text-red-500 flex items-center">
                         <FaCogs className="mr-2" />
-                        Staus
+                        Status
                       </a>
                     </Link>
                   </li>
                   
                   
                   <li>
-                    <Link href={"https://docs.discordinflux.xyz"}>
+                    <Link href={"https://docs.dscinflux.xyz"}>
                       <a className="text-white hover:text-red-500 flex items-center">
                         <FaBook className="mr-2" />
                         Documentation

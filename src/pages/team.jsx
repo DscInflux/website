@@ -6,11 +6,11 @@ export default function Team() {
     
     {
       name: "Connor200024",
-      pfp: "https://cdn.discordapp.com/avatars/324646179134636043/a_a6b6a45371cc347290ad33f829dded7c.gif?size=4096",
-      bio: "Hi, I'm Connor the new Owner of DscInflux.",
+      pfp: "https://beta.cordx.lol/users/324646179134636043/KLz1Sd7c.gif",
+      bio: "Hi, I'm Connor also known as Connor200024. I am the Owner & Head Developer for DscInflux.",
       link1: "https://connor200024.xyz",
       link2: "https://x.com/Connor200024",
-      link1Title: "Connor200024",
+      link1Title: "Website",
       link2Title: "Twitter",
       link1Icon: "fa-icon-class-for-link1",
       link2Icon: "fa-icon-class-for-link1",
@@ -20,9 +20,9 @@ export default function Team() {
       name: "Maya Rose",
       pfp: "https://styles.redditmedia.com/t5_4wr4f2/styles/profileIcon_mp7lvbjw2d281.jpg?width=256&height=256&crop=256:256,smart&s=4ac91e07c3a6b3688b1a8195b60c5835de288756",
       bio: "Hi, I am Maya, CEO of RSenterprise. Verified bot developer. Passionate about development and programming.",
-      link1: "https://discordinflux.xyz/Maya",
+      link1: "https://dscinflux.xyz/Maya",
       link2: "https://x.com/ranveersoni98",
-      link1Title: "DiscordInflux",
+      link1Title: "DscInflux",
       link2Title: "X",
       link1Icon: "fa-icon-class-for-link1",
       link2Icon: "fa-icon-class-for-link1",
@@ -38,7 +38,29 @@ export default function Team() {
       link1Icon: "fa-icon-class-for-link1",
       link2Icon: "fa-icon-class-for-link1",
     },
-    
+    {
+      name: "Rizon",
+      pfp: "https://cdn.discordapp.com/avatars/303278996932526084/d2a8b171f9b0cae42bf858788dc09b59.png?size=4096",
+      bio: "Hi I'm Rizon, the Developer for DscInflux.",
+      link1: "https://x.com/rizonftw_",
+      link2: "https://infinitybots.gg/",
+      link1Title: "X",
+      link2Title: "Infinity Bot List",
+      link1Icon: "fa-icon-class-for-link1",
+      link2Icon: "fa-icon-class-for-link1",
+    },
+    {
+      name: "ItzMatt019",
+      pfp: "https://cdn.discordapp.com/avatars/520599749456560140/2d0109ed4e7412615c7ea22e391cd5ec.png?size=4096",
+      bio: "Hi I'm Matt, the Developer and Administrator for DscInflux.",
+      link1: "https://x.com/ItzMatt019_",
+      link2: "https://itzmatt019.xyz/",
+      link1Title: "X",
+      link2Title: "Website",
+      link1Icon: "fa-icon-class-for-link1",
+      link2Icon: "fa-icon-class-for-link1",
+    },
+
     // Add more team members here
   ];
 
@@ -53,12 +75,12 @@ export default function Team() {
               </div>
               <div>
                 <h1 className="text-lg lg:text-3xl text-transparent bg-clip-text bg-gradient-to-tr from-primary to-secondary font-extrabold">
-                  Our Team
+                  Staff Team
                 </h1>
                 <p
                   className={`text-sm lg:text-base text-gray-700 $["bold-text"]}`}
                 >
-                  Meet the team who have worked hard on this project
+                  Meet our Staff Team who work hard on this project.
                 </p>
               </div>
             </div>

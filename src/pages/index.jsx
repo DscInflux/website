@@ -79,7 +79,7 @@ export default function Home({ popularUsers }) {
                       variant="default"
                       className="border !border-white/0 w-full lg:w-auto mt-4 lg:mt-0 px-8 h-[50px]"
                     >
-                      Take
+                      Find
                     </Button>
                   </div>
                 </form>

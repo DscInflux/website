@@ -1,24 +1,24 @@
 module.exports = {
-  title: "DiscordInflux - Find and add new friends on Discord the easy way",
+  title: "DscInflux - Find and add new friends on Discord the easy way",
   description: "Find and add new friends on Discord the easy way",
-  canonical: "https://discordinflux.xyz",
+  canonical: "https://dscinflux.xyz/",
   defaultTitle:
-    "DiscordInflux - Find and add new friends on Discord the easy way",
-  titleTemplate: "%s – DiscordInflux",
+    "DscInflux - Find and add new friends on Discord the easy way",
+  titleTemplate: "%s | DscInflux",
   openGraph: {
-    url: "https://discordinflux.xyz",
-    title: "DiscordInflux - Find and add new friends on Discord the easy way",
+    url: "https://dscinflux.xyz/",
+    title: "DscInflux - Find and add new friends on Discord the easy way",
     description: "Find and add new friends on Discord the easy way",
     images: [
       {
-        url: "https://cdn.topiclist.xyz/images/jpg/Banner_DiscordInflux.jpg",
+        url: "",
         width: 900,
         height: 400,
-        alt: "DiscordInflux - Open Graph Image Alt",
+        alt: "DscInflux - Open Graph Image Alt",
         type: "image/jpeg",
       },
     ],
-    site_name: "DiscordInflux",
+    site_name: "DscInflux",
   },
   additionalLinkTags: [
     {

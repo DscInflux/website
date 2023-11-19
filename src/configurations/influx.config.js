@@ -1,5 +1,5 @@
 module.exports = {
-  apiAddress: "https://api.discordinflux.xyz/v1",
+  apiAddress: "https://api.dscinflux.xyz/v1",
   authRequired: ["/[id]/edit", "/submit"],
   titles: {
     "/": {
@@ -30,10 +30,7 @@ module.exports = {
       title: "About",
       description: "Learn more about us in this page",
     },
-    "/roadmap": {
-      title: "RoadMap",
-      description: "RoadMap of the projects and features Influx been upto!",
-    },
+    
     "/jobs/index": {
       title: "Jobs",
       description: "work withus!",
