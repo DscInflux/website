@@ -16,7 +16,7 @@ export default function Privacy() {
     <>
       <NextSeo
         title="About"
-        description="About Influx"
+        description="About DscInflux"
         openGraph={{
           images: [
             {
@@ -44,7 +44,7 @@ export default function Privacy() {
             values={[
               {
                 delimiter: "•",
-                text: "Learn about the history of Influx",
+                text: "Here is some history on DscInflux or known as Discord Influx.",
               },
             ]}
           />
@@ -54,17 +54,17 @@ export default function Privacy() {
             values={[
               {
                 delimiter: "I. When:",
-                text: "Discord Influx, created by Flooded in 2023, was shut down on May 7th. But Ranveer took over the site as he thought the concept was quite good and worked on to onward revive this site. It's great to see people who care about technology.",
+                text: "Discord Influx well now known as DscInflux was created by Flooded in 2023 since then this was closed down in May 2023. Since then ranveersoni took over this project and now connor200024 is the owner of it.",
               },
               {
                 delimiter: "II. Why?",
-                text: "The website is for creating profiles and finding new friends. Ranveer revived it after Flooded took it down, showing a passion for using tech to connect people.",
+                text: "We have made this new website and ui for you all to create profiles to find new friends. This is sorta like JobCord another website where you can hire Moderators & Developers. Check them out: https://jobcord.co",
               },
             ]}
           />
           <LegalSectionWithLink
             title="2. Team"
-            text="At the start of this project, only Flooded was working on it. However, the operation got shut down and since  Ranveer Soni became the Owner he also taken over the team. He appointed Toxic Dev and ZeroTwo36 as additional Co-Owners. You can check out more about them and other team members for yourself. At our"
+            text="When this was opened before it was only Flooded working on this but now we have a full development team working on this project. Feel free to check our staff team page."
             linkName="Teams Page"
             linkUrl="/team"
           />
@@ -75,14 +75,14 @@ export default function Privacy() {
               {
                 delimiter: "•",
                 text: "You can contact us via email: ",
-                linkName: "hey@discordinflux.xyz",
-                linkUrl: "mailto:hey@discordinflux.xyz",
+                linkName: "hey@dscinflux.xyz",
+                linkUrl: "mailto:hey@dscinflux.xyz",
               },
               {
                 delimiter: "•",
                 text: "You can also contact us in our: ",
                 linkName: "Discord Server",
-                linkUrl: "https://discord.gg/Jad6TcdEet",
+                linkUrl: "https://discord.gg/RPCtG7Em8g",
               },
             ]}
           />

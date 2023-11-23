@@ -80,7 +80,7 @@ export default function UserPage({ data }) {
     {
       upper: false,
       name: "Occupation",
-      subtitle: "What do i do?",
+      subtitle: "What do you do?",
       isPrivate: data.occupation === undefined,
       isEmpty: data.occupation === null,
       value: data.occupation,
@@ -89,7 +89,7 @@ export default function UserPage({ data }) {
     {
       upper: false,
       name: "Location",
-      subtitle: "Where do i live?",
+      subtitle: "Where do you live?",
       isPrivate: data.location === undefined,
       isEmpty: data.location === null,
       value: data.location,
@@ -98,7 +98,7 @@ export default function UserPage({ data }) {
     {
       upper: false,
       name: "Birthday",
-      subtitle: "When was i born?",
+      subtitle: "When is your birthday?",
       isPrivate: data.birthday === undefined,
       isEmpty: data.birthday === null,
       value: `${new Date(data.birthday).format("D MMMM Y")} (${new Date(
@@ -109,7 +109,7 @@ export default function UserPage({ data }) {
     {
       upper: false,
       name: "Gender",
-      subtitle: "What is my gender?",
+      subtitle: "What is your gender?",
       isPrivate: data.gender === undefined,
       isEmpty: data.gender === null,
       value: genders?.[data.gender]?.name || "Special",
@@ -136,7 +136,7 @@ export default function UserPage({ data }) {
     {
       upper: false,
       name: "Native Language",
-      subtitle: "What is my native language?",
+      subtitle: "What is your native language?",
       isPrivate: data.language === undefined,
       isEmpty: data.language === null,
       value: data.language,

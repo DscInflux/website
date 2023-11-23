@@ -47,7 +47,7 @@ export default function Credits() {
               ownerlink="https://discord.com/users/510065483693817867"
               desc="Simplifying the way you share your online media, files and links with your friends, family and loved ones."
               link1="https://x.com/HeyCordX"
-              link2="https://cordx.lol/"
+              link2="https://beta.cordx.lol/"
               link1Title="X"
               link2Title="Website"
               link1Icon="fab fa-twitter"
