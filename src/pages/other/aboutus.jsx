@@ -50,7 +50,7 @@ export default function Privacy() {
           />
 
           <ListWithHeader
-            header="1. When? Why?"
+            header="When? Why?"
             values={[
               {
                 delimiter: "I. When:",
@@ -63,7 +63,7 @@ export default function Privacy() {
             ]}
           />
           <LegalSectionWithLink
-            title="2. Team"
+            title="Team"
             text="When this was opened before it was only Flooded working on this but now we have a full development team working on this project. Feel free to check our staff team page."
             linkName="Teams Page"
             linkUrl="/team"
