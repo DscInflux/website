@@ -85,7 +85,7 @@ const Footer = () => {
                   </h3>
                   <ul className="mt-4 space-y-4">
                     <li>
-                      <Link href={"/explore"}>
+                      <Link href={"/explore"} legacyBehavior={true}>
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaCompass className="mr-2" />
                           Explore
@@ -93,7 +93,7 @@ const Footer = () => {
                       </Link>
                     </li>
                     <li>
-                      <Link href={"/other/aboutus"}>
+                      <Link href={"/other/aboutus"} legacyBehavior={true}>
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaCompass className="mr-2" />
                           About Us
@@ -101,7 +101,7 @@ const Footer = () => {
                       </Link>
                     </li>
                     <li>
-                      <Link href={"/other/credits"}>
+                      <Link href={"/other/credits"} legacyBehavior={true}>
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaCompass className="mr-2" />
                           Credits
@@ -117,7 +117,7 @@ const Footer = () => {
                   </h3>
                   <ul className="mt-4 space-y-4">
                     <li>
-                      <Link href={"/profile"}>
+                      <Link href={"/profile"} legacyBehavior={true}>
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaUserCircle className="mr-2" />
                           Profile
@@ -127,6 +127,7 @@ const Footer = () => {
                     <li>
                       <Link
                         href={"https://dscinflux.xyz/v1/auth/callback"}
+                        legacyBehavior={true}
                       >
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaSignInAlt className="mr-2" />
@@ -144,7 +145,7 @@ const Footer = () => {
                   </h3>
                   <ul className="mt-4 space-y-4">
                     <li>
-                      <Link href={"https://discord.gg/RPCtG7Em8g"}>
+                      <Link href={"https://discord.gg/RPCtG7Em8g"} legacyBehavior={true}>
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaDiscord className="mr-2" />
                           Discord
@@ -159,7 +160,7 @@ const Footer = () => {
                   </h3>
                   <ul className="mt-4 space-y-4">
                     <li>
-                      <Link href={"/legal/privacy"}>
+                      <Link href={"/legal/privacy"} legacyBehavior={true}>
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaGavel className="mr-2" />
                           Privacy Policy
@@ -167,7 +168,7 @@ const Footer = () => {
                       </Link>
                     </li>
                     <li>
-                      <Link href={"/legal/terms"}>
+                      <Link href={"/legal/terms"} legacyBehavior={true}>
                         <a className="text-white hover:text-red-500 flex items-center">
                           <FaHammer className="mr-2" />
                           Terms of Services
@@ -183,7 +184,7 @@ const Footer = () => {
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <Link href={"/partners"}>
+                    <Link href={"/partners"} legacyBehavior={true}>
                       <a className="text-white hover:text-red-500 flex items-center">
                         <FaHandshake className="mr-2" />
                         Partners
@@ -191,7 +192,7 @@ const Footer = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/team"}>
+                    <Link href={"/team"} legacyBehavior={true}>
                       <a className="text-white hover:text-red-500 flex items-center">
                         <FaUsers className="mr-2" />
                         Teams
@@ -199,7 +200,7 @@ const Footer = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link href={"https://dscinflux.instatus.com/"}>
+                    <Link href={"https://dscinflux.instatus.com/"} legacyBehavior={true}>
                       <a className="text-white hover:text-red-500 flex items-center">
                         <FaCogs className="mr-2" />
                         Status
@@ -209,7 +210,7 @@ const Footer = () => {
                   
                   
                   <li>
-                    <Link href={"https://docs.dscinflux.xyz"}>
+                    <Link href={"https://docs.dscinflux.xyz"} legacyBehavior={true}>
                       <a className="text-white hover:text-red-500 flex items-center">
                         <FaBook className="mr-2" />
                         Documentation

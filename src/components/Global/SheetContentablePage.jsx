@@ -89,7 +89,7 @@ export default function SheetPages({
                       .map((page, i) =>
                         page.id !== "_blank" ? (
                           page.isLink ? (
-                            <Link href={page.link} key={i}>
+                            <Link href={page.link} key={i} legacyBehavior={true}>
                               <div
                                 className={classNames(
                                   "flex items-center justify-between p-2 pr-4 rounded-lg hover:bg-gray-600/5 w-full transition-all duration-200 cursor-pointer",

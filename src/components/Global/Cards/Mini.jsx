@@ -102,7 +102,7 @@ export default function MiniCard({
             </div>
 
             <div className="flex justify-end items-center w-full mt-4 gap-4">
-              <Link href={`/${url}`}>
+              <Link href={`/${url}`} legacyBehavior={true}>
                 <Button className="w-full h-12 block" variant="ghost">
                   View Profile
                 </Button>

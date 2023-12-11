@@ -67,7 +67,7 @@ export default function Home({ sortings, roles, skills, languages }) {
               <h1 className="text-2xl text-black dark:text-white lg:pb-2 font-bold flex items-center gap-2">
                 Users
               </h1>
-              <Link href={resetQuery(router)}>
+              <Link href={resetQuery(router)} legacyBehavior={true}>
                 <a className="hidden lg:block text-primary text-sm font-light hover:underline">
                   Reset all filters
                 </a>
@@ -194,7 +194,7 @@ export default function Home({ sortings, roles, skills, languages }) {
                   <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
                     Sorting
                   </h1>
-                  <Link href={removeQuery(router, "sort")}>
+                  <Link href={removeQuery(router, "sort")} legacyBehavior={true}>
                     <a className="text-primary text-sm font-light hover:underline">
                       Reset
                     </a>
@@ -240,7 +240,7 @@ export default function Home({ sortings, roles, skills, languages }) {
                   <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
                     Language
                   </h1>
-                  <Link href={removeQuery(router, "language")}>
+                  <Link href={removeQuery(router, "language")} legacyBehavior={true}>
                     <a className="text-primary text-sm font-light hover:underline">
                       Reset
                     </a>
@@ -289,7 +289,7 @@ export default function Home({ sortings, roles, skills, languages }) {
                   <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
                     Roles
                   </h1>
-                  <Link href={removeQuery(router, "roles")}>
+                  <Link href={removeQuery(router, "roles")} legacyBehavior={true}>
                     <a className="text-primary text-sm font-light hover:underline">
                       Reset
                     </a>
@@ -339,7 +339,7 @@ export default function Home({ sortings, roles, skills, languages }) {
                   <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
                     Skills
                   </h1>
-                  <Link href={removeQuery(router, "skills")}>
+                  <Link href={removeQuery(router, "skills")} legacyBehavior={true}>
                     <a className="text-primary text-sm font-light hover:underline">
                       Reset
                     </a>

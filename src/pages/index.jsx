@@ -44,7 +44,7 @@ export default function Home({ popularUsers }) {
               </p>
               {user && user.appId ? (
                 <div className="flex justify-center w-full mt-6">
-                  <Link href="/explore">
+                  <Link href="/explore" legacyBehavior={true}>
                     <Button
                       variant="ghost"
                       className="flex justify-center lg:justify-between items-center border !border-white/0 mt-4 lg:mt-0 w-2/4 lg:w-1/4 group h-[50px] rounded-full"

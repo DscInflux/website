@@ -24,7 +24,7 @@ export default function CarouselHeader({
               </p>
               <div className="flex items-center gap-2">
                 {seeAll && (
-                  <Link href={seeAll}>
+                  <Link href={seeAll} legacyBehavior={true}>
                     <a className="text-primary font-medium text-sm lg:text-base hover:text-secondary transition-all duration-200 mr-2">
                       See All
                     </a>

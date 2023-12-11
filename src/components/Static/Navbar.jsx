@@ -50,7 +50,7 @@ export default function Navbar() {
       <div className="w-full flex justify-center px-10 3xl:px-0">
         <nav className="static top-0 grid grid-cols-12 justify-between items-center max-w-7xl w-full py-6">
           <div className="col-span-8 flex justify-start gap-4 items-center">
-            <Link href="/">
+            <Link href="/" legacyBehavior={true}>
               <div className="cursor-pointer col-span-2 flex items-center mr-6">
                 <p className="pointer-events-none text-black dark:text-white font-semibold text-2xl">
                   DscInflux
@@ -59,7 +59,7 @@ export default function Navbar() {
             </Link>
             <div className="hidden relative lg:flex items-center gap-4 group">
               {items.map((item, index) => (
-                <Link href={item.link} key={index}>
+                <Link href={item.link} key={index} legacyBehavior={true}>
                   <a
                     className={`relative text-slate-600 font-medium dark:text-zinc-400 hover:text-black hover:dark:text-white transition-all duration-200`}
                   >
@@ -202,7 +202,7 @@ export default function Navbar() {
                 >
                   {user?.appId ? (
                     <>
-                      <Link href={`/${user?.appId}`}>
+                      <Link href={`/${user?.appId}`} legacyBehavior={true}> 
                         <a>
                           <Item className="flex items-center gap-2">
                             <i className="fa fa-user" />
@@ -210,7 +210,7 @@ export default function Navbar() {
                           </Item>
                         </a>
                       </Link>
-                      <Link href={`/${user?.appId}/edit`}>
+                      <Link href={`/${user?.appId}/edit`} legacyBehavior={true}>
                         <a>
                           <Item className="flex items-center gap-2">
                             <i className="fa fa-cog" />
@@ -220,7 +220,7 @@ export default function Navbar() {
                       </Link>
                     </>
                   ) : (
-                    <Link href={`/submit`}>
+                    <Link href={`/submit`} legacyBehavior={true}>
                       <a>
                         <Item className="flex items-center gap-2">
                           <i className="fa fa-plus" />
@@ -229,7 +229,7 @@ export default function Navbar() {
                       </a>
                     </Link>
                   )}
-                  <Link href={`/v1/auth/logout`}>
+                  <Link href={`/v1/auth/logout`} legacyBehavior={true}>
                     <a>
                       <Item className="flex items-center gap-2">
                         <i className="fa fa-sign-out-alt" />

@@ -228,7 +228,7 @@ export default function UserPage({ data }) {
                     </div>
                   </Tooltip>
                   {data?.isSelf && (
-                    <Link href="/[id]/edit" as={`/${data.url}/edit`}>
+                    <Link href="/[id]/edit" as={`/${data.url}/edit`} legacyBehavior={true}>
                       <Button className="flex items-center gap-2">
                         <i className="fa fa-user-edit" />
                         <span>Edit Profile</span>
