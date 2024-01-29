@@ -24,7 +24,7 @@
         "cookies-next": "^3.0.0",
         "embla-carousel-react": "^7.0.3",
         "framer-motion": "^10.15.1",
-        "next": "^14.0.5-canary.5",
+        "next": "^14.1.1-canary.20",
         "next-bottom-sheet": "^0.0.2",
         "next-iron-session": "^4.2.0",
         "next-pwa": "^5.6.0",
@@ -45,10 +45,12 @@
     },
     "devDependencies": {
         "@tailwindcss/typography": "^0.5.7",
+        "@types/react": "18.2.48",
         "autoprefixer": "^10.4.11",
         "eslint": "8.23.1",
         "eslint-config-next": "12.3.0",
         "postcss": "^8.4.16",
-        "tailwindcss": "^3.1.8"
+        "tailwindcss": "^3.1.8",
+        "typescript": "5.3.3"
     }
 }

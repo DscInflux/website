@@ -13,7 +13,7 @@ const ListWithoutHeader = function ({ values }) {
           </li>
         ))}
       </ul>
-      <style jsx>{`
+      <style>{`
         p {
           font-size: 1.125rem;
           line-height: 1.75rem;
@@ -91,7 +91,7 @@ const ListWithHeaderAndLink = function ({ header, values }) {
           </li>
         ))}
       </ul>
-      <style jsx>{`
+      <style>{`
         p {
           font-size: 1.125rem;
           line-height: 1.75rem;
@@ -137,7 +137,7 @@ const ListWithHeaderAndSubtitle = function ({ header, subtitle, values }) {
           </li>
         ))}
       </ul>
-      <style jsx>{`
+      <style>{`
         p {
           font-size: 1.125rem;
           line-height: 1.75rem;

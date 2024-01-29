@@ -1,48 +1,51 @@
-import { useState } from "react";
+import React from "react";
 
 export default function PartnerCard({
-  name,
-  pfp,
+  title,
+  logo,
   banner,
-  bio,
+  owner,
+  ownerlink,
+  desc,
   link1,
   link2,
   link1Title,
   link2Title,
   link1Icon,
   link2Icon,
-  customBackground,
 }) {
-  const [isCustomBackground, setIsCustomBackground] = useState(false);
 
-  const handleClick = () => {
-    setIsCustomBackground((prev) => !prev);
-  };
 
   return (
     <div
-      className={`rounded-lg p-4 shadow-md hover:shadow-lg ${
-        isCustomBackground
-          ? customBackground
-          : "bg-gradient-to-r from-cyber-cyan to-cyber-purple"
-      }`}
-      onClick={handleClick}
+      className={`rounded-lg p-4 shadow-md hover:shadow-lg
+      `}
     >
       <div
         className={`rounded-lg p-3 ${banner} hover:scale-105 transition-transform`}
       >
         <div className="flex items-center">
           <img
-            src={pfp}
+            src={logo}
             className="rounded-full border-2 border-cyber-blue w-24 h-24 object-cover shadow-lg transform hover:rotate-6 hover:scale-110 transition-transform logo-spin-animation"
             draggable={false}
-            alt={name + " pfp"}
+            alt={title + " Logo"}
           />
           <div className="items-center pl-4">
             <p className="inline-block text-3xl font-semibold text-neon-green">
-              {name}&nbsp;
+              {title}&nbsp;
             </p>
             <br />
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href={ownerlink ? ownerlink : link1}
+            >
+              <p className="relative mt-1 inline-block rounded-lg bg-gradient-to-r from-cyber-cyan to-cyber-purple py-1 px-2 text-sm font-medium text-cyber-white">
+                <i className="fas fa-crown text-cyber-cyan" />
+                {owner}
+              </p>
+            </a>
           </div>
         </div>
       </div>
@@ -53,7 +56,7 @@ export default function PartnerCard({
           animation: "glowAnimation 2s ease-in-out infinite",
         }}
       >
-        <p className="text-cyber-white">{bio}</p>
+        <p className="text-cyber-white">{desc}</p>
       </div>
       <div className="mt-3 flex">
         <a
@@ -98,6 +101,19 @@ export default function PartnerCard({
           100% {
             box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
           }
+        }
+
+        @keyframes spinAnimation {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        .logo-spin-animation {
+          animation: spinAnimation 3s linear infinite;
         }
 
         .bg-gradient-neon-red {

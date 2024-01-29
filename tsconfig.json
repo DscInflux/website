@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+      "target": "es6",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "lib": ["dom", "dom.iterable", "esnext"],
+      "baseUrl": ".",
+      "rootDir": ".",
+      "paths": {
+          "@/*": ["./src"],
+          "@/root/*": ["./*"],
+          "@/styles/*": ["src/styles/*"],
+          "@/hooks/*": ["src/hooks/*"],
+          "@/utils/*": ["src/utils/*"],
+          "@/context/*": ["src/context/*"],
+          "@/libraries/*": ["src/libraries/*"],
+          "@/plugins/*": ["src/plugins/*"],
+          "@/components/*": ["src/components/*"]
+      },
+      "allowJs": true,
+      "skipLibCheck": true,
+      "strict": false,
+      "allowSyntheticDefaultImports": true,
+      "forceConsistentCasingInFileNames": true,
+      "noEmit": true,
+      "incremental": true,
+      "esModuleInterop": true,
+      "module": "esnext",
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "jsx": "preserve"
+  },
+  "include": ["next-env.d.ts", "src/components/*", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules"]
+}

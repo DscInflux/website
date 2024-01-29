@@ -1,19 +1,24 @@
+import Image from "next/image";
 import { useRouter } from "next/router";
+import React from "react";
 
 export default function Render() {
   const router = useRouter();
 
   return (
-    <div className="p-5 lg:p-10 py-[10rem] lg:py-[12rem] rounded-lg min-h-screen">
+    <div className="p-5 lg:p-10 py-[6rem] lg:py-[8rem] rounded-lg min-h-screen">
       <div className="flex justify-center w-full">
         <div className="px-6 lg:px-36 max-w-4xl">
           <div className="flex flex-col mt-20 justify-center text-center w-full">
-            <p className="text-8xl text-transparent bg-clip-text bg-gradient-to-bl to-sky-500 from-purple-600 font-semibold">
-              504
-            </p>
+            <Image
+              alt="403"
+              src="https://cdn.topiclist.xyz/images/error/403.svg"
+              width="500"
+              height="200"
+            ></Image>
             <p className="mt-2 text-2xl text-transparent bg-clip-text bg-gradient-to-bl to-gray-200 from-gray-400 font-semibold"></p>
             <p className="mt-1 text-xl text-transparent bg-clip-text bg-gradient-to-bl to-gray-400 from-gray-600 dark:to-gray-200 dark:from-gray-400 font-semibold">
-              Our API servers are down.
+              Access to this page is forbidden.
             </p>
             <div className="mt-10">
               <div className="w-full h-1 my-3 bg-zinc-500/0 rounded-xl"></div>
@@ -25,10 +30,10 @@ export default function Render() {
                   <i className="flex items-center bg-sky-500/10 rounded-lg text-xl w-12 h-12 text-sky-600 px-3 py-2 fas fa-arrow-left"></i>
                   <div className="text-left mr-3">
                     <p className="text-lg text-sky-500 dark:text-sky-200">
-                      Status
+                      Go Back
                     </p>
                     <p className="text-sm text-black/50 dark:text-white/50">
-                      Find out about problems on our API
+                      Back to the page you were redirected to here
                     </p>
                   </div>
                 </div>

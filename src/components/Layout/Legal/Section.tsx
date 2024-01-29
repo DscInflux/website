@@ -1,3 +1,5 @@
+import React from "react";
+
 const LegalSectionWithLink = function ({ title, text, linkName, linkUrl }) {
   return (
     <>

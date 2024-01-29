@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 
 export default function PartnerCard({
   title,
@@ -13,21 +13,13 @@ export default function PartnerCard({
   link2Title,
   link1Icon,
   link2Icon,
-  customBackground,
 }) {
-  const [isCustomBackground, setIsCustomBackground] = useState(false);
-
-  const handleClick = () => {
-    setIsCustomBackground((prev) => !prev);
-  };
 
   return (
     <div
-      className={`rounded-lg p-4 shadow-md hover:shadow-lg ${
-        isCustomBackground
-          ? customBackground
-          : "bg-gradient-to-r from-cyber-cyan to-cyber-purple"
-      }`}
+      className={`rounded-lg p-4 shadow-md hover:shadow-lg 
+         "bg-gradient-to-r from-cyber-cyan to-cyber-purple"
+      `}
     >
       <div
         className={`rounded-lg p-3 ${banner} hover:scale-105 transition-transform`}

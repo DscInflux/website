@@ -2,6 +2,7 @@ import EditPage from "@/components/Global/EditPage";
 import { useUser } from "@/context/user";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import React from "react";
 
 export default function Edit() {
   const router = useRouter();

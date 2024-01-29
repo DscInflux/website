@@ -194,9 +194,6 @@ export default function UserPage({ data }) {
                 <div className="flex items-center justify-center lg:justify-start text-center lg:text-left gap-4 w-full mb-6 lg:mb-0">
                   <h1 className="text-4xl font-bold text-center">
                     {data.discord.username}
-                    <span className="font-medium text-zinc-500 text-xl">
-                      #{data.discord.discriminator}
-                    </span>
                   </h1>
                   {data?.isVerified && (
                     <Tooltip content={`Verified Profile`}>

@@ -1,4 +1,5 @@
 import PartnerCard from "@/components/Layout/Team/TeamLayout";
+import React from "react";
 
 export default function Team() {
   const teamMembers = [
@@ -86,16 +87,12 @@ export default function Team() {
             </div>
           </div>
           {teamMembers.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-5">
-              {teamMembers.map((teamMember, index) => (
-                <PartnerCard key={index} {...teamMember} />
-              ))}
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-64 mt-10">
-              {/* Display a message when there are no team members */}
-            </div>
-          )}
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-5">
+    {teamMembers.map((teamMember, index) => (
+      <PartnerCard key={index} {...teamMember} />
+    ))}
+  </div>
+) : null}
         </div>
       </div>
     </>

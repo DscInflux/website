@@ -8,21 +8,8 @@ import withSession from "@/libraries/withSession";
 import { useRouter } from "next/router";
 import { useUser } from "@/context/user";
 import Link from "next/link";
+import React from "react";
 
-const getPos = (i) => {
-  switch (i) {
-    case 4:
-      return ["top-0", "left-0"];
-    case 3:
-      return ["top-4", "left-4"];
-    case 2:
-      return ["top-8", "left-8"];
-    case 1:
-      return ["top-12", "left-12"];
-    case 0:
-      return ["top-16", "left-16"];
-  }
-};
 
 export default function Home({ popularUsers }) {
   const router = useRouter();

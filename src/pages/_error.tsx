@@ -1,5 +1,6 @@
 import Button from "@/components/Global/Button";
 import { useRouter } from "next/router";
+import React from "react";
 
 export default function Error({ statusCode }) {
   const Router = useRouter();

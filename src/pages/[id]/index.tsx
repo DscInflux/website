@@ -1,6 +1,8 @@
 import UserPage from "@/components/Global/User";
 import withSession from "@/libraries/withSession";
 import { request } from "@/utils/apiHandler";
+import React from "react";
+
 
 export default function User({ data }) {
   return <UserPage data={data} />;

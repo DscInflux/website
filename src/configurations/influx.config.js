@@ -31,26 +31,6 @@ module.exports = {
       description: "Learn more about us in this page",
     },
     
-    "/jobs/index": {
-      title: "Jobs",
-      description: "work withus!",
-    },
-    "/jobs": {
-      title: "Jobs",
-      description: "work withus!",
-    },
-    "/jobs/devapp": {
-      title: "DevApp",
-      description: "work withus!",
-    },
-    "/jobs/getverified": {
-      title: "GetVerified",
-      description: "GetVerified",
-    },
-    "/jobs/staff": {
-      title: "Staff APP",
-      description: "work withus!",
-    },
     "/privacy": {
       title: "Privacy",
       description: "View our Privacy Policy",
@@ -62,10 +42,6 @@ module.exports = {
     "/support": {
       title: "Support",
       description: "View our Support page",
-    },
-    "/status": {
-      title: "Status",
-      description: "View our official status page",
     },
     "/[id]": {
       title: "[id] - View Profile",
