@@ -8,7 +8,7 @@ module.exports = {
     },
     "/team": {
       title: "Team",
-      description: "Meet the team behind DiscordInflux.",
+      description: "Meet the team behind DscInflux.",
     },
     "/explore": {
       title: "Explore",
@@ -16,7 +16,7 @@ module.exports = {
     },
     "/submit": {
       title: "Submit",
-      description: "Submit your Profile to the DiscordInflux.",
+      description: "Submit your Profile to the DscInflux.",
     },
     "/partners": {
       title: "Partners",

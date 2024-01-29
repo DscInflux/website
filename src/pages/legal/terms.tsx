@@ -101,14 +101,14 @@ export default function Privacy() {
               {
                 delimiter: "•",
                 text: "You can contact us via email: ",
-                linkName: "legal@discordinflux.xyz",
-                linkUrl: "mailto:legal@discordinflux.xyz",
+                linkName: "legal@dscinflux.xyz",
+                linkUrl: "mailto:legal@dscinflux.xyz",
               },
               {
                 delimiter: "•",
                 text: "You can also contact us in our: ",
                 linkName: "Discord Server",
-                linkUrl: "https://discord.gg/Jad6TcdEet",
+                linkUrl: "https://discord.gg/RPCtG7Em8g",
               },
             ]}
           />

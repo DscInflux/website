@@ -387,7 +387,7 @@ export default function UserPage({ data }) {
                   {data?.socials.map((social, i) => {
                     return (
                       <a
-                        href={social?.url + "?utm_source=discordinflux.xyz"}
+                        href={social?.url + "?utm_source=dscinflux.xyz"}
                         target="_blank"
                         key={i}
                         className="flex items-center justify-between relative bg-light dark:bg-dark border border-primary/5 hover:border-primary/20 active:border-primary/50 rounded-lg px-6 py-3 transition-all duration-200 cursor-pointer"

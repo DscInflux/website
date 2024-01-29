@@ -126,7 +126,7 @@ export default function Privacy() {
 
           <LegalSectionBase
             title="Security"
-            text="DiscordInflux takes reasonable precautions to safeguard your information against unauthorized access, loss, misuse, or modification by third parties. Although we make good faith attempts to maintain information gathered on the Service in a secure operating environment that is not accessible to the public, we cannot guarantee the total security of that information during transmission or storage on our systems. Furthermore, while we make every effort to preserve the integrity and security of our network and systems, we cannot guarantee that our security measures will prevent third-party hackers from illegally accessing this information.."
+            text="dscinflux takes reasonable precautions to safeguard your information against unauthorized access, loss, misuse, or modification by third parties. Although we make good faith attempts to maintain information gathered on the Service in a secure operating environment that is not accessible to the public, we cannot guarantee the total security of that information during transmission or storage on our systems. Furthermore, while we make every effort to preserve the integrity and security of our network and systems, we cannot guarantee that our security measures will prevent third-party hackers from illegally accessing this information.."
           />
 
           <LegalSectionBase
@@ -140,14 +140,14 @@ export default function Privacy() {
               {
                 delimiter: "•",
                 text: "You can contact us via email: ",
-                linkName: "legal@discordinflux.xyz",
-                linkUrl: "mailto:legal@discordinflux.xyz",
+                linkName: "legal@dscinflux.xyz",
+                linkUrl: "mailto:legal@dscinflux.xyz",
               },
               {
                 delimiter: "•",
                 text: "You can also contact us in our: ",
                 linkName: "Discord Server",
-                linkUrl: "https://discord.gg/Jad6TcdEet",
+                linkUrl: "https://discord.gg/dscinflux",
               },
             ]}
           />

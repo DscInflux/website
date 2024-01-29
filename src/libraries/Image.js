@@ -23,7 +23,7 @@ export default function ImageWithFallback(props) {
 
   return (
     <img
-      alt={"discordinflux.xyz/image"}
+      alt={"dscinflux.xyz/image"}
       key={imageSRC}
       src={imageSRC ? fallbackImage : src}
       onError={() => {

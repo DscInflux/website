@@ -23,6 +23,9 @@ const nextConfig = {
       "cdn.discordapp.com",
     ],
   },
+  env: {
+    jwtSecret: process.env.jwtSecret,
+  },
   rewrites() {
     return [
       {
@@ -32,5 +35,6 @@ const nextConfig = {
     ];
   },
 };
+
 
 module.exports = withPWA(nextConfig);

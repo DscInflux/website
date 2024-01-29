@@ -50,7 +50,7 @@ export const GlobalProvider = ({ children }) => {
             </div>
             <button
               onClick={() =>
-                open("https://discordinflux.xyz/discord", "_blank")
+                open("https://discord.gg/RPCtG7Em8g")
               }
               className="px-4 py-2 text-lg font-semibold bg-black/20 hover:bg-black/50 transition-all duration-200 rounded-md"
             >
