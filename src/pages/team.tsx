@@ -30,7 +30,7 @@ export default function Team() {
     },
     {
       name: "Toxic Dev",
-      pfp: "https://cdn.discordapp.com/avatars/510065483693817867/a_5b8b978d724408fa66bc880d1ecc8d17.gif?size=1024",
+      pfp: "https://cdn.discordapp.com/avatars/510065483693817867/6eef90be81e0434815a5f21743310903.png?size=4096",
       bio: "Curious by nature self-taught full-stack software developer who is always aiming for improvement. currently working at Infinity Bot List as a Founder/Owner, FrontEnd Designer/Engineer and Community Manager with a strong background in project management, project planning and customer relations.",
       link1: "https://x.com/TheRealToxicDev",
       link2: "https://infinitybots.gg/",
@@ -41,7 +41,7 @@ export default function Team() {
     },
     {
       name: "Rizon",
-      pfp: "https://cdn.discordapp.com/avatars/303278996932526084/d2a8b171f9b0cae42bf858788dc09b59.png?size=4096",
+      pfp: "https://cdn.discordapp.com/avatars/303278996932526084/31eebe2519dddb771f2014483a8c265d.png?size=4096",
       bio: "Hi I'm Rizon, the Developer for DscInflux.",
       link1: "https://x.com/rizonftw_",
       link2: "https://infinitybots.gg/",
@@ -53,7 +53,7 @@ export default function Team() {
     {
       name: "ItzMatt019",
       pfp: "https://cdn.discordapp.com/avatars/520599749456560140/2d0109ed4e7412615c7ea22e391cd5ec.png?size=4096",
-      bio: "Hi I'm Matt, the Developer and Administrator for DscInflux.",
+      bio: "Hi I'm Matt, the Administrator for DscInflux.",
       link1: "https://x.com/ItzMatt019_",
       link2: "https://itzmatt019.xyz/",
       link1Title: "X",

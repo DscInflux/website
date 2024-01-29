@@ -58,7 +58,7 @@ export default function Privacy() {
               },
               {
                 delimiter: "II. Why?",
-                text: "We have made this new website and ui for you all to create profiles to find new friends. This is sorta like JobCord another website where you can hire Moderators & Developers. Check them out: https://jobcord.co",
+                text: "We have made this new website and ui for you all to create profiles to find new friends.",
               },
             ]}
           />
