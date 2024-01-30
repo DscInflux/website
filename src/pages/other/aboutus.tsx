@@ -80,7 +80,8 @@ About Us
             </p>
           </li>
           <li>
-            <p>We have made this new website and ui for you all to create profiles to find new friends.
+            <p>
+              <strong>II Why:</strong>We have made this new website and ui for you all to create profiles to find new friends.
             </p>
           </li>
         </ul>

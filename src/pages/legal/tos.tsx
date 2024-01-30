@@ -100,7 +100,7 @@ export default function TOS({ isLoggedIn }) {
         <p>
         We gather login location and geolocation data to monitor visitor counts by country. This information is securely stored on our private servers, and we prioritize its safety. Please be assured that location data is not publicly visible; it is mainly utilized for administrative analytics and statistical purposes.
         </p>
-        <h1>3.Location of your Data</h1>
+        <h1>3. Location of your Data</h1>
         <p>
           All saved information is in our database, and the only people who have
           access to it are the owner of the bot list and anybody else who has
