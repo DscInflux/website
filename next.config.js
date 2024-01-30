@@ -23,9 +23,6 @@ const nextConfig = {
       "cdn.discordapp.com",
     ],
   },
-  env: {
-    jwtSecret: process.env.jwtSecret,
-  },
   rewrites() {
     return [
       {
