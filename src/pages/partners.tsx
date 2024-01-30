@@ -12,7 +12,6 @@ export default function Partners() {
   return (
     <>
       <div className="flex flex-col items-center justify-center px-10 3xl:px-0">
-        <div className="lg:text-center">
         <div className="max-w-7xl w-full">
           <div className="w-full mt-5">
             <div className="flex items-center gap-5">
@@ -63,7 +62,6 @@ export default function Partners() {
             />
           </div>
         </div>
-      </div>
       </div>
       </div>
     </>
