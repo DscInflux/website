@@ -2,29 +2,16 @@ import { useRouter } from "next/router";
 import React, { useState, useRef } from "react";
 import PartnerCard from "@/components/Layout/Partner/PartnerLayout";
 
-const getRandomColor = () => {
-  const colors = [
-    "bg-gradient-neon-red",
-    "bg-gradient-neon-blue",
-    "bg-gradient-neon-green",
-    "bg-gradient-neon-purple",
-    // Add more neon colors as needed
-  ];
-  return colors[Math.floor(Math.random() * colors.length)];
-};
-
 export default function Partners() {
   const router = useRouter();
   const [bannerOpen, setBannerOpen] = useState(true);
   const [enterLoading, setEnterLoading] = useState(false);
   const mainButton = useRef(null);
 
-  const customBackground = getRandomColor();
 
   return (
     <>
       <div className="flex flex-col items-center justify-center px-10 3xl:px-0">
-        <div className="lg:text-center">
         <div className="max-w-7xl w-full">
           <div className="w-full mt-5">
             <div className="flex items-center gap-5">
@@ -75,7 +62,6 @@ export default function Partners() {
             />
           </div>
         </div>
-      </div>
       </div>
       </div>
     </>

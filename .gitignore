@@ -127,6 +127,7 @@ dist
 .yarn/unplugged
 .yarn/build-state.yml
 .yarn/install-state.gz
+yarn.lock
 .pnp.*
 public/service-worker.js.map
 public/service-worker.js.map

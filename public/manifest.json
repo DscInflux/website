@@ -5,7 +5,7 @@
     "scope": "/?pwa",
     "start_url": "/",
     "name": "DiscordInflux",
-    "short_name": "DiscordInflux",
+    "short_name": "DscInflux",
     "description": "Find and add new friends on Discord the easy way.",
     "icons": [
         {

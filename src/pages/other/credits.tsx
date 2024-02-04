@@ -3,23 +3,12 @@ import CreditsCard from "@/components/Layout/Other/CreditLayout";
 import { useRouter } from "next/router";
 import React, { useState, useRef } from "react";
 
-const getRandomColor = () => {
-  const colors = [
-    "bg-gradient-neon-red",
-    "bg-gradient-neon-blue",
-    "bg-gradient-neon-green",
-    "bg-gradient-neon-purple",
-  ];
-  return colors[Math.floor(Math.random() * colors.length)];
-};
 
 export default function Credits() {
   const router = useRouter();
   const [bannerOpen, setBannerOpen] = useState(true);
   const [enterLoading, setEnterLoading] = useState(false);
   const mainButton = useRef(null);
-
-  const customBackground = getRandomColor();
 
   return (
     <>

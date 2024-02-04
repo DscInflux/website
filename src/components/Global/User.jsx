@@ -194,9 +194,6 @@ export default function UserPage({ data }) {
                 <div className="flex items-center justify-center lg:justify-start text-center lg:text-left gap-4 w-full mb-6 lg:mb-0">
                   <h1 className="text-4xl font-bold text-center">
                     {data.discord.username}
-                    <span className="font-medium text-zinc-500 text-xl">
-                      #{data.discord.discriminator}
-                    </span>
                   </h1>
                   {data?.isVerified && (
                     <Tooltip content={`Verified Profile`}>
@@ -390,7 +387,7 @@ export default function UserPage({ data }) {
                   {data?.socials.map((social, i) => {
                     return (
                       <a
-                        href={social?.url + "?utm_source=discordinflux.xyz"}
+                        href={social?.url + "?utm_source=dscinflux.xyz"}
                         target="_blank"
                         key={i}
                         className="flex items-center justify-between relative bg-light dark:bg-dark border border-primary/5 hover:border-primary/20 active:border-primary/50 rounded-lg px-6 py-3 transition-all duration-200 cursor-pointer"
