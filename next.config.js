@@ -1,6 +1,3 @@
-const localesConfig = require("./src/configurations/locales.config");
-const influxConfig = require("./src/configurations/influx.config");
-
 /** @type {import('next').NextConfig} */
 const withPWA = require("next-pwa")({
   register: true,
@@ -11,10 +8,6 @@ const withPWA = require("next-pwa")({
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
-  i18n: {
-    locales: localesConfig.map((locale) => locale.value),
-    defaultLocale: localesConfig.find((el) => el.default).value,
-  },
   images: {
     domains: [
       "cdn.dscinflux.xyz",
