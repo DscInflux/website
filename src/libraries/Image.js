@@ -9,11 +9,11 @@ export default function ImageWithFallback(props) {
 
   if (fallbackSrc === "banner" && !fallbackImage)
     setFallbackImage(
-      "https://cdn.topiclist.xyz/images/jpg/Banner_DiscordInflux.jpg",
+      "https://cdn.dscinflux.xyz/assets/jpg/influxbanner.jpg",
     );
   if (fallbackSrc === "avatar" && !fallbackImage)
     setFallbackImage(
-      "https://cdn.topiclist.xyz/images/png/DiscordInflux_logo.png",
+      "https://cdn.dscinflux.xyz/assets/png/influx.png",
     );
 
   if (imageSRC === false && oldSRC !== src) {

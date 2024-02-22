@@ -12,7 +12,7 @@ export default function Render() {
           <div className="flex flex-col mt-20 justify-center text-center w-full">
             <Image
               alt="403"
-              src="https://cdn.topiclist.xyz/images/error/403.svg"
+              src="https://cdn.dscinflux.xyz/assets/svg/403.svg"
               width="500"
               height="200"
             ></Image>

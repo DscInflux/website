@@ -197,7 +197,7 @@ function MyApp({ Component, pageProps }) {
           <Navbar />
           <main className="min-h-[67vh]">
             <img
-              src="https://cdn.topiclist.xyz/images/png/backwave.png"
+              src="https://cdn.dscinflux.xyz/assets/png/backwave.png"
               width="55%"
               className="absolute top-0 right-0 hidden lg:block z-[-1] opacity-50"
             />
