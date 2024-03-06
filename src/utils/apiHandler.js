@@ -1,6 +1,6 @@
 module.exports.request = async (path, method, data, accessToken = null) => {
   try {
-    const API_URL = "https://api.dscinflux.xyz/v1";
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;    
     const url = `${API_URL}${path}`;
 
     const isLocalStorage = typeof localStorage !== "undefined";
