@@ -13,7 +13,7 @@ export default function Render() {
           <div className="flex flex-col mt-20 justify-center text-center w-full">
             <Image
               alt="500"
-              src="https://cdn.topiclist.xyz/images/error/500.svg"
+              src="https://cdn.dscinflux.xyz/assets/svg/500.svg"
               width="500"
               height="200"
             />

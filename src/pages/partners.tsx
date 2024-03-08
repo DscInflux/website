@@ -1,13 +1,18 @@
 import { useRouter } from "next/router";
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import PartnerCard from "@/components/Layout/Partner/PartnerLayout";
 
 export default function Partners() {
   const router = useRouter();
-  const [bannerOpen, setBannerOpen] = useState(true);
-  const [enterLoading, setEnterLoading] = useState(false);
-  const mainButton = useRef(null);
+  const [partners, setPartners] = useState([]);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+  useEffect(() => {
+    fetch(`${apiUrl}/v1/partner`)
+      .then(response => response.json())
+      .then(data => setPartners(data))
+      .catch(error => console.error("Error fetching partners:", error));
+  }, []);
 
   return (
     <>
@@ -30,39 +35,28 @@ export default function Partners() {
               </div>
             </div>
           </div>
-        <div className="mt-32 sm:mt-40 md:mt-40 lg:mt-48">
-          <div className="space-y-10 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10 md:space-y-0">
-            <PartnerCard
-              title="Topic Bot List"
-              logo="https://media.discordapp.net/attachments/922329669884342302/927144475397087242/aa531606-a037-4e5a-b184-c28624e1e116_static.png?width=128&height=128"
-              banner="https://pbs.twimg.com/profile_banners/1505194289323823105/1678624541/1500x500"
-              owner=" RanveerSoni"
-              ownerlink="https://discord.com/users/787241442770419722"
-              desc="Do you want to expand and improve your Discord bot? We are here for you!"
-              link1="https://x.com/topicbotlist"
-              link2="https://topiclist.xyz/"
-              link1Title="X"
-              link2Title="Website"
-              link1Icon="fab fa-twitter"
-              link2Icon="fa fa-globe"
-            />
-            <PartnerCard
-              title="CordX"
-              logo="https://beta.cordx.lol/assets/logo.png"
-              banner="https://beta.cordx.lol/assets/banner.png"
-              owner=" TheRealToxicDev"
-              ownerlink="https://discord.com/users/510065483693817867"
-              desc="Do you want to expand and improve your Discord bot? We are here for you!"
-              link1="https://x.com/HeyCordX"
-              link2="https://beta.cordx.lol"
-              link1Title="X"
-              link2Title="Website"
-              link1Icon="fab fa-twitter"
-              link2Icon="fa fa-globe"
-            />
+          <div className="mt-32 sm:mt-40 md:mt-40 lg:mt-48">
+            <div className="space-y-10 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10 md:space-y-0">
+              {partners.map(partner => (
+                <PartnerCard
+                  key={partner.title}
+                  title={partner.title}
+                  logo={partner.logo}
+                  banner={partner.banner}
+                  owner={partner.ownername}
+                  ownerlink={partner.ownerid}
+                  desc={partner.desc}
+                  link1={partner.link1}
+                  link2={partner.link2}
+                  link1Title={partner.link1title}
+                  link2Title={partner.link2title}
+                  link1Icon={partner.link1icon}
+                  link2Icon={partner.link2icon}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </>
   );

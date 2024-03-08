@@ -48,7 +48,7 @@ export default function TOS({ isLoggedIn }) {
         openGraph={{
           images: [
             {
-              url: `https://cdn.topiclist.xyz/images/png/DiscordInflux_logo.png`,
+              url: `https://cdn.dscinflux.xyz/assets/png/influx.png`,
               width: 800,
               height: 600,
               alt: "Influx Logo",
