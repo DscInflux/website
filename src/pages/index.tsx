@@ -1,3 +1,4 @@
+import React from "react";
 import Button from "@/components/Global/Button";
 import MiniCard from "@/components/Global/Cards/Mini";
 import Input from "@/components/Global/Input";
@@ -8,12 +9,38 @@ import withSession from "@/libraries/withSession";
 import { useRouter } from "next/router";
 import { useUser } from "@/context/user";
 import Link from "next/link";
-import React from "react";
 
+interface User {
+  appId: string;
+}
 
-export default function Home({ popularUsers }) {
+interface Entity {
+  avatar: string;
+  banner: string;
+  url: string;
+  discord: {
+    username: string;
+  };
+  isLiked: boolean;
+  about: string;
+  isVerified: boolean;
+}
+
+interface HomeProps {
+  popularUsers: Entity[];
+}
+
+const Home: React.FC<HomeProps> = ({ popularUsers }) => {
   const router = useRouter();
   const { user } = useUser();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    router.push(
+      "/submit?url=" + encodeURIComponent((e.target as HTMLFormElement).username.value)
+    );
+  };
+
   return (
     <>
       <div className="flex flex-col items-center justify-center px-10 3xl:px-0">
@@ -44,15 +71,7 @@ export default function Home({ popularUsers }) {
                   </Link>
                 </div>
               ) : (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    router.push(
-                      "/submit?url=" +
-                        encodeURIComponent(e.target.username.value),
-                    );
-                  }}
-                >
+                <form onSubmit={handleSubmit}>
                   <div className="lg:flex items-center gap-1 mt-4">
                     <Input
                       placeholder={"Connor200024"}
@@ -80,8 +99,8 @@ export default function Home({ popularUsers }) {
                 <CarouselHeader
                   title="Popular Users"
                   icon="fa fa-fire"
-                  seeAll={"/explore?sort=likes"}
-                  description={"The most popular profiles on DscInflux"}
+                  seeAll="/explore?sort=likes"
+                  description="The most popular profiles on DscInflux"
                   next={next}
                   prev={prev}
                   isPrev={isPrev}
@@ -110,15 +129,15 @@ export default function Home({ popularUsers }) {
       </div>
     </>
   );
-}
+};
 
-export const getServerSideProps = withSession(async (ctx) => {
+export const getServerSideProps = withSession(async (ctx: any) => {
   try {
     const popularUsersRequest = await request(
       "/entities?sort=likes&limit=12",
       "GET",
       null,
-      ctx.req.session.get("access_token"),
+      ctx.req.session.get("access_token")
     );
     return {
       props: {
@@ -133,3 +152,5 @@ export const getServerSideProps = withSession(async (ctx) => {
     };
   }
 });
+
+export default Home;

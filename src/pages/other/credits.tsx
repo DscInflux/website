@@ -30,11 +30,11 @@ export default function Credits() {
           <div className="space-y-10 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10 md:space-y-0">
             <CreditsCard
               title="CordX"
-              logo="https://beta.cordx.lol/assets/logo.png"
+              logo="https://cdn.dscinflux.xyz/assets/png/cordx.png"
               banner="https://pbs.twimg.com/profile_banners/1602095201526640640/1691815511/1500x500"
               owner=" therealtoxicdev"
               ownerlink="https://discord.com/users/510065483693817867"
-              desc="Simplifying the way you share your online media, files and links with your friends, family and loved ones."
+              desc="A powerful ShareX focused Image, File and Short Link uploader, with a variety of features to suit your need!"
               link1="https://x.com/HeyCordX"
               link2="https://beta.cordx.lol/"
               link1Title="X"
