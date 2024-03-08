@@ -137,3 +137,6 @@ public/workbox-8f0e986c.js
 public/service-worker.js.map
 *.map
 public/service-worker.js.map
+/public
+/public
+public/service-worker.js
