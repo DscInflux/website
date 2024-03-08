@@ -16,14 +16,6 @@ const nextConfig = {
       "cdn.discordapp.com",
     ],
   },
-  rewrites() {
-    return [
-      {
-        source: "/:path*",
-        destination: "https://api.dscinflux.xyz/:path*",
-      },
-    ];
-  },
 };
 
 
