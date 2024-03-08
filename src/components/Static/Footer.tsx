@@ -6,12 +6,12 @@ export default function Footer() {
   let items = [
     { label: 'About Us', icon: 'fa fa-home', link: '/other/aboutus', external: false },
     { label: 'Credits', icon: 'fa fa-home', link: '/other/credits', external: false },
-    { label: 'Documentation', icon: 'fa fa-home', link: 'https://docs.dscinflux.xyz', external: true },
+    { label: 'Documentation', icon: 'fa fa-home', link: 'https://docs.dscinflux.xyz', external: false },
     { label: 'Explore', icon: 'fa fa-home', link: '/explore', external: false },
     { label: 'Home', icon: 'fa fa-home', link: '/', external: false },
     { label: 'Partners', icon: 'fa fa-handshake', link: '/partners', external: false },
     { label: 'Privacy', icon: 'fa fa-home', link: '/legal/privacy', external: false },
-    { label: 'Status', icon: 'fa fa-home', link: 'https://dscinflux.instatus.com', external: true },
+    { label: 'Status', icon: 'fa fa-home', link: 'https://dscinflux.instatus.com', external: false },
     { label: 'Terms Of Service', icon: 'fa fa-home', link: '/legal/tos', external: false },
   ];
 
