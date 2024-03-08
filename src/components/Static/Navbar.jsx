@@ -138,7 +138,7 @@ export default function Navbar() {
                               icon: "user",
                               title: "Profile",
                               isLink: true,
-                              link: "/" + user?.appId,
+                              link: "/profile/" + user?.appId,
                               isShow: user?.appId !== null ? true : false,
                             },
                             {
