@@ -80,7 +80,7 @@ export default function UserPage({ data }) {
     {
       upper: false,
       name: "Occupation",
-      subtitle: "What do you do?",
+      subtitle: "What do I do?",
       isPrivate: data.occupation === undefined,
       isEmpty: data.occupation === null,
       value: data.occupation,
@@ -89,7 +89,7 @@ export default function UserPage({ data }) {
     {
       upper: false,
       name: "Location",
-      subtitle: "Where do you live?",
+      subtitle: "Where do I live?",
       isPrivate: data.location === undefined,
       isEmpty: data.location === null,
       value: data.location,
@@ -98,7 +98,7 @@ export default function UserPage({ data }) {
     {
       upper: false,
       name: "Birthday",
-      subtitle: "When is your birthday?",
+      subtitle: "When is my birthday?",
       isPrivate: data.birthday === undefined,
       isEmpty: data.birthday === null,
       value: `${new Date(data.birthday).format("D MMMM Y")} (${new Date(
@@ -109,7 +109,7 @@ export default function UserPage({ data }) {
     {
       upper: false,
       name: "Gender",
-      subtitle: "What is your gender?",
+      subtitle: "What is my gender?",
       isPrivate: data.gender === undefined,
       isEmpty: data.gender === null,
       value: genders?.[data.gender]?.name || "Special",
@@ -136,7 +136,7 @@ export default function UserPage({ data }) {
     {
       upper: false,
       name: "Native Language",
-      subtitle: "What is your native language?",
+      subtitle: "What is my native language?",
       isPrivate: data.language === undefined,
       isEmpty: data.language === null,
       value: data.language,
@@ -314,7 +314,7 @@ export default function UserPage({ data }) {
                 </div>
                 <div className="flex flex-col justify-center">
                   <h1 className="text-xl font-semibold">My Roles</h1>
-                  <p className="text-sm text-gray-500">Roles that i have.</p>
+                  <p className="text-sm text-gray-500">Roles that I have.</p>
                 </div>
               </div>
               {data?.roles.length === 0 ? (
@@ -343,7 +343,7 @@ export default function UserPage({ data }) {
                 </div>
                 <div className="flex flex-col justify-center">
                   <h1 className="text-xl font-semibold">My Skills</h1>
-                  <p className="text-sm text-gray-500">What i know?</p>
+                  <p className="text-sm text-gray-500">What I know?</p>
                 </div>
               </div>
               {data?.skills.length === 0 ? (
