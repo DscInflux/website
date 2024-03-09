@@ -23,15 +23,15 @@ module.exports = {
   additionalLinkTags: [
     {
       rel: "icon",
-      href: "https://cdn.topiclist.xyz/images/png/DiscordInflux_logo.png",
+      href: "https://cdn.dscinflux.xyz/assets/png/influx.png",
     },
     {
       rel: "apple-touch-icon",
-      href: "https://cdn.topiclist.xyz/images/png/DiscordInflux_logo.png",
+      href: "https://cdn.dscinflux.xyz/assets/png/influx.png",
     },
     {
       rel: "apple-touch-icon",
-      href: "https://cdn.topiclist.xyz/images/png/DiscordInflux_logo.png",
+      href: "https://cdn.dscinflux.xyz/assets/png/influx.png",
     },
     {
       rel: "manifest",

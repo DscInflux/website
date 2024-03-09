@@ -8,7 +8,7 @@ export default function Partners() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    fetch(`${apiUrl}/v1/partner`)
+    fetch(`${apiUrl}/partner`)
       .then(response => response.json())
       .then(data => setPartners(data))
       .catch(error => console.error("Error fetching partners:", error));
