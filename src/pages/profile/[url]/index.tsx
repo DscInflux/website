@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import UserPage from '@/components/Global/User';
+import { NextSeo } from "next-seo";
 
 export default function UserProfilePage({ url }) {
   const [userData, setUserData] = useState(null);
@@ -24,10 +25,29 @@ export default function UserProfilePage({ url }) {
   }, [apiUrl, url]);
 
   return (
-    <div>
-      {/* Render the UserPage component with fetched userData */}
-      {userData && <UserPage data={userData} />}
-    </div>
+    <>
+      <NextSeo
+        title="Profile"
+        description="View and make friends with person mentioned on the profile."
+        openGraph={{
+          images: [
+            {
+              url: `https://cdn.dscinflux.xyz/assets/png/influx.png`,
+              width: 800,
+              height: 600,
+              alt: "Influx Logo",
+            },
+          ],
+        }}
+        twitter={{
+          cardType: "summary",
+        }}
+      />
+      <div>
+        {/* Render the UserPage component with fetched userData */}
+        {userData && <UserPage data={userData} />}
+      </div>
+    </>
   );
 }
 
