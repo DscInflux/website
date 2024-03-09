@@ -1,3 +1,5 @@
+const { description } = require("./seo.config");
+
 module.exports = {
   apiAddress: "https://api.dscinflux.xyz/v1",
   authRequired: ["/[id]/edit", "/submit"],
@@ -9,6 +11,10 @@ module.exports = {
     "/team": {
       title: "Team",
       description: "Meet the team behind DscInflux.",
+    },
+    "/profile/*": {
+      title:"Profile",
+      description: "profile of the user"
     },
     "/explore": {
       title: "Explore",
