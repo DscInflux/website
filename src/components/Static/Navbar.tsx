@@ -10,14 +10,6 @@ import SheetItems from "@/components/Global/SheetContentablePage";
 import RadioGroup from "@/components/Global/RadioGroup";
 import Dropdown, { Item } from "@/components/Global/Dropdown";
 
-const colorThemes = [
-  { name: "Blue", primaryColor: "#3490dc", secondaryColor: "#187bcd" },
-  { name: "Green", primaryColor: "#38c172", secondaryColor: "#1a9d6b" },
-  { name: "Pink", primaryColor: "#e74c3c", secondaryColor: "#d63031" },
-  { name: "Purple", primaryColor: "#8e44ad", secondaryColor: "#6c3483" },
-  { name: "Red", primaryColor: "#e74c3c", secondaryColor: "#d63031" },
-];
-
 export default function Navbar() {
   const router = useRouter();
   const { user } = useUser();
@@ -78,8 +70,15 @@ export default function Navbar() {
                   </button>
                 </>
               }
+              disableSwipe={true}
+              onChange={() => {}} // Placeholder onChange
+              containerClassName=""
+              bodyClassName=""
             >
               <SheetItems
+                title=""
+                isMenuInner={false}
+                animation={true}
                 pages={[
                   ...items.map((item, i) => {
                     return {
@@ -104,7 +103,7 @@ export default function Navbar() {
                               label: "Light",
                               value: "light",
                             },
-                           {
+                            {
                               label: "Dark",
                               value: "dark",
                             },
@@ -118,7 +117,7 @@ export default function Navbar() {
                     isShow: true,
                   },
                   {
-                    id: "1",
+                    id: "2",
                     icon: (
                       <img
                         src={`https://cdn.discordapp.com/avatars/${user?.id}/${user?.avatar}`}
@@ -132,6 +131,7 @@ export default function Navbar() {
                         <SheetItems
                           animation={false}
                           isMenuInner={true}
+                          title=""
                           pages={[
                             {
                               id: "1",
@@ -150,7 +150,7 @@ export default function Navbar() {
                               isShow: user?.appId !== null ? true : false,
                             },
                             {
-                              id: "2",
+                              id: "3",
                               icon: "plus",
                               title: "Create",
                               isLink: true,
@@ -173,7 +173,7 @@ export default function Navbar() {
                     isShow: user ? true : false,
                   },
                   {
-                    id: "1",
+                    id: "3",
                     icon: "sign-in-alt",
                     title: "Login",
                     isLink: true,
@@ -199,10 +199,12 @@ export default function Navbar() {
                       </h1>
                     </button>
                   }
+                  label=""
+                  onTrigger={() => {}} // Placeholder onTrigger
                 >
                   {user?.appId ? (
                     <>
-                      <Link href={`/${user?.appId}`} legacyBehavior={true}> 
+                      <Link href={`/${user?.appId}`} legacyBehavior={true}>
                         <a>
                           <Item className="flex items-center gap-2">
                             <i className="fa fa-user" />
