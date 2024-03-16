@@ -4,6 +4,7 @@ import React from 'react';
 
 export default function Footer() {
   let items = [
+
     { label: 'Home', icon: 'fa fa-home', link: '/', external: false },
     { label: 'Explore', icon: 'fa fa-home', link: '/explore', external: false },
     { label: 'Partners', icon: 'fa fa-handshake', link: '/partners', external: false },
@@ -11,8 +12,11 @@ export default function Footer() {
     { label: 'Credits', icon: 'fa fa-home', link: '/other/credits', external: false },
     { label: 'Terms Of Service', icon: 'fa fa-home', link: '/legal/tos', external: false },
     { label: 'Privacy', icon: 'fa fa-home', link: '/legal/privacy', external: false },
+
     { label: 'Documentation', icon: 'fa fa-home', link: 'https://docs.dscinflux.xyz', external: true },
-    { label: 'Status', icon: 'fa fa-home', link: 'https://dscinflux.instatus.com', external: true },
+    { label: 'Status', icon: 'fa fa-home', link: 'https://dscinflux.instatus.com', external: false },
+    { label: 'Terms Of Service', icon: 'fa fa-home', link: '/legal/tos', external: false },
+
   ];
 
   let socialLinks = [

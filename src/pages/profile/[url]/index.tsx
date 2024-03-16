@@ -28,7 +28,9 @@ export default function UserProfilePage({ url }) {
     <>
       <NextSeo
         title="Profile"
-        description="View and make friends with person mentioned on the profile."
+
+        description="View the selected user's profile"
+
         openGraph={{
           images: [
             {
