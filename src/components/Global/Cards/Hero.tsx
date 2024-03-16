@@ -6,7 +6,7 @@ export default function Hero({ name, username, className }) {
           <div className={"w-full h-40 rounded-lg overflow-hidden"}>
             <img
               src={
-                "https://cdn.topiclist.xyz/images/jpg/Banner_DiscordInflux.jpg"
+                "https://cdn.dscinflux.xyz/assets/jpg/influxbanner.jpg"
               }
               alt=""
               className="w-full h-full object-cover"
