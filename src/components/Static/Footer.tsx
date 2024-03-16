@@ -4,15 +4,19 @@ import React from 'react';
 
 export default function Footer() {
   let items = [
+
+    { label: 'Home', icon: 'fa fa-home', link: '/', external: false },
+    { label: 'Explore', icon: 'fa fa-home', link: '/explore', external: false },
+    { label: 'Partners', icon: 'fa fa-handshake', link: '/partners', external: false },
     { label: 'About Us', icon: 'fa fa-home', link: '/other/aboutus', external: false },
     { label: 'Credits', icon: 'fa fa-home', link: '/other/credits', external: false },
-    { label: 'Documentation', icon: 'fa fa-home', link: 'https://docs.dscinflux.xyz', external: false },
-    { label: 'Explore', icon: 'fa fa-home', link: '/explore', external: false },
-    { label: 'Home', icon: 'fa fa-home', link: '/', external: false },
-    { label: 'Partners', icon: 'fa fa-handshake', link: '/partners', external: false },
+    { label: 'Terms Of Service', icon: 'fa fa-home', link: '/legal/tos', external: false },
     { label: 'Privacy', icon: 'fa fa-home', link: '/legal/privacy', external: false },
+
+    { label: 'Documentation', icon: 'fa fa-home', link: 'https://docs.dscinflux.xyz', external: true },
     { label: 'Status', icon: 'fa fa-home', link: 'https://dscinflux.instatus.com', external: false },
     { label: 'Terms Of Service', icon: 'fa fa-home', link: '/legal/tos', external: false },
+
   ];
 
   let socialLinks = [
@@ -20,8 +24,13 @@ export default function Footer() {
     { label: 'Discord', icon: <FaDiscord className="text-white hover:opacity-75" />, link: 'https://discord.gg/RPCtG7Em8g' },
   ];
 
-  items.sort((a, b) => a.label.localeCompare(b.label));
-  socialLinks.sort((a, b) => a.label.localeCompare(b.label));
+  // Function to sort items based on their original index
+  const sortByIndex = (a, b) => {
+    return items.findIndex(item => item.label === a.label) - items.findIndex(item => item.label === b.label);
+  };
+
+  items.sort(sortByIndex);
+  socialLinks.sort(sortByIndex);
 
   return (
     <div className="w-full flex justify-center px-10 lg:px-12 mt-10">
@@ -49,20 +58,20 @@ export default function Footer() {
                   <span className="sr-only">{socialLink.label}</span>
                 </a>
               ))}
-                              <a
-                  href="https://x.com/HeyInflux"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center w-8 h-8 bg-main-700 rounded-full mr-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
-                    <path
-                      fill="currentColor"
-                      d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"
-                    />
-                  </svg>
-                  <span className="sr-only">X</span>
-                </a>
+              <a
+                href="https://x.com/HeyInflux"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center w-8 h-8 bg-main-700 rounded-full mr-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                  <path
+                    fill="currentColor"
+                    d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"
+                  />
+                </svg>
+                <span className="sr-only">X</span>
+              </a>
             </div>
           </div>
           <p className="mt-5 font-semibold text-white">

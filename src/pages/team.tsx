@@ -6,7 +6,7 @@ export default function Team() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    fetch(`${apiUrl}/v1/staff`)
+    fetch(`${apiUrl}/staff`)
       .then(response => response.json())
       .then(data => {
         setTeamMembers(data);
