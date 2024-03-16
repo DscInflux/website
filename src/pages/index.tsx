@@ -54,7 +54,7 @@ const Home: React.FC<HomeProps> = ({ popularUsers }) => {
                 </span>
               </h1>
               <p className="text-lg text-gray-500 mt-4 font-medium">
-                Find and add new friends on Discord the easy way.
+                Find & add new friends on Discord the easy way.
               </p>
               {user && user.appId ? (
                 <div className="flex justify-center w-full mt-6">
