@@ -60,9 +60,8 @@ export default function General() {
             }}
             options={[
               "I don't want to say",
-              "He/Him",
-              "She/Her",
-              "They/Them",
+              "Male",
+              "Female",
               "Other",
             ]}
           />
