@@ -12,12 +12,11 @@ export default function Footer() {
     { label: 'Credits', icon: 'fa fa-home', link: '/other/credits', external: false },
     { label: 'Terms Of Service', icon: 'fa fa-home', link: '/legal/tos', external: false },
     { label: 'Privacy', icon: 'fa fa-home', link: '/legal/privacy', external: false },
+    {label: 'Stats', icon: 'fa fa-home', link: '/stats', external: false },
 
     { label: 'Documentation', icon: 'fa fa-home', link: 'https://docs.dscinflux.xyz', external: true },
-    { label: 'Status', icon: 'fa fa-home', link: 'https://dscinflux.instatus.com', external: false },
-    { label: 'Terms Of Service', icon: 'fa fa-home', link: '/legal/tos', external: false },
-
-  ];
+    { label: 'Status', icon: 'fa fa-home', link: 'https://dscinflux.instatus.com', external: true },
+  ]; 
 
   let socialLinks = [
     { label: 'GitHub', icon: <FaGithub className="text-white hover:opacity-75" />, link: 'https://github.com/DscInflux/' },
