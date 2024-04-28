@@ -38,7 +38,7 @@ export default function Team() {
           {teamMembers.map((teamMember, index) => (
             <TeamCard
               key={index}
-              name={teamMember.discord.DisplayName}
+              name={teamMember.discord.username}
               pfp={teamMember.avatar}
               bio={teamMember.about}
               link1={teamMember.link1}

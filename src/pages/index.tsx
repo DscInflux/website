@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { useUser } from "@/context/user";
 import Link from "next/link";
 
+
 interface User {
   appId: string;
 }
@@ -28,9 +29,10 @@ interface Entity {
 
 interface HomeProps {
   popularUsers: Entity[];
+  randomUsers: Entity[];
 }
 
-const Home: React.FC<HomeProps> = ({ popularUsers }) => {
+const Home: React.FC<HomeProps> = ({ popularUsers, randomUsers }) => {
   const router = useRouter();
   const { user } = useUser();
 
@@ -124,6 +126,38 @@ const Home: React.FC<HomeProps> = ({ popularUsers }) => {
                 ))
               }
             </Carousel>
+            <div className="w-full mt-10">
+            <Carousel
+              header={(next, prev, isPrev, isNext) => (
+                <CarouselHeader
+                  title="Newest Users"
+                  icon="fa fa-dice"
+                  seeAll="/explore?sort=newest"
+                  description="Some random profiles on DscInflux"
+                  next={next}
+                  prev={prev}
+                  isPrev={isPrev}
+                  isNext={isNext}
+                />
+              )}
+              slides={randomUsers || []}
+            >
+              {(data, index) =>
+                data.map((entity, index) => (
+                  <MiniCard
+                    key={index}
+                    image={entity.avatar}
+                    banner={entity.banner}
+                    url={entity.url}
+                    username={entity.discord.username}
+                    isLiked={entity.isLiked}
+                    about={entity.about}
+                    isVerified={entity.isVerified}
+                  />
+                ))
+              }
+            </Carousel>
+            </div>
           </div>
         </div>
       </div>
@@ -139,15 +173,23 @@ export const getServerSideProps = withSession(async (ctx: any) => {
       null,
       ctx.req.session.get("access_token")
     );
+    const newestUsersReqest = await request(
+      "/entities?sort=newest",
+      "GET",
+      null,
+      ctx.req.session.get("access_token")
+    );
     return {
       props: {
         popularUsers: popularUsersRequest?.data?.users || [],
+        randomUsers: newestUsersReqest?.data.users || [],
       },
     };
   } catch (e) {
     return {
       props: {
         popularUsers: [],
+        randomUsers:[],
       },
     };
   }

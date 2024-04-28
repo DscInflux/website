@@ -6,6 +6,7 @@ import classNames from "classnames";
 import { Fragment, useState } from "react";
 import { request } from "@/utils/apiHandler";
 import { useUser } from "@/context/user";
+import { FaCode } from "react-icons/fa";
 import Link from "next/link";
 import { Transition } from "@headlessui/react";
 import { NextSeo } from "next-seo";
@@ -198,6 +199,16 @@ export default function UserPage({ data }) {
                   {data?.isVerified && (
                     <Tooltip content={`Verified Profile`}>
                       <i className="fa fa-badge-check text-3xl" />
+                    </Tooltip>
+                  )}
+                  {data?.isDeveloper && (
+                    <Tooltip content={`This person is a dev`}>
+                      <i className="fa fa-code text-3xl" />
+                    </Tooltip>
+                  )}
+                  {data?.isPartner && (
+                    <Tooltip content={`Partner's Profile`}>
+                      <i className="fa fa-handshake text-3xl" />
                     </Tooltip>
                   )}
                   {data?.isPremium && (

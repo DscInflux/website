@@ -12,6 +12,10 @@ module.exports = {
       title: "Team",
       description: "Meet the team behind DscInflux.",
     },
+    "/stats": {
+      title: "Stats",
+      description: "Check out Dscinflux's Stats.",
+    },
     "/profile/*": {
       title:"Profile",
       description: "profile of the user"
