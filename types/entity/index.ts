@@ -35,7 +35,7 @@ export interface Entity {
   likes: string[];
   skills: string[];
 
-  socials: Record<string, any>;
+  socials: Social[];
 
   createdAt: Date;
   updatedAt: Date;
@@ -44,4 +44,18 @@ export interface Entity {
   isLiked: boolean;
   isSelf: boolean;
   isTeamMember: boolean;
+}
+
+export interface Social {
+  id: string
+  url: string
+  icon: {
+    url: string
+    label: string
+    value: string
+  }
+  name: string
+  color: string
+  enabled: boolean
+  username: string
 }
