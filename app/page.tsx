@@ -21,14 +21,14 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const popularRes = await fetch("/api/get/entity/all?sort=likes&limit=12");
+        const popularRes = await fetch("/api/get/entity/all?sort=popular&limit=10");
         const popularData = await popularRes.json();
 
-        const newestRes = await fetch("/api/get/entity/all?sort=newest&limit=12");
+        const newestRes = await fetch("/api/get/entity/random?count=10");
         const newestData = await newestRes.json();
 
-        setPopularUsers(popularData?.data?.users || []);
-        setRandomUsers(newestData?.data?.users || []);
+        setPopularUsers(popularData?.data || []);
+        setRandomUsers(newestData?.data || []);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       }
@@ -112,7 +112,9 @@ const Home: React.FC = () => {
             )}
             slides={popularUsers}
           >
-            {(data) => data.map((entity) => <MiniCard key={entity.id} entity={entity} />)}
+            {(data) =>
+              data.map((entity) => <MiniCard key={entity.id} entity={entity} />)
+            }
           </Carousel>
         </section>
 
@@ -132,7 +134,9 @@ const Home: React.FC = () => {
             )}
             slides={randomUsers}
           >
-            {(data) => data.map((entity) => <MiniCard key={entity.id} entity={entity} />)}
+            {(data) =>
+              data.map((entity) => <MiniCard key={entity.id} entity={entity} />)
+            }
           </Carousel>
         </section>
       </div>

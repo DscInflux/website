@@ -3,13 +3,13 @@ import { prisma } from '@/lib/db/prisma';
 import { z } from 'zod';
 
 const querySchema = z.object({
-  id: z.string().uuid(),
+  url: z.string().uuid(),
 });
 
 export async function GET(req: NextRequest) {
-  const url = new URL(req.url);
+  const parsedUrl = new URL(req.url);
   const parseResult = querySchema.safeParse(
-    Object.fromEntries(url.searchParams.entries())
+    Object.fromEntries(parsedUrl.searchParams.entries())
   );
 
   if (!parseResult.success) {
@@ -19,11 +19,11 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const { id } = parseResult.data;
+  const { url } = parseResult.data; 
 
   try {
     const entity = await prisma.entity.findUnique({
-      where: { id },
+      where: { id: url },
     });
 
     if (!entity) {

@@ -8,7 +8,7 @@ export interface Entity {
   avatar: string;
   about: string;
   occupation: string[];
-  staff: string;
+  staff: boolean;
   birthday?: Date;
   location: string;
   gender: string;

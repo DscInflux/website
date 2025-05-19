@@ -41,12 +41,12 @@ export async function GET(req: NextRequest) {
   const orderBy = (() => {
     switch (sort) {
       case 'oldest':
-        return { createdAt: 'asc' };
+        return { createdAt: 'asc' as const };
       case 'popular':
-        return { like: 'desc' };
+        return { like: 'desc' as const };
       case 'newest':
       default:
-        return { createdAt: 'desc' };
+        return { createdAt: 'desc' as const };
     }
   })();
 

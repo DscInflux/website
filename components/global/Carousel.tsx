@@ -1,5 +1,8 @@
+"use client";
+
 import React, { ReactNode, useState } from "react";
-import MCarousel, { CarouselProps } from "react-multi-carousel";
+import MCarousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 
 interface CarouselPropsCustom<T> {
   header?: (
@@ -17,42 +20,35 @@ const Carousel = <T,>({ header, children, slides }: CarouselPropsCustom<T>) => {
   const [isNext, setIsNext] = useState(true);
   const [isPrev, setIsPrev] = useState(false);
 
-  function next() {
-    // pass 1 slide by default
-    carousel?.next(1);
-  }
-  function prev() {
-    // pass 1 slide by default
-    carousel?.previous(1);
-  }
+  const next = () => carousel?.next(1);
+  const prev = () => carousel?.previous(1);
 
   return (
     <>
-      {header && header(next, prev, isPrev, isNext)}
+      {header?.(next, prev, isPrev, isNext)}
+
       <MCarousel
         responsive={{
-          desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3, slidesToSlide: 3 },
-          tablet: { breakpoint: { max: 1024, min: 600 }, items: 2, slidesToSlide: 2 },
-          mobile: { breakpoint: { max: 600, min: 0 }, items: 1, slidesToSlide: 1 },
+          desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3 },
+          tablet: { breakpoint: { max: 1024, min: 600 }, items: 2 },
+          mobile: { breakpoint: { max: 600, min: 0 }, items: 1 },
         }}
-        swipeable={true}
-        draggable={true}
+        swipeable
+        draggable
         showDots={false}
         arrows={false}
         ssr={false}
         ref={(el) => setCarousel(el)}
         afterChange={() => {
           if (!carousel) return;
-
           const { currentSlide, slidesToShow, totalItems } = carousel.state;
-
           setIsNext(currentSlide + slidesToShow < totalItems);
           setIsPrev(currentSlide > 0);
         }}
-        containerClass="-mr-4"
+        containerClass=""
       >
         {children(slides).map((child, index) => (
-          <div key={index} className="flex-shrink-0 w-full select-none pr-4">
+          <div key={index} className="inline-block pr-4 h-full">
             {child}
           </div>
         ))}

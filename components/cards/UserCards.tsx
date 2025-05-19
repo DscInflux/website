@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -43,55 +45,42 @@ export default function MiniCard({ entity, isSkeleton = false }: MiniCardProps) 
 
   if (isSkeleton) {
     return (
-      <div className="user-select-none w-full bg-light dark:bg-dark rounded-lg overflow-hidden animate-pulse p-4">
-        <div className="flex items-center gap-4">
-          <div className="rounded-full bg-zinc-500/20 dark:bg-zinc-500/20 w-16 h-16" />
-          <div className="flex flex-col flex-grow space-y-2">
-            <div className="h-5 bg-zinc-500/20 dark:bg-zinc-500/20 rounded w-1/2" />
-            <div className="h-4 bg-zinc-500/20 dark:bg-zinc-500/20 rounded w-1/4" />
-          </div>
-        </div>
-        <div className="mt-6 space-y-3">
-          <div className="h-4 bg-zinc-500/20 dark:bg-zinc-500/20 rounded w-full" />
-          <div className="h-4 bg-zinc-500/20 dark:bg-zinc-500/20 rounded w-5/6" />
-          <div className="h-4 bg-zinc-500/20 dark:bg-zinc-500/20 rounded w-3/4" />
-        </div>
-        <div className="flex gap-4 mt-6">
-          <div className="bg-zinc-500/20 dark:bg-zinc-500/20 h-12 rounded flex-grow" />
-          <div className="bg-zinc-500/20 dark:bg-zinc-500/20 h-12 w-12 rounded" />
-        </div>
-      </div>
+      <div className="w-full h-[350px] bg-light dark:bg-dark rounded-lg overflow-hidden animate-pulse p-4" />
     );
   }
 
   return (
-    <div className="w-full bg-light dark:bg-dark rounded-lg overflow-hidden select-none p-4">
+    <div className="w-full h-[250px] w-[500px] bg-light dark:bg-dark rounded-lg overflow-hidden select-none p-4 flex flex-col justify-between">
+      {/* --- Top: avatar + name --- */}
       <div className="flex items-center gap-4">
-        <div className="relative w-16 h-16 rounded-full ring-4 ring-light dark:ring-dark ring-offset-0 overflow-hidden">
+        <div className="relative w-16 h-16 rounded-full ring-4 ring-light dark:ring-dark overflow-hidden">
           <Image
-            src={entity.avatar || "/avatar.png"}
-            alt={`${entity.discord.username} avatar`}
+            src={entity.avatar || "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"}
+            alt={`${entity.discordUsername} avatar`}
             fill
             sizes="64px"
             style={{ objectFit: "cover" }}
             onError={(e) => {
-              (e.target as HTMLImageElement).src = "/avatar.png";
+              (e.target as HTMLImageElement).src =
+                "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75";
             }}
           />
         </div>
         <div>
           <h1 className="text-black dark:text-white text-lg font-medium flex items-center gap-1">
-            {entity.discord.username}
+            {entity.discordUsername}
             {entity.isVerified && <CheckCircle size={18} className="text-blue-500" />}
           </h1>
           <p className="text-sm text-black dark:text-gray-500 font-medium">@{entity.url}</p>
         </div>
       </div>
 
-      <p className="text-sm text-black/75 dark:text-gray-500 font-medium line-clamp-3 h-16 overflow-hidden mt-6">
+      {/* --- Middle: about text flexes --- */}
+      <p className="text-sm text-black/75 dark:text-gray-500 font-medium overflow-hidden flex-grow mt-4 line-clamp-3">
         {typeof entity.about === "string" ? entity.about : JSON.stringify(entity.about)}
       </p>
 
+      {/* --- Bottom: actions --- */}
       <div className="flex justify-end items-center gap-4 mt-4">
         <Link href={`/profile/${entity.url}`} legacyBehavior>
           <a className="w-full h-12 inline-flex justify-center items-center border border-transparent rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -101,7 +90,7 @@ export default function MiniCard({ entity, isSkeleton = false }: MiniCardProps) 
 
         <button
           onClick={toggleLike}
-          className="px-0 w-12 h-12 flex justify-center items-center flex-shrink-0 bg-transparent border-none cursor-pointer text-red-600 text-xl"
+          className="w-12 h-12 flex justify-center items-center bg-transparent border-none cursor-pointer text-red-600 text-xl"
           aria-pressed={liked}
           aria-label={liked ? "Unlike" : "Like"}
           type="button"
