@@ -18,6 +18,7 @@ const handler = NextAuth({
         global_name?: string;
         avatar?: string;
         email?: string;
+        banner?: string;
       };
       if (account?.provider === 'discord' && discordProfile) {
         await prisma.user.upsert({
@@ -48,7 +49,9 @@ const handler = NextAuth({
             locale: '',
             mfa_enabled: false,
             public_flags: 0,
-            banner: '',
+            banner: discordProfile.banner
+              ? `https://cdn.discordapp.com/banners/${discordProfile.id}/${discordProfile.banner}.png`
+              : undefined,
             banner_color: '',
             avatar_decoration: '',
             is_banned: false,
