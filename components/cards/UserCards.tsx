@@ -82,7 +82,7 @@ export default function MiniCard({ entity, isSkeleton = false }: MiniCardProps) 
 
       {/* --- Bottom: actions --- */}
       <div className="flex justify-end items-center gap-4 mt-4">
-        <Link href={`/profile/${entity.url}`} legacyBehavior>
+        <Link href={`/user/${entity.url}`} legacyBehavior>
           <a className="w-full h-12 inline-flex justify-center items-center border border-transparent rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             View Profile
           </a>
