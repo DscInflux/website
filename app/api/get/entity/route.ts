@@ -2,8 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { z } from 'zod';
 
+// share a fresh terminal with me.
+// i am with the microsoft sir fuck you sir
+// sir, share write access to this terminal sir
+// this not scam
+// you pay 15 million for repair sir
+// we accept credit card, cash, debit
+// give write access look how the tables have tunred  bitch
+// my battery is at 2
+// hurry tf up
+// idgaf get on pc
+
+// DO NOT REDEEM GIFT CARD
+// SIR, STOP MAKING CHANGES
+// the ping is too high, i send command to you sir.
 const querySchema = z.object({
-  url: z.string().uuid(),
+  name: z.string(),
 });
 
 export async function GET(req: NextRequest) {
@@ -18,12 +32,12 @@ export async function GET(req: NextRequest) {
       { status: 400 }
     );
   }
-
-  const { url } = parseResult.data; 
+ 
+  const { name } = parseResult.data; 
 
   try {
-    const entity = await prisma.entity.findUnique({
-      where: { id: url },
+    const entity = await prisma.entity.findFirst({
+      where: { url: name },
     });
 
     if (!entity) {
