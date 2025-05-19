@@ -1,50 +1,87 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { FaGithub, FaTwitter, FaInstagram, FaGlobe, FaHeart, FaMapMarkerAlt, FaBirthdayCake, FaEnvelope } from "react-icons/fa";
-import { MdVerified, MdWork } from "react-icons/md";
-import Image from "next/image";
-import { Entity } from "@/types/entity";
+import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
+import Image from "next/image"
+import Link from "next/link"
+import {
+  FaHeart,
+  FaHeartBroken,
+  FaUserEdit,
+  FaBriefcase,
+  FaMapMarkerAlt,
+  FaBirthdayCake,
+  FaVenusMars,
+  FaLanguage,
+  FaInfoCircle,
+  FaShareAlt,
+  FaBolt,
+  FaMagic,
+} from "react-icons/fa"
+import { MdVerified } from "react-icons/md"
+import { RiVipDiamondFill } from "react-icons/ri"
+import type { Entity } from "@/types/entity"
 
 export default function UserProfile({ username }: { username: string }) {
-  const [user, setUser] = useState<Entity | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<Entity | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [liked, setLiked] = useState(false)
+  const [likes, setLikes] = useState(0)
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`/api/get/entity?name=${username}`);
+        const response = await fetch(`/api/get/entity?name=${username}`)
         if (!response.ok) {
-          throw new Error("Failed to fetch user data");
+          throw new Error("Failed to fetch user data")
         }
-        const data = await response.json();
-        setUser(data);
+        const userData = await response.json()
+        setData(userData)
+        setLiked(userData.isLiked || false)
+        setLikes(userData.likes?.length || 0)
       } catch (err) {
-        setError("Failed to load user profile");
-        console.error(err);
+        setError("Failed to load user profile")
+        console.error(err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchUser();
-  }, [username]);
+    fetchUser()
+  }, [username])
+
+  const toggleLike = async () => {
+    if (!data) return
+
+    try {
+      if (liked) {
+        // Unlike logic would go here
+        setLiked(false)
+        setLikes((prev) => prev - 1)
+      } else {
+        // Like logic would go here
+        setLiked(true)
+        setLikes((prev) => prev + 1)
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error)
+    }
+  }
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
           className="w-12 h-12 border-4 border-primary rounded-full border-t-transparent"
         />
       </div>
-    );
+    )
   }
 
-  if (error || !user) {
+  if (error || !data) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
         <div className="text-center p-8 max-w-md mx-auto bg-white dark:bg-dark rounded-xl shadow-lg">
@@ -54,254 +91,337 @@ export default function UserProfile({ username }: { username: string }) {
           </p>
         </div>
       </div>
-    );
+    )
   }
 
-  const getSocialIcon = (name: string) => {
-    switch (name.toLowerCase()) {
-      case "github":
-        return <FaGithub />;
-      case "twitter":
-        return <FaTwitter />;
-      case "instagram":
-        return <FaInstagram />;
-      default:
-        return <FaGlobe />;
-    }
-  };
-
-  const formatDate = (dateString: Date) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
+  const formatDate = (dateString: Date | undefined) => {
+    if (!dateString) return "Not specified"
+    const date = new Date(dateString)
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    });
-  };
+    })
+  }
+
+  const getAge = (dateString: Date | undefined) => {
+    if (!dateString) return ""
+    const birthDate = new Date(dateString)
+    const today = new Date()
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const m = today.getMonth() - birthDate.getMonth()
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--
+    }
+    return ` (${age} years)`
+  }
+
+  const genders = {
+    "He/Him": {
+      name: "Male",
+      pronouns: "He/Him",
+    },
+    "She/Her": {
+      name: "Female",
+      pronouns: "She/Her",
+    },
+    "They/Them": {
+      name: "Non-Binary",
+      pronouns: "They/Them",
+    },
+    Other: {
+      name: "Other",
+      pronouns: "Other",
+    },
+  }
+
+  const cards = [
+    {
+      upper: true,
+      name: "About Me",
+      subtitle: "Who am I?",
+      isPrivate: false,
+      isEmpty: !data.about,
+      value: data.about,
+      icon: <FaInfoCircle className="text-4xl text-primary" />,
+    },
+    {
+      upper: false,
+      name: "Occupation",
+      subtitle: "What do I do?",
+      isPrivate: false,
+      isEmpty: !data.occupation || data.occupation.length === 0,
+      value: data.occupation?.join(", "),
+      icon: <FaBriefcase className="text-4xl text-primary" />,
+    },
+    {
+      upper: false,
+      name: "Location",
+      subtitle: "Where do I live?",
+      isPrivate: data.isLocationPrivate,
+      isEmpty: !data.location,
+      value: data.location,
+      icon: <FaMapMarkerAlt className="text-4xl text-primary" />,
+    },
+    {
+      upper: false,
+      name: "Birthday",
+      subtitle: "When was I born?",
+      isPrivate: data.isBirthdayPrivate,
+      isEmpty: !data.birthday,
+      value: data.birthday ? `${formatDate(data.birthday)}${getAge(data.birthday)}` : "",
+      icon: <FaBirthdayCake className="text-4xl text-primary" />,
+    },
+    {
+      upper: false,
+      name: "Gender",
+      subtitle: "What is my gender?",
+      isPrivate: data.isGenderPrivate,
+      isEmpty: !data.gender,
+      value: data.gender ? genders[data.gender as keyof typeof genders]?.name || data.gender : "",
+      icon: <FaVenusMars className="text-4xl text-primary" />,
+    },
+    {
+      upper: false,
+      name: "Pronouns",
+      subtitle: "What are my pronouns?",
+      isPrivate: data.isPronounsPrivate,
+      isEmpty: !data.gender && !data.pronouns,
+      value:
+        data.pronouns || (data.gender ? genders[data.gender as keyof typeof genders]?.pronouns || data.gender : ""),
+      icon: <FaVenusMars className="text-4xl text-primary" />,
+    },
+    {
+      upper: false,
+      name: "Native Language",
+      subtitle: "What is my native language?",
+      isPrivate: false,
+      isEmpty: !data.language,
+      value: data.language,
+      icon: <FaLanguage className="text-4xl text-primary" />,
+    },
+  ]
 
   return (
-    <div className="min-h-screen bg-light dark:bg-transparent">
-      <div className="background-shapes" />
-      <div className="color-layout layout-blue" />
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="container mx-auto px-4 py-8 max-w-7xl"
-      >
-        {/* Banner */}
-        <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden mb-24">
-          <Image
-            src={user.banner || "/placeholder.svg?height=300&width=1200"}
-            alt="Profile Banner"
-            fill
-            className="object-cover"
-            priority
-          />
-          
-          {/* Avatar */}
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="absolute -bottom-16 left-8 w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white dark:border-dark overflow-hidden shadow-xl"
-          >
-            <Image
-              src={user.avatar || "/placeholder.svg?height=160&width=160"}
-              alt={user.discordUsername}
-              fill
-              className="object-cover"
-            />
-          </motion.div>
-        </div>
-
-        {/* User Info */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-dark rounded-2xl shadow-lg p-6 mb-8">
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <h1 className="text-3xl font-bold">{user.discordUsername}</h1>
-                {user.isVerified && (
-                  <motion.span
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    className="text-primary"
-                  >
-                    <MdVerified size={24} />
-                  </motion.span>
-                )}
-                {user.isPremium && (
-                  <span className="bg-primary text-white text-xs px-2 py-1 rounded-full">
-                    Premium
-                  </span>
-                )}
-              </div>
-
-              <div className="text-gray-600 dark:text-gray-300 mb-6">
-                <p className="text-lg mb-4 whitespace-pre-line">{user.about}</p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                  {user.occupation && user.occupation.length > 0 && (
-                    <div className="flex items-center gap-2">
-                      <MdWork className="text-primary" size={20} />
-                      <span>{user.occupation.join(", ")}</span>
-                    </div>
-                  )}
-                  
-                  {user.location && !user.isLocationPrivate && (
-                    <div className="flex items-center gap-2">
-                      <FaMapMarkerAlt className="text-primary" size={18} />
-                      <span>{user.location}</span>
-                    </div>
-                  )}
-                  
-                  {user.birthday && !user.isBirthdayPrivate && (
-                    <div className="flex items-center gap-2">
-                      <FaBirthdayCake className="text-primary" size={18} />
-                      <span>{formatDate(user.birthday)}</span>
-                    </div>
-                  )}
-                  
-                  {user.email && !user.isEmailPrivate && (
-                    <div className="flex items-center gap-2">
-                      <FaEnvelope className="text-primary" size={18} />
-                      <span>{user.email}</span>
-                    </div>
-                  )}
-                  
-                  {user.gender && !user.isGenderPrivate && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-primary font-bold">Gender:</span>
-                      <span>{user.gender}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="flex flex-wrap gap-3 mt-6"
-              >
-                <button className="bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg transition-all duration-300 flex items-center gap-2">
-                  <FaHeart /> Like Profile
-                </button>
-                <button className="bg-white dark:bg-dark border border-primary text-primary hover:bg-primary hover:text-white px-6 py-2 rounded-lg transition-all duration-300">
-                  Message
-                </button>
-              </motion.div>
-            </div>
-
-            {/* Skills & Interests */}
-            <div className="bg-white dark:bg-dark rounded-2xl shadow-lg p-6 mb-8">
-              <h2 className="text-2xl font-bold mb-4">Skills & Interests</h2>
-              
-              {user.skills && user.skills.length > 0 ? (
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {user.skills.map((skill, index) => (
-                    <span 
-                      key={index}
-                      className="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-sm"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500 dark:text-gray-400 mb-6">No skills listed yet.</p>
-              )}
-              
-              <h3 className="text-xl font-bold mb-3">Likes</h3>
-              <div className="flex items-center gap-2">
-                <span className="text-primary font-bold">{user.likes?.length || 0}</span>
-                <span className="text-gray-600 dark:text-gray-300">profile likes</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            {/* Social Links */}
-            {user.socials && user.socials.length > 0 && (
-              <motion.div 
-                initial={{ x: 50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="bg-white dark:bg-dark rounded-2xl shadow-lg p-6 mb-8"
-              >
-                <h2 className="text-2xl font-bold mb-4">Connect</h2>
-                <div className="space-y-4">
-                  {user.socials.map((social) => (
-                    <a
-                      key={social.id}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                      style={{ color: social.color }}
-                    >
-                      <span className="text-xl">{getSocialIcon(social.name)}</span>
-                      <span className="font-medium">{social.username || social.name}</span>
-                    </a>
-                  ))}
-                </div>
-              </motion.div>
+    <div className="flex flex-col items-center justify-center px-10 3xl:px-0">
+      <div className="max-w-7xl w-full">
+        <div id="user-header" className="mb-12">
+          <div className="w-full h-[400px] bg-primary rounded-lg relative overflow-hidden">
+            {data.banner ? (
+              <Image
+                id="user-banner"
+                src={data.banner || "http://purrquinox.com/banner.png"}
+                alt="Banner"
+                className="absolute object-cover w-full h-full"
+                fill
+                priority
+              />
+            ) : (
+              <div className="absolute w-full h-full bg-gradient-to-r from-primary to-secondary opacity-50" />
             )}
-
-            {/* Discord Info */}
-            <motion.div 
-              initial={{ x: 50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="bg-white dark:bg-dark rounded-2xl shadow-lg p-6 mb-8"
-            >
-              <h2 className="text-2xl font-bold mb-4">Discord</h2>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Username</span>
-                  <span className="font-medium">{user.discordUsername}</span>
+          </div>
+          <div id="user-info" className="lg:pl-16 pr-0 flex flex-col lg:flex-row items-center gap-6">
+            <div className="w-36 h-36 -mt-[4.5rem] rounded-full relative ring-8 ring-light dark:ring-dark overflow-hidden flex-shrink-0">
+              {data.avatar ? (
+                <Image
+                  src={data.avatar || "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"}
+                  alt="Avatar"
+                  id="user-avatar"
+                  className="w-full h-full object-cover"
+                  width={144}
+                  height={144}
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center">
+                  <span className="text-4xl font-bold text-gray-500 dark:text-gray-400">
+                    {data.discordUsername?.charAt(0).toUpperCase() || "U"}
+                  </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">ID</span>
-                  <span className="font-medium">{user.discordId}</span>
+              )}
+            </div>
+            <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-between w-full">
+              <div className="flex items-center justify-center lg:justify-start text-center lg:text-left gap-4 w-full mb-6 lg:mb-0">
+                <h1 className="text-4xl font-bold text-center">
+                  {data.discordUsername}
+                  {data.discordDisplayName && (
+                    <span className="block text-xl font-medium text-zinc-500">{data.discordDisplayName}</span>
+                  )}
+                </h1>
+                <div className="flex items-center gap-2">
+                  {data.isVerified && (
+                    <div className="group relative">
+                      <MdVerified className="text-3xl text-primary" />
+                      <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white dark:bg-dark text-black dark:text-white px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                        Verified Profile
+                      </div>
+                    </div>
+                  )}
+                  {data.isPremium && (
+                    <div className="group relative">
+                      <RiVipDiamondFill className="text-3xl text-primary" />
+                      <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white dark:bg-dark text-black dark:text-white px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                        Premium Profile
+                      </div>
+                    </div>
+                  )}
                 </div>
-                {user.discordDisplayName && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-300">Display Name</span>
-                    <span className="font-medium">{user.discordDisplayName}</span>
-                  </div>
+              </div>
+              <div className="flex items-center justify-center lg:justify-end gap-4 w-full lg:w-2/4">
+                <div className="relative group">
+                  <button
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                      liked
+                        ? "bg-red-500 text-white hover:bg-red-600"
+                        : "bg-white dark:bg-dark text-red-500 hover:bg-red-100 dark:hover:bg-red-900/20 border border-red-500"
+                    }`}
+                    onClick={toggleLike}
+                  >
+                    {liked ? <FaHeart /> : <FaHeartBroken />}
+                    <span>{likes}</span>
+                  </button>
+                </div>
+                {data.isSelf && (
+                  <Link href={`/${data.url}/edit`}>
+                    <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-all duration-200">
+                      <FaUserEdit />
+                      <span>Edit Profile</span>
+                    </button>
+                  </Link>
                 )}
               </div>
-            </motion.div>
-
-            {/* Account Info */}
-            <motion.div 
-              initial={{ x: 50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="bg-white dark:bg-dark rounded-2xl shadow-lg p-6"
-            >
-              <h2 className="text-2xl font-bold mb-4">Account</h2>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Member Since</span>
-                  <span className="font-medium">{formatDate(user.createdAt)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Last Updated</span>
-                  <span className="font-medium">{formatDate(user.updatedAt)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">URL</span>
-                  <span className="font-medium text-primary">{user.url}</span>
-                </div>
-              </div>
-            </motion.div>
+            </div>
           </div>
         </div>
-      </motion.div>
+        <div className="grid grid-cols-1 gap-4 w-full mt-4">
+          {cards
+            .filter((el) => el.upper)
+            .map((card, i) => (
+              <div key={i} className="p-4 px-6 bg-light dark:bg-dark rounded-lg dark:shadow-lg w-full">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex-shrink-0">{card.icon}</div>
+                  <div className="flex flex-col justify-center">
+                    <h1 className="text-xl font-semibold">{card.name}</h1>
+                    <p className="text-sm text-gray-500">{card.subtitle}</p>
+                  </div>
+                </div>
+                {card.isPrivate ? (
+                  <p className="text-md text-gray-500">This information is private.</p>
+                ) : card.isEmpty ? (
+                  <p className="text-md text-gray-500">This information is not set.</p>
+                ) : (
+                  <p className="text-md whitespace-pre-line">{card.value}</p>
+                )}
+              </div>
+            ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full mt-4">
+          {cards
+            .filter((el) => !el.upper)
+            .map((card, i) => (
+              <div key={i} className="p-4 px-6 bg-light dark:bg-dark rounded-lg dark:shadow-lg w-full">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex-shrink-0">{card.icon}</div>
+                  <div className="flex flex-col justify-center">
+                    <h1 className="text-xl font-semibold">{card.name}</h1>
+                    <p className="text-sm text-gray-500">{card.subtitle}</p>
+                  </div>
+                </div>
+                {card.isPrivate ? (
+                  <p className="text-md text-gray-500">This information is private.</p>
+                ) : card.isEmpty ? (
+                  <p className="text-md text-gray-500">This information is not set.</p>
+                ) : (
+                  <p className="text-md text-gray-500">{card.value}</p>
+                )}
+              </div>
+            ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-4">
+          <div className="p-4 px-6 bg-light dark:bg-dark rounded-lg dark:shadow-lg w-full">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex-shrink-0">
+                <FaMagic className="text-4xl text-primary" />
+              </div>
+              <div className="flex flex-col justify-center">
+                <h1 className="text-xl font-semibold">My Roles</h1>
+                <p className="text-sm text-gray-500">Roles that I have.</p>
+              </div>
+            </div>
+            {!data.roles || data.roles.length === 0 ? (
+              <p className="text-md text-gray-500">This information is not set.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {data.roles.map((role, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 bg-light dark:bg-dark border border-primary/5 rounded-lg px-3 py-1.5"
+                  >
+                    {role}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="p-4 px-6 bg-light dark:bg-dark rounded-lg dark:shadow-lg w-full">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex-shrink-0">
+                <FaBolt className="text-4xl text-primary" />
+              </div>
+              <div className="flex flex-col justify-center">
+                <h1 className="text-xl font-semibold">My Skills</h1>
+                <p className="text-sm text-gray-500">What I know?</p>
+              </div>
+            </div>
+            {!data.skills || data.skills.length === 0 ? (
+              <p className="text-md text-gray-500">This information is not set.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {data.skills.map((skill, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 bg-light dark:bg-dark border border-primary/5 rounded-lg px-3 py-1.5"
+                  >
+                    {skill}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 w-full mt-4 mb-8">
+          <div className="p-4 px-6 bg-light dark:bg-dark rounded-lg dark:shadow-lg w-full">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex-shrink-0">
+                <FaShareAlt className="text-4xl text-primary" />
+              </div>
+              <div className="flex flex-col justify-center">
+                <h1 className="text-xl font-semibold">My Socials</h1>
+                <p className="text-sm text-gray-500">Links to my socials.</p>
+              </div>
+            </div>
+            {!data.socials || data.socials.length === 0 ? (
+              <p className="text-md text-gray-500">This information is not set.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                {data.socials.map((social, i) => (
+                  <a
+                    href={social.url + "?utm_source=profile"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    key={i}
+                    className="flex items-center justify-between relative bg-light dark:bg-dark border border-primary/5 hover:border-primary/20 active:border-primary/50 rounded-lg px-6 py-3 transition-all duration-200 cursor-pointer"
+                    style={{ color: social.color || "currentColor" }}
+                  >
+                    <h1 className="capitalize text-md select-none">{social.name}</h1>
+                    <span className="text-zinc-500">↗</span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
