@@ -7,7 +7,7 @@ import { MdVerified, MdWork } from "react-icons/md";
 import Image from "next/image";
 import { Entity } from "@/types/entity";
 
-export default function UserProfile({ params }: { params: { username: string } }) {
+export default function UserProfile({ username }: { username: string }) {
   const [user, setUser] = useState<Entity | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +15,7 @@ export default function UserProfile({ params }: { params: { username: string } }
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`/api/get/entity?name=${params.username}`);
+        const response = await fetch(`/api/get/entity?name=${username}`);
         if (!response.ok) {
           throw new Error("Failed to fetch user data");
         }
@@ -30,7 +30,7 @@ export default function UserProfile({ params }: { params: { username: string } }
     };
 
     fetchUser();
-  }, [params.username]);
+  }, [username]);
 
   if (loading) {
     return (

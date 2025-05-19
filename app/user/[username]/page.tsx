@@ -1,6 +1,7 @@
-import UserProfile from "@/components/Layout/user/";
-
+import UserProfile from "@/components/Layout/user";
 
 export default function UserPage({ params }: { params: { username: string } }) {
-  return <UserProfile params={params} />;
+  const { username } = params;
+
+  return <UserProfile username={username} />;
 }
