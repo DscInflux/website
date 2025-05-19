@@ -1,58 +1,28 @@
 {
-    "name": "@discordinflux/website",
-    "version": "3.0.0",
-    "private": true,
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "lint": "next lint",
-        "export": "next export",
-        "format": "prettier -w ./**/**/*.{ts,tsx,js,jsx}"
-    },
-    "dependencies": {
-        "@ducanh2912/next-pwa": "^10.2.6",
-        "@fortawesome/fontawesome-svg-core": "^6.4.0",
-        "@fortawesome/react-fontawesome": "^0.2.0",
-        "@headlessui/react": "^1.7.17",
-        "@heroicons/react": "^2.0.12",
-        "@material-tailwind/react": "^1.2.4",
-        "@next/bundle-analyzer": "^14.1.4",
-        "@tailwindcss/line-clamp": "^0.4.2",
-        "@tippyjs/react": "^4.2.6",
-        "@vercel/analytics": "^1.0.2",
-        "axios": "^0.27.2",
-        "classnames": "^2.3.2",
-        "cookies-next": "^3.0.0",
-        "embla-carousel-react": "^7.0.3",
-        "framer-motion": "^10.15.1",
-        "next": "^14.2.0-canary.8",
-        "next-bottom-sheet": "^0.0.2",
-        "next-iron-session": "^4.2.0",
-        "next-pwa": "^5.6.0",
-        "next-seo": "^5.8.0",
-        "next-themes": "^0.2.1",
-        "nprogress": "^0.2.0",
-        "prettier": "^3.0.2",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "react-hot-toast": "^2.4.1",
-        "react-icons": "^4.10.1",
-        "react-infinite-scroll-component": "^6.1.0",
-        "react-loading-skeleton": "^3.3.1",
-        "react-markdown": "^8.0.3",
-        "react-multi-carousel": "^2.8.2",
-        "remark-gfm": "^3.0.1",
-        "swr": "^2.2.0"
-    },
-    "devDependencies": {
-        "@tailwindcss/typography": "^0.5.7",
-        "@types/react": "18.2.48",
-        "autoprefixer": "^10.4.11",
-        "eslint": "8.23.1",
-        "eslint-config-next": "12.3.0",
-        "postcss": "^8.4.16",
-        "tailwindcss": "^3.1.8",
-        "typescript": "5.3.3"
-    }
+  "name": "dscinflux",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "framer-motion": "^12.12.1",
+    "lucide-react": "^0.511.0",
+    "next": "15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1"
+  }
 }
