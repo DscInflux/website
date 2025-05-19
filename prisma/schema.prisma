@@ -75,9 +75,9 @@ model User {
   public_flags      Int
   accent_color      Int
   avatar_decoration Json?
-  banner            Json?
+  banner            String
   banner_color      String?
-  appId             Json?
-  entity            Json?
+  appId             String?
+  entity            String?
   isRevolt          Boolean @default(false)
 }
