@@ -118,11 +118,11 @@ export default function Navbar() {
         {/* Desktop user + theme */}
         <div className="col-span-4 hidden lg:flex items-center justify-end gap-4">
           {session ? (
-            <div className="relative">
+            <div className="relative group">
               <button className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-gray-400/10 transition">
-                {session.user?.image ? (
+                {session.user?.avatar ? (
                   <img
-                    src={session.user.image}
+                    src={session.user.avatar}
                     alt="avatar"
                     className="w-8 h-8 rounded-full"
                   />
@@ -130,10 +130,11 @@ export default function Navbar() {
                   <FaUser />
                 )}
                 <span className="font-medium text-black dark:text-white">
-                  {session.user?.name}
+                  {session.user?.display_name || session.user?.username || session.user?.name}
                 </span>
               </button>
-              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-800 rounded-md shadow-lg z-20">
+              {/* Dropdown menu */}
+              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-800 rounded-md shadow-lg z-20 opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 transition-opacity">
                 <Link href={`/${session.user?.id}`} legacyBehavior>
                   <a className="block px-4 py-2 text-gray-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700">
                     Profile

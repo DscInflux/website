@@ -79,5 +79,5 @@ model User {
   banner_color      String?
   appId             Json?
   entity            Json?
-  isRevolt          Boolean
+  isRevolt          Boolean @default(false)
 }
