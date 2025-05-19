@@ -1,11 +1,13 @@
-'use client';
-
-import { useParams, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import UserProfile from '@/components/Layout/user';
 
-export default function UserPage() {
-  const params = useParams();
+type PageProps = {
+  params: {
+    username: string;
+  };
+};
 
+export default function UserPage({ params }: PageProps) {
   const username = typeof params.username === 'string' ? params.username : null;
 
   if (!username) {
