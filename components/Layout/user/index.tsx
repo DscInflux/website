@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
-import Link from "next/link"
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
 import {
   Heart,
   HeartCrack,
@@ -18,127 +18,140 @@ import {
   Zap,
   Sparkles,
   ExternalLink,
-} from "lucide-react"
-import { MdVerified } from "react-icons/md"
-import type { User } from "@/types/users"
-import type { Entity } from "@/types/entity"
+} from "lucide-react";
+import { MdVerified } from "react-icons/md";
+import type { User } from "@/types/users";
+import type { Entity } from "@/types/entity";
 import { Code, Handshake, Shield } from "lucide-react";
 
 export default function UserProfile({ username }: { username: string }) {
-  const [data, setData] = useState<Entity | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [liked, setLiked] = useState(false)
-  const [likes, setLikes] = useState(0)
-  const [user, setUser] = useState<User | null>(null)
+  const [data, setData] = useState<Entity | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`/api/get/entity?name=${username}`)
+        const response = await fetch(`/api/get/entity?name=${username}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch user data")
+          throw new Error("Failed to fetch user data");
         }
-        const userData = await response.json()
-        setData(userData)
-        setLiked(userData.isLiked || false)
-        setLikes(userData.likes?.length || 0)
+        const userData = await response.json();
+        setData(userData);
+        setLiked(userData.isLiked || false);
+        setLikes(userData.likes?.length || 0);
       } catch (err) {
-        setError("Failed to load user profile")
-        console.error(err)
+        setError("Failed to load user profile");
+        console.error(err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
     const fetchCurrentUser = async () => {
-      const meRes = await fetch("/api/auth/me")
-      const meData = meRes.ok ? await meRes.json() : null
-      setUser(meData?.user || null)
-    }
+      const meRes = await fetch("/api/auth/me");
+      const meData = meRes.ok ? await meRes.json() : null;
+      setUser(meData?.user || null);
+    };
 
-    fetchUser()
-    fetchCurrentUser()
-  }, [username])
+    fetchUser();
+    fetchCurrentUser();
+  }, [username]);
 
   const toggleLike = async () => {
-    if (!data) return
+    if (!data) return;
 
     try {
       if (liked) {
-        const res = await fetch(`/api/post/entity/heart?action=unlike&url=${data.url}`, {
-          method: "POST",
-        })
-        const req = await res.json()
+        const res = await fetch(
+          `/api/post/entity/heart?action=unlike&url=${data.url}`,
+          {
+            method: "POST",
+          },
+        );
+        const req = await res.json();
         if (req.success) {
-          setLiked(false)
-          setLikes((prev) => prev - 1)
+          setLiked(false);
+          setLikes((prev) => prev - 1);
         } else if (req.data?.length > 0) {
-          setLiked((old: any) => req.data[0]?.isLiked ?? old)
+          setLiked((old: any) => req.data[0]?.isLiked ?? old);
         }
       } else {
-        const res = await fetch(`/api/post/entity/heart?action=like&url=${data.url}`, {
-          method: "POST",
-        })
-        const req = await res.json()
+        const res = await fetch(
+          `/api/post/entity/heart?action=like&url=${data.url}`,
+          {
+            method: "POST",
+          },
+        );
+        const req = await res.json();
         if (req.success) {
-          setLiked(true)
-          setLikes((prev) => prev + 1)
+          setLiked(true);
+          setLikes((prev) => prev + 1);
         } else if (req.data?.length > 0) {
-          setLiked((old: any) => req.data[0]?.isLiked ?? old)
+          setLiked((old: any) => req.data[0]?.isLiked ?? old);
         }
       }
     } catch (error) {
-      console.error("Error toggling like:", error)
+      console.error("Error toggling like:", error);
     }
-  }
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+          transition={{
+            duration: 1,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "linear",
+          }}
           className="w-16 h-16 border-4 border-primary rounded-full border-t-transparent"
         />
       </div>
-    )
+    );
   }
 
   if (error || !data) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
         <div className="text-center p-8 max-w-md mx-auto bg-white dark:bg-dark rounded-xl shadow-lg backdrop-blur-sm bg-opacity-50 dark:bg-opacity-50">
-          <h1 className="text-2xl font-bold text-primary mb-4">User Not Found</h1>
+          <h1 className="text-2xl font-bold text-primary mb-4">
+            User Not Found
+          </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            {error || "The user you're looking for doesn't exist or has been removed."}
+            {error ||
+              "The user you're looking for doesn't exist or has been removed."}
           </p>
         </div>
       </div>
-    )
+    );
   }
 
   const formatDate = (dateString: Date | undefined) => {
-    if (!dateString) return "Not specified"
-    const date = new Date(dateString)
+    if (!dateString) return "Not specified";
+    const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   const getAge = (dateString: Date | undefined) => {
-    if (!dateString) return ""
-    const birthDate = new Date(dateString)
-    const today = new Date()
-    let age = today.getFullYear() - birthDate.getFullYear()
-    const m = today.getMonth() - birthDate.getMonth()
+    if (!dateString) return "";
+    const birthDate = new Date(dateString);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--
+      age--;
     }
-    return ` (${age} years)`
-  }
+    return ` (${age} years)`;
+  };
 
   const genders = {
     "He/Him": {
@@ -157,7 +170,7 @@ export default function UserProfile({ username }: { username: string }) {
       name: "Other",
       pronouns: "Other",
     },
-  }
+  };
 
   const cards = [
     {
@@ -193,7 +206,9 @@ export default function UserProfile({ username }: { username: string }) {
       subtitle: "When was I born?",
       isPrivate: data.isBirthdayPrivate,
       isEmpty: !data.birthday,
-      value: data.birthday ? `${formatDate(data.birthday)}${getAge(data.birthday)}` : "",
+      value: data.birthday
+        ? `${formatDate(data.birthday)}${getAge(data.birthday)}`
+        : "",
       icon: <Cake className="text-primary" strokeWidth={1.5} />,
     },
     {
@@ -202,7 +217,9 @@ export default function UserProfile({ username }: { username: string }) {
       subtitle: "What is my gender?",
       isPrivate: data.isGenderPrivate,
       isEmpty: !data.gender,
-      value: data.gender ? genders[data.gender as keyof typeof genders]?.name || data.gender : "",
+      value: data.gender
+        ? genders[data.gender as keyof typeof genders]?.name || data.gender
+        : "",
       icon: <Users className="text-primary" strokeWidth={1.5} />,
     },
     {
@@ -212,7 +229,11 @@ export default function UserProfile({ username }: { username: string }) {
       isPrivate: data.isPronounsPrivate,
       isEmpty: !data.gender && !data.pronouns,
       value:
-        data.pronouns || (data.gender ? genders[data.gender as keyof typeof genders]?.pronouns || data.gender : ""),
+        data.pronouns ||
+        (data.gender
+          ? genders[data.gender as keyof typeof genders]?.pronouns ||
+            data.gender
+          : ""),
       icon: <Users className="text-primary" strokeWidth={1.5} />,
     },
     {
@@ -224,7 +245,7 @@ export default function UserProfile({ username }: { username: string }) {
       value: data.language,
       icon: <Languages className="text-primary" strokeWidth={1.5} />,
     },
-  ]
+  ];
 
   return (
     <div className="flex flex-col items-center justify-center px-4 md:px-10 3xl:px-0 min-h-screen">
@@ -258,12 +279,18 @@ export default function UserProfile({ username }: { username: string }) {
           </div>
 
           {/* User info section */}
-          <div id="user-info" className="lg:pl-16 pr-0 flex flex-col lg:flex-row items-center gap-6 relative z-20">
+          <div
+            id="user-info"
+            className="lg:pl-16 pr-0 flex flex-col lg:flex-row items-center gap-6 relative z-20"
+          >
             {/* Avatar */}
             <div className="w-40 h-40 -mt-20 rounded-full relative ring-8 ring-light dark:ring-dark overflow-hidden flex-shrink-0 shadow-2xl">
               {data.avatar ? (
                 <Image
-                  src={data.avatar || "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"}
+                  src={
+                    data.avatar ||
+                    "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"
+                  }
                   alt="Avatar"
                   id="user-avatar"
                   className="w-full h-full object-cover"
@@ -338,7 +365,11 @@ export default function UserProfile({ username }: { username: string }) {
                     }`}
                     onClick={toggleLike}
                   >
-                    {liked ? <Heart className="w-5 h-5" /> : <HeartCrack className="w-5 h-5" />}
+                    {liked ? (
+                      <Heart className="w-5 h-5" />
+                    ) : (
+                      <HeartCrack className="w-5 h-5" />
+                    )}
                     <span className="font-medium">{likes}</span>
                   </button>
                 </div>
@@ -368,18 +399,28 @@ export default function UserProfile({ username }: { username: string }) {
                 className="p-6 px-8 rounded-2xl shadow-xl dark:shadow-2xl backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 border border-gray-100 dark:border-gray-800 w-full mb-8"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="flex-shrink-0 p-3 bg-primary/10 dark:bg-primary/20 rounded-xl">{card.icon}</div>
+                  <div className="flex-shrink-0 p-3 bg-primary/10 dark:bg-primary/20 rounded-xl">
+                    {card.icon}
+                  </div>
                   <div className="flex flex-col justify-center">
                     <h1 className="text-xl font-semibold">{card.name}</h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{card.subtitle}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {card.subtitle}
+                    </p>
                   </div>
                 </div>
                 {card.isPrivate ? (
-                  <p className="text-md text-gray-500 dark:text-gray-400 italic">This information is private.</p>
+                  <p className="text-md text-gray-500 dark:text-gray-400 italic">
+                    This information is private.
+                  </p>
                 ) : card.isEmpty ? (
-                  <p className="text-md text-gray-500 dark:text-gray-400 italic">This information is not set. wow</p>
+                  <p className="text-md text-gray-500 dark:text-gray-400 italic">
+                    This information is not set. wow
+                  </p>
                 ) : (
-                  <p className="text-md whitespace-pre-line leading-relaxed">{card.value}</p>
+                  <p className="text-md whitespace-pre-line leading-relaxed">
+                    {card.value}
+                  </p>
                 )}
               </motion.div>
             ))}
@@ -399,18 +440,28 @@ export default function UserProfile({ username }: { username: string }) {
                   className="p-6 px-8 rounded-2xl shadow-lg dark:shadow-xl backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-primary/10 transition-all duration-300"
                 >
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="flex-shrink-0 p-3 bg-primary/10 dark:bg-primary/20 rounded-xl">{card.icon}</div>
+                    <div className="flex-shrink-0 p-3 bg-primary/10 dark:bg-primary/20 rounded-xl">
+                      {card.icon}
+                    </div>
                     <div className="flex flex-col justify-center">
                       <h1 className="text-xl font-semibold">{card.name}</h1>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{card.subtitle}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {card.subtitle}
+                      </p>
                     </div>
                   </div>
                   {card.isPrivate ? (
-                    <p className="text-md text-gray-500 dark:text-gray-400 italic">This information is private.</p>
+                    <p className="text-md text-gray-500 dark:text-gray-400 italic">
+                      This information is private.
+                    </p>
                   ) : card.isEmpty ? (
-                    <p className="text-md text-gray-500 dark:text-gray-400 italic">This information is not set. damn</p>
+                    <p className="text-md text-gray-500 dark:text-gray-400 italic">
+                      This information is not set. damn
+                    </p>
                   ) : (
-                    <p className="text-md text-gray-500 dark:text-gray-400">{card.value}</p>
+                    <p className="text-md text-gray-500 dark:text-gray-400">
+                      {card.value}
+                    </p>
                   )}
                 </motion.div>
               ))}
@@ -431,11 +482,15 @@ export default function UserProfile({ username }: { username: string }) {
               </div>
               <div className="flex flex-col justify-center">
                 <h1 className="text-xl font-semibold">My Roles</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Roles that I have.</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Roles that I have.
+                </p>
               </div>
             </div>
             {!data.roles || data.roles.length === 0 ? (
-              <p className="text-md text-gray-500 dark:text-gray-400 italic">idk i didnt set this just take a guess.</p>
+              <p className="text-md text-gray-500 dark:text-gray-400 italic">
+                idk i didnt set this just take a guess.
+              </p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {data.roles.map((role, i) => (
@@ -462,11 +517,15 @@ export default function UserProfile({ username }: { username: string }) {
               </div>
               <div className="flex flex-col justify-center">
                 <h1 className="text-xl font-semibold">My Skills</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">What I know?</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  What I know?
+                </p>
               </div>
             </div>
             {!data.skills || data.skills.length === 0 ? (
-              <p className="text-md text-gray-500 dark:text-gray-400 italic">This information is not set. idk too man</p>
+              <p className="text-md text-gray-500 dark:text-gray-400 italic">
+                This information is not set. idk too man
+              </p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {data.skills.map((skill, i) => (
@@ -496,11 +555,15 @@ export default function UserProfile({ username }: { username: string }) {
               </div>
               <div className="flex flex-col justify-center">
                 <h1 className="text-xl font-semibold">My Socials</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Links to my socials.</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Links to my socials.
+                </p>
               </div>
             </div>
             {!data.socials || data.socials.length === 0 ? (
-              <p className="text-md text-gray-500 dark:text-gray-400 italic">This information is not set. Why you may ask? idk</p>
+              <p className="text-md text-gray-500 dark:text-gray-400 italic">
+                This information is not set. Why you may ask? idk
+              </p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 text-white">
                 {data.socials.map((social, i) => (
@@ -512,7 +575,9 @@ export default function UserProfile({ username }: { username: string }) {
                     className="flex items-center text-white justify-between relative border border-gray-100 dark:border-gray-800 hover:border-primary/20 active:border-primary/50 rounded-xl px-6 py-4 transition-all duration-200 cursor-pointer hover:shadow-lg group"
                     style={{ color: social.color || "currentColor" }}
                   >
-                    <h1 className="capitalize text-md text-white font-medium select-none">{social.name}</h1>
+                    <h1 className="capitalize text-md text-white font-medium select-none">
+                      {social.name}
+                    </h1>
                     <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors duration-200" />
                   </a>
                 ))}
@@ -522,5 +587,5 @@ export default function UserProfile({ username }: { username: string }) {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   User,
   Settings,
@@ -32,8 +32,8 @@ import {
   EyeOff,
   Trash2,
   ExternalLink,
-} from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Social options for selection
 export const SOCIAL_OPTIONS = [
@@ -110,103 +110,105 @@ export default function EditProfilePage({
   skills: initialSkills = [],
   isSubmit = false,
 }: {
-  roles?: string[]
-  skills?: string[]
-  isSubmit?: boolean
+  roles?: string[];
+  skills?: string[];
+  isSubmit?: boolean;
 }) {
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [isEdit, setIsEdit] = useState(false)
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isEdit, setIsEdit] = useState(false);
 
   // Form state
-  const [about, setAbout] = useState("")
-  const [email, setEmail] = useState("")
-  const [url, setUrl] = useState("")
-  const [gender, setGender] = useState("")
-  const [birthday, setBirthday] = useState("")
-  const [location, setLocation] = useState("")
-  const [occupation, setOccupation] = useState("")
-  const [socials, setSocials] = useState<any[]>([])
-  const [skills, setSkills] = useState<string[]>(initialSkills)
-  const [roles, setRoles] = useState<string[]>(initialRoles)
-  const [banner, setBanner] = useState("")
-  const [avatar, setAvatar] = useState("")
-  const [language, setLanguage] = useState("")
+  const [about, setAbout] = useState("");
+  const [email, setEmail] = useState("");
+  const [url, setUrl] = useState("");
+  const [gender, setGender] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [location, setLocation] = useState("");
+  const [occupation, setOccupation] = useState("");
+  const [socials, setSocials] = useState<any[]>([]);
+  const [skills, setSkills] = useState<string[]>(initialSkills);
+  const [roles, setRoles] = useState<string[]>(initialRoles);
+  const [banner, setBanner] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [language, setLanguage] = useState("");
 
   // New social media state
-  const [newSocialName, setNewSocialName] = useState("")
-  const [newSocialUrl, setNewSocialUrl] = useState("")
+  const [newSocialName, setNewSocialName] = useState("");
+  const [newSocialUrl, setNewSocialUrl] = useState("");
 
   // Privacy settings
-  const [isShow, setIsShow] = useState(true)
-  const [isEmailPrivate, setIsEmailPrivate] = useState(true)
-  const [isBirthdayPrivate, setIsBirthdayPrivate] = useState(true)
-  const [isLocationPrivate, setIsLocationPrivate] = useState(true)
-  const [isGenderPrivate, setIsGenderPrivate] = useState(true)
+  const [isShow, setIsShow] = useState(true);
+  const [isEmailPrivate, setIsEmailPrivate] = useState(true);
+  const [isBirthdayPrivate, setIsBirthdayPrivate] = useState(true);
+  const [isLocationPrivate, setIsLocationPrivate] = useState(true);
+  const [isGenderPrivate, setIsGenderPrivate] = useState(true);
 
   // New skill/role input state
-  const [newSkill, setNewSkill] = useState("")
-  const [newRole, setNewRole] = useState("")
+  const [newSkill, setNewSkill] = useState("");
+  const [newRole, setNewRole] = useState("");
 
   // File upload state
-  const [files, setFiles] = useState<any[]>([])
-  const [Uploading, setUploading] = useState(false)
+  const [files, setFiles] = useState<any[]>([]);
+  const [Uploading, setUploading] = useState(false);
   // Refs for file inputs
-  const avatarInputRef = useRef<HTMLInputElement>(null)
-  const bannerInputRef = useRef<HTMLInputElement>(null)
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
 
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     async function fetchEntity() {
-      setLoading(true)
+      setLoading(true);
       try {
-        const res = await fetch("/api/auth/me")
+        const res = await fetch("/api/auth/me");
         if (res.ok) {
-          const data = await res.json()
+          const data = await res.json();
           if (data.user) {
-            setUser(data.user)
+            setUser(data.user);
           }
           if (data.entity) {
-            setIsEdit(true)
-            setAbout(data.entity.about || "")
-            setEmail(data.entity.email || "")
-            setUrl(data.entity.url || "")
-            setGender(data.entity.gender || "")
-            setBirthday(data.entity.birthday ? data.entity.birthday.slice(0, 10) : "")
-            setLocation(data.entity.location || "")
-            setOccupation(data.entity.occupation?.join(", ") || "")
-            setSocials(data.entity.socials || [])
-            setSkills(data.entity.skills || [])
-            setRoles(data.entity.roles || [])
-            setBanner(data.entity.banner || "")
-            setAvatar(data.entity.avatar || "")
-            setIsShow(data.entity.isShow ?? true)
-            setIsEmailPrivate(data.entity.isEmailPrivate ?? true)
-            setIsBirthdayPrivate(data.entity.isBirthdayPrivate ?? true)
-            setIsLocationPrivate(data.entity.isLocationPrivate ?? true)
-            setIsGenderPrivate(data.entity.isGenderPrivate ?? true)
-            setLanguage(data.entity.language || "")
+            setIsEdit(true);
+            setAbout(data.entity.about || "");
+            setEmail(data.entity.email || "");
+            setUrl(data.entity.url || "");
+            setGender(data.entity.gender || "");
+            setBirthday(
+              data.entity.birthday ? data.entity.birthday.slice(0, 10) : "",
+            );
+            setLocation(data.entity.location || "");
+            setOccupation(data.entity.occupation?.join(", ") || "");
+            setSocials(data.entity.socials || []);
+            setSkills(data.entity.skills || []);
+            setRoles(data.entity.roles || []);
+            setBanner(data.entity.banner || "");
+            setAvatar(data.entity.avatar || "");
+            setIsShow(data.entity.isShow ?? true);
+            setIsEmailPrivate(data.entity.isEmailPrivate ?? true);
+            setIsBirthdayPrivate(data.entity.isBirthdayPrivate ?? true);
+            setIsLocationPrivate(data.entity.isLocationPrivate ?? true);
+            setIsGenderPrivate(data.entity.isGenderPrivate ?? true);
+            setLanguage(data.entity.language || "");
           }
         }
       } catch (e) {
         // Ignore errors, treat as new profile
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    fetchEntity()
-  }, [])
+    fetchEntity();
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError(null)
-    setSuccess(null)
-    setSaving(true)
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setSaving(true);
 
     const payload = {
       about,
@@ -229,45 +231,52 @@ export default function EditProfilePage({
         isLocationPrivate,
         isGenderPrivate,
       },
-    }
+    };
 
     try {
-      const res = await fetch(isEdit ? "/api/post/entity/edit" : "/api/post/entity/new", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
+      const res = await fetch(
+        isEdit ? "/api/post/entity/edit" : "/api/post/entity/new",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
 
-      const data = await res.json()
+      const data = await res.json();
 
       if (res.ok) {
-        setSuccess(isEdit ? "Profile updated successfully!" : "Profile created successfully!")
+        setSuccess(
+          isEdit
+            ? "Profile updated successfully!"
+            : "Profile created successfully!",
+        );
         if (isSubmit && data.entity?.url) {
-          router.push("/user/" + data.entity.url)
+          router.push("/user/" + data.entity.url);
         }
       } else {
-        setError(data.error?.toString() || "Something went wrong")
+        setError(data.error?.toString() || "Something went wrong");
       }
     } catch (e: any) {
-      setError(e.message || "Something went wrong")
+      setError(e.message || "Something went wrong");
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
   }
 
   const addSkill = () => {
     if (newSkill.trim() && !skills.includes(newSkill.trim())) {
-      setSkills([...skills, newSkill.trim()])
-      setNewSkill("")
+      setSkills([...skills, newSkill.trim()]);
+      setNewSkill("");
     }
-  }
+  };
 
   const addRole = () => {
     if (newRole.trim() && !roles.includes(newRole.trim())) {
-      setRoles([...roles, newRole.trim()])
-      setNewRole("")
+      setRoles([...roles, newRole.trim()]);
+      setNewRole("");
     }
-  }
+  };
 
   const addSocial = () => {
     if (newSocialName.trim() && newSocialUrl.trim()) {
@@ -277,38 +286,41 @@ export default function EditProfilePage({
           name: newSocialName.trim(),
           url: newSocialUrl.trim(),
         },
-      ])
-      setNewSocialName("")
-      setNewSocialUrl("")
+      ]);
+      setNewSocialName("");
+      setNewSocialUrl("");
     }
-  }
+  };
 
-  const uploadFiles = async (type: "avatar" | "banner", files: FileList | null): Promise<void> => {
-    const API_URL = "https://bytepurr.purrquinox.com"
+  const uploadFiles = async (
+    type: "avatar" | "banner",
+    files: FileList | null,
+  ): Promise<void> => {
+    const API_URL = "https://bytepurr.purrquinox.com";
     if (!files || files.length === 0 || !user?.id) return;
     Array.from(files).forEach(async (p) => {
       setUploading(true);
       const formData = new FormData();
-      formData.append('file', p);
+      formData.append("file", p);
       try {
         const e = await fetch(`${API_URL}/upload`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            "userID": String(user.id),
-            "platform": "DscInflux",
+            userID: String(user.id),
+            platform: "DscInflux",
           },
-          body: formData
+          body: formData,
         });
         const resp = await e.json();
-        if (type === "avatar") setAvatar(`${API_URL}/${resp.key}`)
-        if (type === "banner") setBanner(`${API_URL}/${resp.key}`)
+        if (type === "avatar") setAvatar(`${API_URL}/${resp.key}`);
+        if (type === "banner") setBanner(`${API_URL}/${resp.key}`);
         setUploading(false);
       } catch (err) {
         setUploading(false);
         setError("File upload failed");
       }
     });
-  }
+  };
 
   const tabs = [
     {
@@ -335,18 +347,22 @@ export default function EditProfilePage({
       icon: <Briefcase className="w-5 h-5" />,
       description: "Add your skills and roles",
     },
-  ]
+  ];
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+          transition={{
+            duration: 1,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "linear",
+          }}
           className="w-20 h-20 border-4 border-primary rounded-full border-t-transparent shadow-lg"
         />
       </div>
-    )
+    );
   }
 
   return (
@@ -386,7 +402,13 @@ export default function EditProfilePage({
           <div
             className="h-64 w-full bg-gradient-to-r from-primary/80 to-secondary/80 relative"
             style={
-              banner ? { backgroundImage: `url(${banner})`, backgroundSize: "cover", backgroundPosition: "center" } : {}
+              banner
+                ? {
+                    backgroundImage: `url(${banner})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }
+                : {}
             }
           >
             {/* Banner overlay */}
@@ -418,7 +440,11 @@ export default function EditProfilePage({
                   className="w-40 h-40 rounded-full border-4 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden shadow-xl"
                   style={
                     avatar
-                      ? { backgroundImage: `url(${avatar})`, backgroundSize: "cover", backgroundPosition: "center" }
+                      ? {
+                          backgroundImage: `url(${avatar})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }
                       : {}
                   }
                 >
@@ -427,7 +453,7 @@ export default function EditProfilePage({
                 <div
                   className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
                   onClick={() => avatarInputRef.current?.click()}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                 >
                   <div className="text-white">
                     <Camera className="w-8 h-8 mx-auto" />
@@ -484,14 +510,20 @@ export default function EditProfilePage({
                       <div className="flex items-center gap-3 mb-6">
                         <User className="w-6 h-6 text-primary" />
                         <div>
-                          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Basic Information</h2>
-                          <p className="text-gray-500 dark:text-gray-400">{tabs[0].description}</p>
+                          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Basic Information
+                          </h2>
+                          <p className="text-gray-500 dark:text-gray-400">
+                            {tabs[0].description}
+                          </p>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Email
+                          </label>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                               <Mail className="h-5 w-5 text-gray-400" />
@@ -506,7 +538,9 @@ export default function EditProfilePage({
                           </div>
                           <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-1">
                             <AlertCircle className="w-3.5 h-3.5" />
-                            {isEmailPrivate ? "This will be kept private" : "This will be visible to others"}
+                            {isEmailPrivate
+                              ? "This will be kept private"
+                              : "This will be visible to others"}
                           </p>
                         </div>
 
@@ -533,7 +567,9 @@ export default function EditProfilePage({
                         </div>
 
                         <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Location</label>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Location
+                          </label>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                               <MapPin className="h-5 w-5 text-gray-400" />
@@ -562,7 +598,9 @@ export default function EditProfilePage({
                         </div>
 
                         <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Birthday</label>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Birthday
+                          </label>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                               <Calendar className="h-5 w-5 text-gray-400" />
@@ -590,7 +628,9 @@ export default function EditProfilePage({
                         </div>
 
                         <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Gender</label>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Gender
+                          </label>
                           <select
                             value={gender}
                             onChange={(e) => setGender(e.target.value)}
@@ -601,7 +641,9 @@ export default function EditProfilePage({
                             <option value="She/Her">She/Her</option>
                             <option value="They/Them">They/Them</option>
                             <option value="Other">Other</option>
-                            <option value="I don't want to say">I don't want to say</option>
+                            <option value="I don't want to say">
+                              I don't want to say
+                            </option>
                           </select>
                           <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-1">
                             {isGenderPrivate ? (
@@ -635,7 +677,9 @@ export default function EditProfilePage({
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">About</label>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            About
+                          </label>
                           <textarea
                             value={about}
                             onChange={(e) => setAbout(e.target.value)}
@@ -664,15 +708,21 @@ export default function EditProfilePage({
                       <div className="flex items-center gap-3 mb-6">
                         <Settings className="w-6 h-6 text-primary" />
                         <div>
-                          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Appearance</h2>
-                          <p className="text-gray-500 dark:text-gray-400">{tabs[1].description}</p>
+                          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Appearance
+                          </h2>
+                          <p className="text-gray-500 dark:text-gray-400">
+                            {tabs[1].description}
+                          </p>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="space-y-6">
                           <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Picture</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                              Profile Picture
+                            </h3>
                             <div className="flex gap-6 items-center">
                               <div
                                 className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0 flex items-center justify-center overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg"
@@ -686,7 +736,9 @@ export default function EditProfilePage({
                                     : {}
                                 }
                               >
-                                {!avatar && <Camera className="w-10 h-10 text-gray-400" />}
+                                {!avatar && (
+                                  <Camera className="w-10 h-10 text-gray-400" />
+                                )}
                               </div>
                               <div className="flex-1 space-y-4">
                                 <div className="relative">
@@ -704,7 +756,9 @@ export default function EditProfilePage({
                                 <div className="flex gap-2">
                                   <button
                                     type="button"
-                                    onClick={() => avatarInputRef.current?.click()}
+                                    onClick={() =>
+                                      avatarInputRef.current?.click()
+                                    }
                                     className="flex-1 flex items-center justify-center gap-2 bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 py-2.5 px-4 rounded-xl font-medium transition-colors"
                                   >
                                     <Upload className="w-5 h-5" />
@@ -734,7 +788,9 @@ export default function EditProfilePage({
                           </div>
 
                           <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Language</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                              Language
+                            </h3>
                             <div className="relative">
                               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <Languages className="h-5 w-5 text-gray-400" />
@@ -752,7 +808,9 @@ export default function EditProfilePage({
 
                         <div className="space-y-6">
                           <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Banner Image</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                              Banner Image
+                            </h3>
                             <div className="space-y-4">
                               <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -778,12 +836,16 @@ export default function EditProfilePage({
                                     : {}
                                 }
                               >
-                                {!banner && <Camera className="w-12 h-12 text-gray-400" />}
+                                {!banner && (
+                                  <Camera className="w-12 h-12 text-gray-400" />
+                                )}
                               </div>
                               <div className="flex gap-2">
                                 <button
                                   type="button"
-                                  onClick={() => bannerInputRef.current?.click()}
+                                  onClick={() =>
+                                    bannerInputRef.current?.click()
+                                  }
                                   className="flex-1 flex items-center justify-center gap-2 bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 py-2.5 px-4 rounded-xl font-medium transition-colors"
                                 >
                                   <Upload className="w-5 h-5" />
@@ -828,8 +890,12 @@ export default function EditProfilePage({
                       <div className="flex items-center gap-3 mb-6">
                         <Shield className="w-6 h-6 text-primary" />
                         <div>
-                          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Privacy Settings</h2>
-                          <p className="text-gray-500 dark:text-gray-400">{tabs[2].description}</p>
+                          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Privacy Settings
+                          </h2>
+                          <p className="text-gray-500 dark:text-gray-400">
+                            {tabs[2].description}
+                          </p>
                         </div>
                       </div>
 
@@ -837,9 +903,12 @@ export default function EditProfilePage({
                         <div className="space-y-6">
                           <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
                             <div>
-                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">Show Profile</h4>
+                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">
+                                Show Profile
+                              </h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                If disabled, your profile will be hidden from the public
+                                If disabled, your profile will be hidden from
+                                the public
                               </p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
@@ -855,16 +924,21 @@ export default function EditProfilePage({
 
                           <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
                             <div>
-                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">Private Email</h4>
+                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">
+                                Private Email
+                              </h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                If enabled, your email will be hidden from the public
+                                If enabled, your email will be hidden from the
+                                public
                               </p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
                               <input
                                 type="checkbox"
                                 checked={isEmailPrivate}
-                                onChange={() => setIsEmailPrivate(!isEmailPrivate)}
+                                onChange={() =>
+                                  setIsEmailPrivate(!isEmailPrivate)
+                                }
                                 className="sr-only peer"
                               />
                               <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
@@ -873,16 +947,21 @@ export default function EditProfilePage({
 
                           <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
                             <div>
-                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">Private Birthday</h4>
+                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">
+                                Private Birthday
+                              </h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                If enabled, your birthday will be hidden from the public
+                                If enabled, your birthday will be hidden from
+                                the public
                               </p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
                               <input
                                 type="checkbox"
                                 checked={isBirthdayPrivate}
-                                onChange={() => setIsBirthdayPrivate(!isBirthdayPrivate)}
+                                onChange={() =>
+                                  setIsBirthdayPrivate(!isBirthdayPrivate)
+                                }
                                 className="sr-only peer"
                               />
                               <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
@@ -891,16 +970,21 @@ export default function EditProfilePage({
 
                           <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
                             <div>
-                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">Private Location</h4>
+                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">
+                                Private Location
+                              </h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                If enabled, your location will be hidden from the public
+                                If enabled, your location will be hidden from
+                                the public
                               </p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
                               <input
                                 type="checkbox"
                                 checked={isLocationPrivate}
-                                onChange={() => setIsLocationPrivate(!isLocationPrivate)}
+                                onChange={() =>
+                                  setIsLocationPrivate(!isLocationPrivate)
+                                }
                                 className="sr-only peer"
                               />
                               <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
@@ -909,16 +993,21 @@ export default function EditProfilePage({
 
                           <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
                             <div>
-                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">Private Gender</h4>
+                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">
+                                Private Gender
+                              </h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                If enabled, your gender will be hidden from the public
+                                If enabled, your gender will be hidden from the
+                                public
                               </p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
                               <input
                                 type="checkbox"
                                 checked={isGenderPrivate}
-                                onChange={() => setIsGenderPrivate(!isGenderPrivate)}
+                                onChange={() =>
+                                  setIsGenderPrivate(!isGenderPrivate)
+                                }
                                 className="sr-only peer"
                               />
                               <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
@@ -942,8 +1031,12 @@ export default function EditProfilePage({
                       <div className="flex items-center gap-3 mb-6">
                         <Briefcase className="w-6 h-6 text-primary" />
                         <div>
-                          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Skills & Roles</h2>
-                          <p className="text-gray-500 dark:text-gray-400">{tabs[3].description}</p>
+                          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Skills & Roles
+                          </h2>
+                          <p className="text-gray-500 dark:text-gray-400">
+                            {tabs[3].description}
+                          </p>
                         </div>
                       </div>
 
@@ -953,13 +1046,17 @@ export default function EditProfilePage({
                             <div className="p-2 bg-primary/10 dark:bg-primary/20 rounded-lg">
                               <Zap className="w-5 h-5 text-primary" />
                             </div>
-                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Skills</h3>
+                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                              Skills
+                            </h3>
                           </div>
 
                           <div className="flex flex-wrap gap-2 mb-6 min-h-[100px]">
                             {skills.length === 0 ? (
                               <div className="w-full flex items-center justify-center h-24 bg-gray-50 dark:bg-gray-900/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
-                                <p className="text-gray-500 dark:text-gray-400 text-sm">No skills added yet</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                                  No skills added yet
+                                </p>
                               </div>
                             ) : (
                               skills.map((skill, index) => (
@@ -967,10 +1064,16 @@ export default function EditProfilePage({
                                   key={index}
                                   className="flex items-center gap-2 bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 px-3 py-2 rounded-full group hover:from-primary/20 hover:to-secondary/20 transition-all duration-200"
                                 >
-                                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{skill}</span>
+                                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                    {skill}
+                                  </span>
                                   <button
                                     type="button"
-                                    onClick={() => setSkills(skills.filter((_, i) => i !== index))}
+                                    onClick={() =>
+                                      setSkills(
+                                        skills.filter((_, i) => i !== index),
+                                      )
+                                    }
                                     className="text-gray-400 hover:text-red-500 transition-colors"
                                   >
                                     <X size={16} />
@@ -987,7 +1090,10 @@ export default function EditProfilePage({
                               onChange={(e) => setNewSkill(e.target.value)}
                               placeholder="Add a skill"
                               className="flex-1 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSkill())}
+                              onKeyDown={(e) =>
+                                e.key === "Enter" &&
+                                (e.preventDefault(), addSkill())
+                              }
                             />
                             <button
                               type="button"
@@ -1005,13 +1111,17 @@ export default function EditProfilePage({
                             <div className="p-2 bg-primary/10 dark:bg-primary/20 rounded-lg">
                               <Sparkles className="w-5 h-5 text-primary" />
                             </div>
-                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Roles</h3>
+                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                              Roles
+                            </h3>
                           </div>
 
                           <div className="flex flex-wrap gap-2 mb-6 min-h-[100px]">
                             {roles.length === 0 ? (
                               <div className="w-full flex items-center justify-center h-24 bg-gray-50 dark:bg-gray-900/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
-                                <p className="text-gray-500 dark:text-gray-400 text-sm">No roles added yet</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                                  No roles added yet
+                                </p>
                               </div>
                             ) : (
                               roles.map((role, index) => (
@@ -1019,10 +1129,16 @@ export default function EditProfilePage({
                                   key={index}
                                   className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700/70 border border-gray-200 dark:border-gray-600 px-3 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
                                 >
-                                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{role}</span>
+                                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                    {role}
+                                  </span>
                                   <button
                                     type="button"
-                                    onClick={() => setRoles(roles.filter((_, i) => i !== index))}
+                                    onClick={() =>
+                                      setRoles(
+                                        roles.filter((_, i) => i !== index),
+                                      )
+                                    }
                                     className="text-gray-400 hover:text-red-500 transition-colors"
                                   >
                                     <X size={16} />
@@ -1039,7 +1155,10 @@ export default function EditProfilePage({
                               onChange={(e) => setNewRole(e.target.value)}
                               placeholder="Add a role"
                               className="flex-1 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addRole())}
+                              onKeyDown={(e) =>
+                                e.key === "Enter" &&
+                                (e.preventDefault(), addRole())
+                              }
                             />
                             <button
                               type="button"
@@ -1058,13 +1177,17 @@ export default function EditProfilePage({
                           <div className="p-2 bg-primary/10 dark:bg-primary/20 rounded-lg">
                             <Share2 className="w-5 h-5 text-primary" />
                           </div>
-                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Social Media</h3>
+                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                            Social Media
+                          </h3>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                           {socials.length === 0 ? (
                             <div className="md:col-span-2 flex items-center justify-center h-24 bg-gray-50 dark:bg-gray-900/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700">
-                              <p className="text-gray-500 dark:text-gray-400 text-sm">No social links added yet</p>
+                              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                                No social links added yet
+                              </p>
                             </div>
                           ) : (
                             socials.map((social, index) => (
@@ -1086,14 +1209,20 @@ export default function EditProfilePage({
                                       rel="noopener noreferrer"
                                       className="text-sm text-primary hover:text-primary/80 truncate max-w-[200px] flex items-center gap-1"
                                     >
-                                      {social.url.length > 30 ? social.url.substring(0, 30) + "..." : social.url}
+                                      {social.url.length > 30
+                                        ? social.url.substring(0, 30) + "..."
+                                        : social.url}
                                       <ExternalLink className="w-3 h-3" />
                                     </a>
                                   </div>
                                 </div>
                                 <button
                                   type="button"
-                                  onClick={() => setSocials(socials.filter((_, i) => i !== index))}
+                                  onClick={() =>
+                                    setSocials(
+                                      socials.filter((_, i) => i !== index),
+                                    )
+                                  }
                                   className="text-gray-400 hover:text-red-500 transition-colors p-2 opacity-0 group-hover:opacity-100"
                                 >
                                   <Trash2 size={18} />
@@ -1108,9 +1237,13 @@ export default function EditProfilePage({
                             <select
                               value={newSocialName}
                               onChange={(e) => {
-                                const selectedOption = SOCIAL_OPTIONS.find(option => option.name === e.target.value);
+                                const selectedOption = SOCIAL_OPTIONS.find(
+                                  (option) => option.name === e.target.value,
+                                );
                                 setNewSocialName(e.target.value);
-                                setNewSocialUrl(selectedOption ? selectedOption.url : "");
+                                setNewSocialUrl(
+                                  selectedOption ? selectedOption.url : "",
+                                );
                               }}
                               className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                             >
@@ -1203,7 +1336,9 @@ export default function EditProfilePage({
                   {activeTab < tabs.length - 1 ? (
                     <button
                       type="button"
-                      onClick={() => setActiveTab(Math.min(tabs.length - 1, activeTab + 1))}
+                      onClick={() =>
+                        setActiveTab(Math.min(tabs.length - 1, activeTab + 1))
+                      }
                       className="px-6 py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-xl flex items-center gap-2 transition-colors shadow-lg shadow-primary/20 hover:shadow-primary/30"
                     >
                       Next
@@ -1235,5 +1370,5 @@ export default function EditProfilePage({
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

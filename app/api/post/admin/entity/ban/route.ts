@@ -27,7 +27,10 @@ export async function POST(req: NextRequest) {
 
   const { username } = body;
   if (!username || typeof username !== "string") {
-    return NextResponse.json({ error: "Missing or invalid username" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing or invalid username" },
+      { status: 400 },
+    );
   }
 
   const user = await prisma.user.findFirst({ where: { username } });
@@ -41,5 +44,8 @@ export async function POST(req: NextRequest) {
     data: { is_banned: true },
   });
 
-  return NextResponse.json({ success: true, message: `User ${username} has been suspended.` });
+  return NextResponse.json({
+    success: true,
+    message: `User ${username} has been suspended.`,
+  });
 }

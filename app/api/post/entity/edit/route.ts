@@ -18,14 +18,16 @@ const entityEditSchema = z.object({
   roles: z.array(z.string()).optional(),
   skills: z.array(z.string()).optional(),
   socials: z.array(z.any()).optional(),
-  privacy: z.object({
-    isShow: z.boolean().optional(),
-    isEmailPrivate: z.boolean().optional(),
-    isBirthdayPrivate: z.boolean().optional(),
-    isLocationPrivate: z.boolean().optional(),
-    isGenderPrivate: z.boolean().optional(),
-    isPronounsPrivate: z.boolean().optional(),
-  }).optional(),
+  privacy: z
+    .object({
+      isShow: z.boolean().optional(),
+      isEmailPrivate: z.boolean().optional(),
+      isBirthdayPrivate: z.boolean().optional(),
+      isLocationPrivate: z.boolean().optional(),
+      isGenderPrivate: z.boolean().optional(),
+      isPronounsPrivate: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -43,7 +45,10 @@ export async function POST(req: NextRequest) {
 
   const parseResult = entityEditSchema.safeParse(body);
   if (!parseResult.success) {
-    return NextResponse.json({ error: parseResult.error.flatten() }, { status: 400 });
+    return NextResponse.json(
+      { error: parseResult.error.flatten() },
+      { status: 400 },
+    );
   }
   const data = parseResult.data;
 
@@ -59,11 +64,16 @@ export async function POST(req: NextRequest) {
   const updateData: any = { ...data };
   if (data.privacy) {
     updateData.isShow = data.privacy.isShow ?? entity.isShow;
-    updateData.isEmailPrivate = data.privacy.isEmailPrivate ?? entity.isEmailPrivate;
-    updateData.isBirthdayPrivate = data.privacy.isBirthdayPrivate ?? entity.isBirthdayPrivate;
-    updateData.isLocationPrivate = data.privacy.isLocationPrivate ?? entity.isLocationPrivate;
-    updateData.isGenderPrivate = data.privacy.isGenderPrivate ?? entity.isGenderPrivate;
-    updateData.isPronounsPrivate = data.privacy.isPronounsPrivate ?? entity.isPronounsPrivate;
+    updateData.isEmailPrivate =
+      data.privacy.isEmailPrivate ?? entity.isEmailPrivate;
+    updateData.isBirthdayPrivate =
+      data.privacy.isBirthdayPrivate ?? entity.isBirthdayPrivate;
+    updateData.isLocationPrivate =
+      data.privacy.isLocationPrivate ?? entity.isLocationPrivate;
+    updateData.isGenderPrivate =
+      data.privacy.isGenderPrivate ?? entity.isGenderPrivate;
+    updateData.isPronounsPrivate =
+      data.privacy.isPronounsPrivate ?? entity.isPronounsPrivate;
     delete updateData.privacy;
   }
 
@@ -79,6 +89,9 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ entity: updated });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to update entity" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update entity" },
+      { status: 500 },
+    );
   }
 }

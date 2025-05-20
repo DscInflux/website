@@ -1,23 +1,43 @@
-import Link from 'next/link';
-import { FaGithub, FaDiscord, FaExternalLinkAlt } from 'react-icons/fa';
-import { SiX } from 'react-icons/si';
-import React from 'react';
+import Link from "next/link";
+import { FaGithub, FaDiscord, FaExternalLinkAlt } from "react-icons/fa";
+import { SiX } from "react-icons/si";
+import React from "react";
 
 export default function Footer() {
   const items = [
-    { label: 'Home', link: '/', external: false },
-    { label: 'Explore', link: '/explore', external: false },
-    { label: 'Stats', link: '/stats', external: false },
-    { label: 'Terms Of Service', link: 'https://purrquinox.com/terms', external: true },
-    { label: 'Privacy Policy', link: 'https://purrquinox.com/privacy', external: true },
-    { label: 'Cookie Policy', link: 'https://purrquinox.com/cookies', external: true },
-    { label: 'Status', link: 'https://status.purrquinox.com/', external: true },
+    { label: "Home", link: "/", external: false },
+    { label: "Explore", link: "/explore", external: false },
+    { label: "Stats", link: "/stats", external: false },
+    {
+      label: "Terms Of Service",
+      link: "https://purrquinox.com/terms",
+      external: true,
+    },
+    {
+      label: "Privacy Policy",
+      link: "https://purrquinox.com/privacy",
+      external: true,
+    },
+    {
+      label: "Cookie Policy",
+      link: "https://purrquinox.com/cookies",
+      external: true,
+    },
+    { label: "Status", link: "https://status.purrquinox.com/", external: true },
   ];
 
   const socialLinks = [
-    { label: 'GitHub', icon: <FaGithub />, link: 'https://github.com/DscInflux/' },
-    { label: 'Discord', icon: <FaDiscord />, link: 'https://discord.gg/RPCtG7Em8g' },
-    { label: 'X', icon: <SiX />, link: 'https://x.com/HeyDscInflux' },
+    {
+      label: "GitHub",
+      icon: <FaGithub />,
+      link: "https://github.com/DscInflux/",
+    },
+    {
+      label: "Discord",
+      icon: <FaDiscord />,
+      link: "https://discord.gg/RPCtG7Em8g",
+    },
+    { label: "X", icon: <SiX />, link: "https://x.com/HeyDscInflux" },
   ];
 
   return (
@@ -28,7 +48,9 @@ export default function Footer() {
             <Link href="/" legacyBehavior>
               <a className="text-2xl font-bold tracking-tight text-white hover:text-primary transition">
                 DscInflux
-                <span className="block text-sm font-normal text-zinc-400">by Purrquinox</span>
+                <span className="block text-sm font-normal text-zinc-400">
+                  by Purrquinox
+                </span>
               </a>
             </Link>
 

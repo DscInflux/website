@@ -5,13 +5,23 @@ import { motion } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 type CarouselProps<T> = {
-  header: (next: () => void, prev: () => void, isPrev: boolean, isNext: boolean) => React.ReactNode;
+  header: (
+    next: () => void,
+    prev: () => void,
+    isPrev: boolean,
+    isNext: boolean,
+  ) => React.ReactNode;
   slides: T[];
   children: (slides: T[]) => React.ReactNode[];
   perPage?: number;
 };
 
-export default function Carousel<T>({ header, slides, children, perPage = 3 }: CarouselProps<T>) {
+export default function Carousel<T>({
+  header,
+  slides,
+  children,
+  perPage = 3,
+}: CarouselProps<T>) {
   const [page, setPage] = useState(0);
   const totalPages = Math.ceil(slides.length / perPage);
 

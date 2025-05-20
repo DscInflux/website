@@ -22,7 +22,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Entity not found" }, { status: 404 });
   }
 
-  let updatedLikes: string[] = Array.isArray(entity.like) ? [...entity.like] : [];
+  let updatedLikes: string[] = Array.isArray(entity.like)
+    ? [...entity.like]
+    : [];
   const userId = session.user.id;
 
   if (action === "like") {
@@ -38,5 +40,9 @@ export async function POST(req: Request) {
     data: { like: updatedLikes },
   });
 
-  return NextResponse.json({ success: true, action, likes: updatedLikes.length });
+  return NextResponse.json({
+    success: true,
+    action,
+    likes: updatedLikes.length,
+  });
 }

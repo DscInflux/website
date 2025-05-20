@@ -44,9 +44,9 @@ const TeamPage = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3
-      }
-    }
+        staggerChildren: 0.3,
+      },
+    },
   };
 
   const itemVariants = {
@@ -57,17 +57,17 @@ const TeamPage = () => {
       transition: {
         type: "spring",
         stiffness: 100,
-        damping: 12
-      }
+        damping: 12,
+      },
     },
     hover: {
       y: -10,
       transition: {
         type: "spring",
         stiffness: 300,
-        damping: 10
-      }
-    }
+        damping: 10,
+      },
+    },
   };
 
   if (loading) {
@@ -92,7 +92,9 @@ const TeamPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center p-8 max-w-lg rounded-xl bg-red-50 dark:bg-red-900/20">
-          <h2 className="text-2xl font-bold text-red-700 dark:text-red-400 mb-2">Error</h2>
+          <h2 className="text-2xl font-bold text-red-700 dark:text-red-400 mb-2">
+            Error
+          </h2>
           <p className="text-red-600 dark:text-red-300">{error}</p>
         </div>
       </div>
@@ -120,7 +122,8 @@ const TeamPage = () => {
             </h1>
           </div>
           <p className="mt-4 text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Meet the talented individuals behind our success, dedicated to delivering exceptional experiences.
+            Meet the talented individuals behind our success, dedicated to
+            delivering exceptional experiences.
           </p>
         </motion.div>
 
@@ -139,14 +142,18 @@ const TeamPage = () => {
               className="relative group perspective-right"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl -z-10 transform group-hover:scale-[1.03] transition-transform duration-300 opacity-0 group-hover:opacity-100" />
-              
+
               <div className="p-6 rounded-2xl overflow-hidden backdrop-blur-sm bg-white/90 dark:bg-gray-900/90 border border-gray-200 dark:border-gray-700 shadow-xl transition-all duration-300 group-hover:shadow-2xl">
                 <div className="flex flex-col md:flex-row items-center text-center md:text-left gap-6">
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full blur-md opacity-30 group-hover:opacity-60 transition-opacity duration-300" />
-                    <motion.div 
+                    <motion.div
                       whileHover={{ scale: 1.05 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 10,
+                      }}
                       className="relative"
                     >
                       <img
@@ -156,7 +163,7 @@ const TeamPage = () => {
                       />
                     </motion.div>
                   </div>
-                  
+
                   <div className="flex-1">
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
                       {member.display_name}
@@ -164,7 +171,6 @@ const TeamPage = () => {
                     <p className="text-purple-600 dark:text-purple-400 font-medium mb-4">
                       @{member.username}
                     </p>
-                    
                   </div>
                 </div>
               </div>
@@ -186,7 +192,8 @@ const TeamPage = () => {
                 Want to join our team?
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                We're always looking for talented individuals to join our growing team.
+                We're always looking for talented individuals to join our
+                growing team.
               </p>
               <motion.button
                 whileHover={{ scale: 1.03 }}

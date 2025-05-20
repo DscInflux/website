@@ -2,7 +2,16 @@
 import { useEffect, useState } from "react";
 import { FiUsers, FiBox, FiCheckCircle } from "react-icons/fi";
 import { motion } from "framer-motion";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 export interface Stats {
   entities: number;
@@ -19,7 +28,14 @@ interface StatsCardProps {
   isVerified?: boolean;
 }
 
-const StatsCard = ({ title, value, icon, description, color, isVerified = false }: StatsCardProps) => {
+const StatsCard = ({
+  title,
+  value,
+  icon,
+  description,
+  color,
+  isVerified = false,
+}: StatsCardProps) => {
   const getGradient = () => {
     switch (color) {
       case "blue":
@@ -55,8 +71,12 @@ const StatsCard = ({ title, value, icon, description, color, isVerified = false 
   };
 
   return (
-    <div className={`bg-white dark:bg-[#070510] rounded-2xl shadow-lg p-6 border ${getBorderColor()} h-full relative overflow-hidden`}>
-      <div className={`absolute inset-0 bg-gradient-to-br ${getGradient()} opacity-50`}></div>
+    <div
+      className={`bg-white dark:bg-[#070510] rounded-2xl shadow-lg p-6 border ${getBorderColor()} h-full relative overflow-hidden`}
+    >
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${getGradient()} opacity-50`}
+      ></div>
       <div className="relative z-10">
         <div className="flex justify-between items-start mb-4">
           <div className="p-3 rounded-lg bg-white dark:bg-[#1d2341] shadow-md">
@@ -72,7 +92,9 @@ const StatsCard = ({ title, value, icon, description, color, isVerified = false 
         <div className="flex items-end gap-1 mb-2">
           <span className="text-3xl font-bold">{value.toLocaleString()}</span>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {description}
+        </p>
       </div>
     </div>
   );

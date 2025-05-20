@@ -45,7 +45,12 @@ const InfiniteScrollComponent: React.FC<InfiniteScrollComponentProps> = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || !hasMore) return;
+      if (
+        window.innerHeight + document.documentElement.scrollTop !==
+          document.documentElement.offsetHeight ||
+        !hasMore
+      )
+        return;
       setPage((prevPage) => prevPage + 1);
     };
     window.addEventListener("scroll", handleScroll);
@@ -56,7 +61,9 @@ const InfiniteScrollComponent: React.FC<InfiniteScrollComponentProps> = ({
     <div className={upperContainer}>
       <div className={container}>
         {items.length === 0
-          ? Array.from({ length: preRenderCount }).map((_, i) => preRender(null, i))
+          ? Array.from({ length: preRenderCount }).map((_, i) =>
+              preRender(null, i),
+            )
           : items.map((item, i) => render(item, i))}
       </div>
     </div>
@@ -105,7 +112,11 @@ interface CheckboxGroupProps {
   query?: any;
   onChange: (value: string[]) => void;
 }
-const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, value, onChange }) => {
+const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
+  items,
+  value,
+  onChange,
+}) => {
   const handleCheckboxChange = (itemLabel: string) => {
     const newValue = value.includes(itemLabel)
       ? value.filter((v) => v !== itemLabel)
@@ -148,12 +159,35 @@ export default function Home() {
   }, []);
 
   const sortings: RadioGroupItem[] = [
-    { label: "Newest", value: "newest", icon: { value: "fas fa-sort-amount-down", label: "Newest" }, default: true },
-    { label: "Oldest", value: "oldest", icon: { value: "fas fa-sort-amount-up", label: "Oldest" } },
-    { label: "Popular", value: "popular", icon: { value: "fas fa-heart", label: "Popular" } },
-    { label: "Random", value: "random", icon: { value: "fas fa-random", label: "Random" } },
+    {
+      label: "Newest",
+      value: "newest",
+      icon: { value: "fas fa-sort-amount-down", label: "Newest" },
+      default: true,
+    },
+    {
+      label: "Oldest",
+      value: "oldest",
+      icon: { value: "fas fa-sort-amount-up", label: "Oldest" },
+    },
+    {
+      label: "Popular",
+      value: "popular",
+      icon: { value: "fas fa-heart", label: "Popular" },
+    },
+    {
+      label: "Random",
+      value: "random",
+      icon: { value: "fas fa-random", label: "Random" },
+    },
   ];
-  const languages: string[] = ["English", "Spanish", "French", "German", "Chinese"];
+  const languages: string[] = [
+    "English",
+    "Spanish",
+    "French",
+    "German",
+    "Chinese",
+  ];
   const roles = [
     { name: "Developer", slug: "developer" },
     { name: "Designer", slug: "designer" },
@@ -240,7 +274,10 @@ export default function Home() {
               <h1 className="text-2xl text-black dark:text-white lg:pb-2 font-bold flex items-center gap-2">
                 Users
               </h1>
-              <Link href={{ pathname }} className="hidden lg:block text-primary text-sm font-light hover:underline">
+              <Link
+                href={{ pathname }}
+                className="hidden lg:block text-primary text-sm font-light hover:underline"
+              >
                 Reset all filters
               </Link>
             </div>
@@ -250,7 +287,13 @@ export default function Home() {
                   <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
                     Sorting
                   </h1>
-                  <Link href={{ pathname, query: { ...getQueryObject(), sort: undefined } }} className="text-primary text-sm font-light hover:underline">
+                  <Link
+                    href={{
+                      pathname,
+                      query: { ...getQueryObject(), sort: undefined },
+                    }}
+                    className="text-primary text-sm font-light hover:underline"
+                  >
                     Reset
                   </Link>
                 </div>
@@ -265,7 +308,13 @@ export default function Home() {
                   <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
                     Language
                   </h1>
-                  <Link href={{ pathname, query: { ...getQueryObject(), language: undefined } }} className="text-primary text-sm font-light hover:underline">
+                  <Link
+                    href={{
+                      pathname,
+                      query: { ...getQueryObject(), language: undefined },
+                    }}
+                    className="text-primary text-sm font-light hover:underline"
+                  >
                     Reset
                   </Link>
                 </div>
@@ -280,13 +329,23 @@ export default function Home() {
                   <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
                     Roles
                   </h1>
-                  <Link href={{ pathname, query: { ...getQueryObject(), roles: undefined } }} className="text-primary text-sm font-light hover:underline">
+                  <Link
+                    href={{
+                      pathname,
+                      query: { ...getQueryObject(), roles: undefined },
+                    }}
+                    className="text-primary text-sm font-light hover:underline"
+                  >
                     Reset
                   </Link>
                 </div>
                 <CheckboxGroup
                   items={roles.map((el) => ({ label: el.name }))}
-                  value={getQueryObject().roles ? getQueryObject().roles.split(",") : []}
+                  value={
+                    getQueryObject().roles
+                      ? getQueryObject().roles.split(",")
+                      : []
+                  }
                   onChange={handleRolesChange}
                 />
               </div>
@@ -295,13 +354,23 @@ export default function Home() {
                   <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
                     Skills
                   </h1>
-                  <Link href={{ pathname, query: { ...getQueryObject(), skills: undefined } }} className="text-primary text-sm font-light hover:underline">
+                  <Link
+                    href={{
+                      pathname,
+                      query: { ...getQueryObject(), skills: undefined },
+                    }}
+                    className="text-primary text-sm font-light hover:underline"
+                  >
                     Reset
                   </Link>
                 </div>
                 <CheckboxGroup
                   items={skills.map((el) => ({ label: el.name }))}
-                  value={getQueryObject().skills ? getQueryObject().skills.split(",") : []}
+                  value={
+                    getQueryObject().skills
+                      ? getQueryObject().skills.split(",")
+                      : []
+                  }
                   onChange={handleSkillsChange}
                 />
               </div>
@@ -313,7 +382,9 @@ export default function Home() {
             container="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 w-full"
             upperContainer="col-span-9 2xl:col-span-10 w-full"
             preRenderCount={9}
-            preRender={(_, i) => <MiniCard key={i} entity={{} as Entity} isSkeleton />}
+            preRender={(_, i) => (
+              <MiniCard key={i} entity={{} as Entity} isSkeleton />
+            )}
             itemsCount={12}
             render={(item, i) => (
               <MiniCard

@@ -27,12 +27,14 @@ const HeroLayout: React.FC = () => {
           fetch("/api/auth/me"),
         ]);
 
-        const [popularData, newestData, randomData, meData] = await Promise.all([
-          popularRes.json(),
-          newestRes.json(),
-          randomRes.json(),
-          meRes.ok ? meRes.json() : Promise.resolve(null),
-        ]);
+        const [popularData, newestData, randomData, meData] = await Promise.all(
+          [
+            popularRes.json(),
+            newestRes.json(),
+            randomRes.json(),
+            meRes.ok ? meRes.json() : Promise.resolve(null),
+          ],
+        );
 
         setPopularUsers(popularData?.data || []);
         setNewestUsers(newestData?.data || []);
@@ -51,7 +53,9 @@ const HeroLayout: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const username = (e.currentTarget.username as HTMLInputElement).value.trim();
+    const username = (
+      e.currentTarget.username as HTMLInputElement
+    ).value.trim();
     if (username) {
       router.push(`/submit?url=${encodeURIComponent(username)}`);
     }
@@ -115,7 +119,9 @@ const HeroLayout: React.FC = () => {
             header={(next, prev, isPrev, isNext) => (
               <CarouselHeader
                 title="Popular Users"
-                icon={<FaFire className="text-primary text-5xl hidden lg:block" />}
+                icon={
+                  <FaFire className="text-primary text-5xl hidden lg:block" />
+                }
                 seeAll="/explore?sort=likes"
                 description="The most popular profiles on DscInflux"
                 next={next}
@@ -148,7 +154,9 @@ const HeroLayout: React.FC = () => {
             header={(next, prev, isPrev, isNext) => (
               <CarouselHeader
                 title="Newest Users"
-                icon={<FaDice className="text-primary text-5xl hidden lg:block" />}
+                icon={
+                  <FaDice className="text-primary text-5xl hidden lg:block" />
+                }
                 seeAll="/explore?sort=newest"
                 description="Some newest profiles on DscInflux"
                 next={next}
@@ -161,10 +169,15 @@ const HeroLayout: React.FC = () => {
           >
             {(slides: Entity[]) =>
               slides.length > 0
-                ? slides.map((entity) => <MiniCard key={entity.id} entity={{
+                ? slides.map((entity) => (
+                    <MiniCard
+                      key={entity.id}
+                      entity={{
                         ...entity,
                         isLiked: user ? entity.like?.includes(user.id) : false,
-                      }} />)
+                      }}
+                    />
+                  ))
                 : [<div key="no-users">No users found.</div>]
             }
           </Carousel>
@@ -176,7 +189,9 @@ const HeroLayout: React.FC = () => {
             header={(next, prev, isPrev, isNext) => (
               <CarouselHeader
                 title="Random Users"
-                icon={<FaDice className="text-primary text-5xl hidden lg:block" />}
+                icon={
+                  <FaDice className="text-primary text-5xl hidden lg:block" />
+                }
                 seeAll="/explore?sort=random"
                 description="Some random profiles on DscInflux"
                 next={next}
@@ -189,10 +204,15 @@ const HeroLayout: React.FC = () => {
           >
             {(slides: Entity[]) =>
               slides.length > 0
-                ? slides.map((entity) => <MiniCard key={entity.id} entity={{
+                ? slides.map((entity) => (
+                    <MiniCard
+                      key={entity.id}
+                      entity={{
                         ...entity,
                         isLiked: user ? entity.like?.includes(user.id) : false,
-                      }} />)
+                      }}
+                    />
+                  ))
                 : [<div key="no-users">No users found.</div>]
             }
           </Carousel>

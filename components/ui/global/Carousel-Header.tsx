@@ -26,13 +26,18 @@ export default function CarouselHeader({
             {title}
           </h2>
           {description && (
-            <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {description}
+            </p>
           )}
         </div>
       </div>
 
       {seeAll && (
-        <Link href={seeAll} className="text-primary hover:underline text-sm font-semibold">
+        <Link
+          href={seeAll}
+          className="text-primary hover:underline text-sm font-semibold"
+        >
           See all →
         </Link>
       )}

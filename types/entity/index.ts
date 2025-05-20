@@ -46,15 +46,15 @@ export interface Entity {
 }
 
 export interface Social {
-  id: string
-  url: string
+  id: string;
+  url: string;
   icon: {
-    url: string
-    label: string
-    value: string
-  }
-  name: string
-  color: string
-  enabled: boolean
-  username: string
+    url: string;
+    label: string;
+    value: string;
+  };
+  name: string;
+  color: string;
+  enabled: boolean;
+  username: string;
 }

@@ -14,6 +14,9 @@ export async function GET() {
     });
     return NextResponse.json({ staff });
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

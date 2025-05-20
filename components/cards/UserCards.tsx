@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaHeart, FaRegHeart, FaUserShield, FaCode, FaHandshake } from "react-icons/fa";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaUserShield,
+  FaCode,
+  FaHandshake,
+} from "react-icons/fa";
 import { CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -11,7 +17,11 @@ type MiniCardProps = {
   isLiked?: boolean;
 };
 
-const MiniCard: React.FC<MiniCardProps> = ({ entity, isSkeleton = false, isLiked = false }) => {
+const MiniCard: React.FC<MiniCardProps> = ({
+  entity,
+  isSkeleton = false,
+  isLiked = false,
+}) => {
   const [liked, setLiked] = useState(isLiked);
 
   async function sendRequest(endpoint: string, method: string) {
@@ -26,14 +36,20 @@ const MiniCard: React.FC<MiniCardProps> = ({ entity, isSkeleton = false, isLiked
 
   const toggleLike = async () => {
     if (liked) {
-      const req = await sendRequest(`/api/post/entity/heart?action=unlike&url=${entity.url}`, "POST");
+      const req = await sendRequest(
+        `/api/post/entity/heart?action=unlike&url=${entity.url}`,
+        "POST",
+      );
       if (req.success) {
         setLiked(false);
       } else if (req.data?.length > 0) {
         setLiked((old: any) => req.data[0]?.isLiked ?? old);
       }
     } else {
-      const req = await sendRequest(`/api/post/entity/heart?action=like&url=${entity.url}`, "POST");
+      const req = await sendRequest(
+        `/api/post/entity/heart?action=like&url=${entity.url}`,
+        "POST",
+      );
       if (req.success) {
         setLiked(true);
       } else if (req.data?.length > 0) {
@@ -59,7 +75,10 @@ const MiniCard: React.FC<MiniCardProps> = ({ entity, isSkeleton = false, isLiked
       <div className="flex items-center gap-4">
         <div className="relative w-16 h-16 rounded-full ring-4 ring-light dark:ring-dark overflow-hidden">
           <Image
-            src={entity.avatar || "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"}
+            src={
+              entity.avatar ||
+              "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"
+            }
             alt={`${entity.discordUsername} avatar`}
             fill
             sizes="64px"
@@ -73,18 +92,30 @@ const MiniCard: React.FC<MiniCardProps> = ({ entity, isSkeleton = false, isLiked
         <div>
           <h1 className="text-black dark:text-white text-lg font-medium flex items-center gap-1">
             {entity.discordUsername}
-            {entity.isVerified && <CheckCircle size={18} className="text-blue-500" />}
-            {entity.staff && <FaUserShield className="text-red-500" title="Staff" />}
-            {entity.isDeveloper && <FaCode className="text-green-500" title="Developer" />}
-            {entity.isPartner && <FaHandshake className="text-yellow-500" title="Partner" />}
+            {entity.isVerified && (
+              <CheckCircle size={18} className="text-blue-500" />
+            )}
+            {entity.staff && (
+              <FaUserShield className="text-red-500" title="Staff" />
+            )}
+            {entity.isDeveloper && (
+              <FaCode className="text-green-500" title="Developer" />
+            )}
+            {entity.isPartner && (
+              <FaHandshake className="text-yellow-500" title="Partner" />
+            )}
           </h1>
-          <p className="text-sm text-black dark:text-gray-500 font-medium">@{entity.url}</p>
+          <p className="text-sm text-black dark:text-gray-500 font-medium">
+            @{entity.url}
+          </p>
         </div>
       </div>
 
       {/* --- Middle: about text --- */}
       <p className="text-sm text-black/75 dark:text-gray-500 font-medium overflow-hidden flex-grow mt-4 line-clamp-3">
-        {typeof entity.about === "string" ? entity.about : JSON.stringify(entity.about)}
+        {typeof entity.about === "string"
+          ? entity.about
+          : JSON.stringify(entity.about)}
       </p>
 
       {/* --- Bottom: actions --- */}

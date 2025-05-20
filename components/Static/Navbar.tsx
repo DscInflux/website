@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (!session) return;
     fetch("/api/auth/me")
-      .then((res) => res.ok ? res.json() : null)
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.entity?.url) setEntityUrl(data.entity.url);
         else setEntityUrl(null);
@@ -39,7 +39,10 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
@@ -65,7 +68,10 @@ const Navbar: React.FC = () => {
   return (
     <nav className="w-full z-50 relative">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-bold text-black dark:text-white">
+        <Link
+          href="/"
+          className="text-2xl font-bold text-black dark:text-white"
+        >
           DscInflux
         </Link>
 
@@ -92,7 +98,7 @@ const Navbar: React.FC = () => {
                 {item.icon}
                 <span>{item.label}</span>
               </Link>
-            )
+            ),
           )}
 
           {session ? (
@@ -107,7 +113,9 @@ const Navbar: React.FC = () => {
                   className="w-8 h-8 rounded-full object-cover"
                 />
                 <span className="text-gray-800 dark:text-white font-medium">
-                  {session.user?.display_name || session.user?.username || "User"}
+                  {session.user?.display_name ||
+                    session.user?.username ||
+                    "User"}
                 </span>
               </button>
 
@@ -193,7 +201,7 @@ const Navbar: React.FC = () => {
                 {item.icon}
                 <span>{item.label}</span>
               </Link>
-            )
+            ),
           )}
 
           {session ? (
