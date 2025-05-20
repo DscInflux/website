@@ -20,8 +20,9 @@ import {
   ExternalLink,
 } from "lucide-react"
 import { MdVerified } from "react-icons/md"
-import { RiVipDiamondFill } from "react-icons/ri"
+import type { User } from "@/types/users"
 import type { Entity } from "@/types/entity"
+import { Code, Handshake, Shield } from "lucide-react";
 
 export default function UserProfile({ username }: { username: string }) {
   const [data, setData] = useState<Entity | null>(null)
@@ -29,6 +30,7 @@ export default function UserProfile({ username }: { username: string }) {
   const [error, setError] = useState<string | null>(null)
   const [liked, setLiked] = useState(false)
   const [likes, setLikes] = useState(0)
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -49,7 +51,14 @@ export default function UserProfile({ username }: { username: string }) {
       }
     }
 
+    const fetchCurrentUser = async () => {
+      const meRes = await fetch("/api/auth/me")
+      const meData = meRes.ok ? await meRes.json() : null
+      setUser(meData?.user || null)
+    }
+
     fetchUser()
+    fetchCurrentUser()
   }, [username])
 
   const toggleLike = async () => {
@@ -57,13 +66,27 @@ export default function UserProfile({ username }: { username: string }) {
 
     try {
       if (liked) {
-        // Unlike logic would go here
-        setLiked(false)
-        setLikes((prev) => prev - 1)
+        const res = await fetch(`/api/post/entity/heart?action=unlike&url=${data.url}`, {
+          method: "POST",
+        })
+        const req = await res.json()
+        if (req.success) {
+          setLiked(false)
+          setLikes((prev) => prev - 1)
+        } else if (req.data?.length > 0) {
+          setLiked((old: any) => req.data[0]?.isLiked ?? old)
+        }
       } else {
-        // Like logic would go here
-        setLiked(true)
-        setLikes((prev) => prev + 1)
+        const res = await fetch(`/api/post/entity/heart?action=like&url=${data.url}`, {
+          method: "POST",
+        })
+        const req = await res.json()
+        if (req.success) {
+          setLiked(true)
+          setLikes((prev) => prev + 1)
+        } else if (req.data?.length > 0) {
+          setLiked((old: any) => req.data[0]?.isLiked ?? old)
+        }
       }
     } catch (error) {
       console.error("Error toggling like:", error)
@@ -254,13 +277,6 @@ export default function UserProfile({ username }: { username: string }) {
                   </span>
                 </div>
               )}
-
-              {/* Status indicator */}
-              {data.isPremium && (
-                <div className="absolute bottom-1 right-1 w-6 h-6 bg-primary rounded-full border-4 border-light dark:border-dark flex items-center justify-center">
-                  <span className="animate-pulse w-3 h-3 bg-white rounded-full"></span>
-                </div>
-              )}
             </div>
 
             <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-between w-full mt-4 lg:mt-0">
@@ -279,11 +295,27 @@ export default function UserProfile({ username }: { username: string }) {
                           </div>
                         </div>
                       )}
-                      {data.isPremium && (
+                      {data.staff && (
                         <div className="group relative">
-                          <RiVipDiamondFill className="text-2xl text-primary" />
+                          <Shield className="text-2xl text-red-500" />
                           <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white dark:bg-dark text-black dark:text-white px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
-                            Premium Profile
+                            Staff
+                          </div>
+                        </div>
+                      )}
+                      {data.isDeveloper && (
+                        <div className="group relative">
+                          <Code className="text-2xl text-green-500" />
+                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white dark:bg-dark text-black dark:text-white px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+                            Developer
+                          </div>
+                        </div>
+                      )}
+                      {data.isPartner && (
+                        <div className="group relative">
+                          <Handshake className="text-2xl text-yellow-500" />
+                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white dark:bg-dark text-black dark:text-white px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+                            Partner
                           </div>
                         </div>
                       )}

@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import {
   User,
@@ -34,6 +34,76 @@ import {
   ExternalLink,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+
+// Social options for selection
+export const SOCIAL_OPTIONS = [
+  {
+    name: "Github",
+    url: "https://github.com/{username}",
+    color: "#000000",
+    enabled: true,
+  },
+  {
+    name: "Twitter/X",
+    url: "https://x.com/{username}",
+    color: "#1DA1F2",
+    enabled: true,
+  },
+  {
+    name: "Facebook",
+    url: "https://facebook.com/{username}",
+    color: "#3b5998",
+    enabled: true,
+  },
+  {
+    name: "Instagram",
+    url: "https://instagram.com/{username}",
+    color: "#E1306C",
+    enabled: true,
+  },
+  {
+    name: "LinkedIn",
+    url: "https://linkedin.com/in/{username}",
+    color: "#0077B5",
+    enabled: true,
+  },
+  {
+    name: "StackOverflow",
+    url: "https://stackoverflow.com/users/{username}",
+    color: "#f48024",
+    enabled: true,
+  },
+  {
+    name: "Reddit",
+    url: "https://reddit.com/user/{username}",
+    color: "#FF4500",
+    enabled: true,
+  },
+  {
+    name: "YouTube",
+    url: "https://youtube.com/channel/{username}",
+    color: "#FF0000",
+    enabled: true,
+  },
+  {
+    name: "Steam",
+    url: "https://steamcommunity.com/{username}",
+    color: "#171A21",
+    enabled: true,
+  },
+  {
+    name: "Twitch",
+    url: "https://www.twitch.tv/{username}",
+    color: "#9147FF",
+    enabled: true,
+  },
+  {
+    name: "MyAnimeList",
+    url: "https://myanimelist.net/profile/{username}",
+    color: "#2E51A2",
+    enabled: true,
+  },
+];
 
 export default function EditProfilePage({
   roles: initialRoles = [],
@@ -82,6 +152,15 @@ export default function EditProfilePage({
   const [newSkill, setNewSkill] = useState("")
   const [newRole, setNewRole] = useState("")
 
+  // File upload state
+  const [files, setFiles] = useState<any[]>([])
+  const [Uploading, setUploading] = useState(false)
+  // Refs for file inputs
+  const avatarInputRef = useRef<HTMLInputElement>(null)
+  const bannerInputRef = useRef<HTMLInputElement>(null)
+
+  const [user, setUser] = useState<any>(null)
+
   useEffect(() => {
     async function fetchEntity() {
       setLoading(true)
@@ -89,6 +168,9 @@ export default function EditProfilePage({
         const res = await fetch("/api/auth/me")
         if (res.ok) {
           const data = await res.json()
+          if (data.user) {
+            setUser(data.user)
+          }
           if (data.entity) {
             setIsEdit(true)
             setAbout(data.entity.about || "")
@@ -201,6 +283,33 @@ export default function EditProfilePage({
     }
   }
 
+  const uploadFiles = async (type: "avatar" | "banner", files: FileList | null): Promise<void> => {
+    const API_URL = "https://bytepurr.purrquinox.com"
+    if (!files || files.length === 0 || !user?.id) return;
+    Array.from(files).forEach(async (p) => {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('file', p);
+      try {
+        const e = await fetch(`${API_URL}/upload`, {
+          method: 'POST',
+          headers: {
+            "userID": String(user.id),
+            "platform": "DscInflux",
+          },
+          body: formData
+        });
+        const resp = await e.json();
+        if (type === "avatar") setAvatar(`${API_URL}/${resp.key}`)
+        if (type === "banner") setBanner(`${API_URL}/${resp.key}`)
+        setUploading(false);
+      } catch (err) {
+        setUploading(false);
+        setError("File upload failed");
+      }
+    });
+  }
+
   const tabs = [
     {
       id: 0,
@@ -285,9 +394,21 @@ export default function EditProfilePage({
 
             {/* Banner edit button */}
             <div className="absolute top-4 right-4 z-10">
-              <div className="bg-black/30 backdrop-blur-md text-white rounded-full p-2 cursor-pointer hover:bg-black/50 transition-all duration-200">
+              <div
+                className="bg-black/30 backdrop-blur-md text-white rounded-full p-2 cursor-pointer hover:bg-black/50 transition-all duration-200"
+                onClick={() => bannerInputRef.current?.click()}
+              >
                 <Camera className="w-6 h-6" />
               </div>
+              <input
+                ref={bannerInputRef}
+                id="banner-upload-header"
+                type="file"
+                className="hidden"
+                onChange={(e) => {
+                  uploadFiles("banner", e.target.files);
+                }}
+              />
             </div>
 
             {/* Avatar overlay */}
@@ -303,12 +424,25 @@ export default function EditProfilePage({
                 >
                   {!avatar && <Camera className="w-12 h-12 text-gray-400" />}
                 </div>
-                <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                <div
+                  className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
+                  onClick={() => avatarInputRef.current?.click()}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className="text-white">
                     <Camera className="w-8 h-8 mx-auto" />
                     <span className="text-xs font-medium">Change Photo</span>
                   </div>
                 </div>
+                <input
+                  ref={avatarInputRef}
+                  id="avatar-upload-header"
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => {
+                    uploadFiles("avatar", e.target.files);
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -570,11 +704,21 @@ export default function EditProfilePage({
                                 <div className="flex gap-2">
                                   <button
                                     type="button"
+                                    onClick={() => avatarInputRef.current?.click()}
                                     className="flex-1 flex items-center justify-center gap-2 bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 py-2.5 px-4 rounded-xl font-medium transition-colors"
                                   >
                                     <Upload className="w-5 h-5" />
                                     Upload
                                   </button>
+                                  <input
+                                    ref={avatarInputRef}
+                                    id="avatar-upload"
+                                    type="file"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                      uploadFiles("avatar", e.target.files);
+                                    }}
+                                  />
                                   {avatar && (
                                     <button
                                       type="button"
@@ -639,11 +783,21 @@ export default function EditProfilePage({
                               <div className="flex gap-2">
                                 <button
                                   type="button"
+                                  onClick={() => bannerInputRef.current?.click()}
                                   className="flex-1 flex items-center justify-center gap-2 bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 py-2.5 px-4 rounded-xl font-medium transition-colors"
                                 >
                                   <Upload className="w-5 h-5" />
                                   Upload Banner
                                 </button>
+                                <input
+                                  ref={bannerInputRef}
+                                  id="banner-upload"
+                                  type="file"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    uploadFiles("banner", e.target.files);
+                                  }}
+                                />
                                 {banner && (
                                   <button
                                     type="button"
@@ -951,13 +1105,22 @@ export default function EditProfilePage({
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div className="md:col-span-1">
-                            <input
-                              type="text"
+                            <select
                               value={newSocialName}
-                              onChange={(e) => setNewSocialName(e.target.value)}
-                              placeholder="Platform name"
+                              onChange={(e) => {
+                                const selectedOption = SOCIAL_OPTIONS.find(option => option.name === e.target.value);
+                                setNewSocialName(e.target.value);
+                                setNewSocialUrl(selectedOption ? selectedOption.url : "");
+                              }}
                               className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                            />
+                            >
+                              <option value="">Select a platform</option>
+                              {SOCIAL_OPTIONS.map((option) => (
+                                <option key={option.name} value={option.name}>
+                                  {option.name}
+                                </option>
+                              ))}
+                            </select>
                           </div>
                           <div className="md:col-span-1">
                             <input

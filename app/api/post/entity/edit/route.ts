@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
   // Find the entity belonging to the user
   const entity = await prisma.entity.findFirst({
-    where: { discordId: session.user.id, deletedAt: null },
+    where: { discordId: session.user.id },
   });
   if (!entity) {
     return NextResponse.json({ error: "Entity not found" }, { status: 404 });

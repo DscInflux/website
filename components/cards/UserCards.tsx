@@ -1,19 +1,18 @@
-"use client";
-
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import type { Entity } from "@/types/entity";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaUserShield, FaCode, FaHandshake } from "react-icons/fa";
 import { CheckCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 type MiniCardProps = {
-  entity: Entity;
+  entity: any;
   isSkeleton?: boolean;
+  isLiked?: boolean;
 };
 
-export default function MiniCard({ entity, isSkeleton = false }: MiniCardProps) {
-  const [liked, setLiked] = useState(entity.isLiked || false);
+const MiniCard: React.FC<MiniCardProps> = ({ entity, isSkeleton = false, isLiked = false }) => {
+  const [liked, setLiked] = useState(isLiked);
 
   async function sendRequest(endpoint: string, method: string) {
     try {
@@ -27,18 +26,18 @@ export default function MiniCard({ entity, isSkeleton = false }: MiniCardProps) 
 
   const toggleLike = async () => {
     if (liked) {
-      const req = await sendRequest(`/entity/${entity.url}/unlike`, "POST");
+      const req = await sendRequest(`/api/post/entity/heart?action=unlike&url=${entity.url}`, "POST");
       if (req.success) {
         setLiked(false);
       } else if (req.data?.length > 0) {
-        setLiked((old) => req.data[0]?.isLiked ?? old);
+        setLiked((old: any) => req.data[0]?.isLiked ?? old);
       }
     } else {
-      const req = await sendRequest(`/entity/${entity.url}/like`, "POST");
+      const req = await sendRequest(`/api/post/entity/heart?action=like&url=${entity.url}`, "POST");
       if (req.success) {
         setLiked(true);
       } else if (req.data?.length > 0) {
-        setLiked((old) => req.data[0]?.isLiked ?? old);
+        setLiked((old: any) => req.data[0]?.isLiked ?? old);
       }
     }
   };
@@ -50,7 +49,12 @@ export default function MiniCard({ entity, isSkeleton = false }: MiniCardProps) 
   }
 
   return (
-    <div className="w-full h-[250px] w-[500px] bg-light dark:bg-dark rounded-lg overflow-hidden select-none p-4 flex flex-col justify-between">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="w-full h-[250px] w-[500px] bg-light dark:bg-dark rounded-lg overflow-hidden select-none p-4 flex flex-col justify-between"
+    >
       {/* --- Top: avatar + name --- */}
       <div className="flex items-center gap-4">
         <div className="relative w-16 h-16 rounded-full ring-4 ring-light dark:ring-dark overflow-hidden">
@@ -70,12 +74,15 @@ export default function MiniCard({ entity, isSkeleton = false }: MiniCardProps) 
           <h1 className="text-black dark:text-white text-lg font-medium flex items-center gap-1">
             {entity.discordUsername}
             {entity.isVerified && <CheckCircle size={18} className="text-blue-500" />}
+            {entity.staff && <FaUserShield className="text-red-500" title="Staff" />}
+            {entity.isDeveloper && <FaCode className="text-green-500" title="Developer" />}
+            {entity.isPartner && <FaHandshake className="text-yellow-500" title="Partner" />}
           </h1>
           <p className="text-sm text-black dark:text-gray-500 font-medium">@{entity.url}</p>
         </div>
       </div>
 
-      {/* --- Middle: about text flexes --- */}
+      {/* --- Middle: about text --- */}
       <p className="text-sm text-black/75 dark:text-gray-500 font-medium overflow-hidden flex-grow mt-4 line-clamp-3">
         {typeof entity.about === "string" ? entity.about : JSON.stringify(entity.about)}
       </p>
@@ -95,9 +102,11 @@ export default function MiniCard({ entity, isSkeleton = false }: MiniCardProps) 
           aria-label={liked ? "Unlike" : "Like"}
           type="button"
         >
-          {liked ? <FaHeart /> : <FaRegHeart />}
+          {liked ? <FaHeart color="#ef4444" /> : <FaRegHeart />}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
-}
+};
+
+export default MiniCard;

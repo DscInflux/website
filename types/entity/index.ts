@@ -20,7 +20,6 @@ export interface Entity {
   isPartner: boolean;
   email?: string;
   views: string[];
-  isPremium: boolean;
   isVerified: boolean;
 
   // Flattened Privacy fields
