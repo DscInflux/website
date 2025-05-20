@@ -39,7 +39,7 @@ export default function Footer() {
             <Link href="/" legacyBehavior={true}>
               <div className="cursor-pointer col-span-2 flex items-center mr-6">
                 <p className="pointer-events-none text-black dark:text-white font-semibold text-2xl">
-                  Dsc<span className="text-primary"></span>‎ Influx
+                  Dsc<span className="text-primary"></span>‎ Influx by Purrquinox
                 </p>
               </div>
             </Link>
@@ -102,7 +102,7 @@ export default function Footer() {
 
         <div className="col-span-4 flex flex-col lg:flex-row justify-between items-center pt-2 md:pt-4 lg:pt-6 border-t border-slate-850 mt-2 md:mt-4 lg:mt-6">
           <p className="text-slate-600 dark:text-zinc-400 font-medium">
-            &copy; {new Date().getFullYear()} © DscInflux. All rights reserved. We are not affiliated with Discord.
+            &copy; {new Date().getFullYear()} © Purrquinox. All rights reserved.
           </p>
         </div>
       </footer>

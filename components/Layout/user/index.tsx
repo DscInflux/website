@@ -204,7 +204,7 @@ export default function UserProfile({ username }: { username: string }) {
   ]
 
   return (
-    <div className="flex flex-col items-center justify-center px-4 md:px-10 3xl:px-0 bg-gradient-to-b from-light to-white dark:from-dark dark:to-[#050510] min-h-screen">
+    <div className="flex flex-col items-center justify-center px-4 md:px-10 3xl:px-0 min-h-screen">
       <div className="max-w-7xl w-full">
         <div id="user-header" className="mb-12 relative">
           {/* Decorative elements */}
