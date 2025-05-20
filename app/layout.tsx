@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import './globals.css';
+import "./globals.css";
 import Navbar from "@/components/Static/Navbar";
 import Footer from "@/components/Static/Footer";
-import { ThemeProvider, SessionProviders } from '../components/Provider';
+import { ThemeProvider, SessionProviders } from "../components/Provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,17 +27,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <ThemeProvider>
           <SessionProviders>
-          <Navbar />
-          <img
-            src="https://dscinfluxcnd.vercel.app/assets/png/backwave.png"
-            width="55%"
-            className="absolute top-0 right-0 hidden lg:block z-[-1] opacity-50"
-          />
-          {children}
-          <Footer />
+            <Navbar />
+            <img
+              src="https://dscinfluxcnd.vercel.app/assets/png/backwave.png"
+              width="55%"
+              className="absolute top-0 right-0 hidden lg:block z-[-1] opacity-50"
+            />
+            {children}
+            <Footer />
           </SessionProviders>
         </ThemeProvider>
       </body>

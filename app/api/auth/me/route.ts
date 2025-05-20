@@ -19,10 +19,13 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     const entity = await prisma.entity.findFirst({
-      where: { discordId: session.user.id, deletedAt: null },
+      where: { discordId: session.user.id },
     });
     return NextResponse.json({ user, entity });
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

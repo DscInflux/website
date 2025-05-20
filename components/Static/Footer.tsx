@@ -1,109 +1,101 @@
-import Link from 'next/link';
-import { FaGithub, FaDiscord } from 'react-icons/fa';
-import React from 'react';
+import Link from "next/link";
+import { FaGithub, FaDiscord, FaExternalLinkAlt } from "react-icons/fa";
+import { SiX } from "react-icons/si";
+import React from "react";
 
 export default function Footer() {
-  let items = [
-
-    { label: 'Home', icon: 'fa fa-home', link: '/', external: false },
-    { label: 'Explore', icon: 'fa fa-home', link: '/explore', external: false },
-    { label: 'Partners', icon: 'fa fa-handshake', link: '/partners', external: false },
-    { label: 'About Us', icon: 'fa fa-home', link: '/other/aboutus', external: false },
-    { label: 'Credits', icon: 'fa fa-home', link: '/other/credits', external: false },
-    { label: 'Terms Of Service', icon: 'fa fa-home', link: '/legal/tos', external: false },
-    { label: 'Privacy', icon: 'fa fa-home', link: '/legal/privacy', external: false },
-    {label: 'Stats', icon: 'fa fa-home', link: '/stats', external: false },
-
-    { label: 'Documentation', icon: 'fa fa-home', link: 'https://docs.dscinflux.xyz', external: true },
-    { label: 'Status', icon: 'fa fa-home', link: 'https://dscinflux.instatus.com', external: true },
-  ]; 
-
-  let socialLinks = [
-    { label: 'GitHub', icon: <FaGithub className="text-white hover:opacity-75" />, link: 'https://github.com/DscInflux/' },
-    { label: 'Discord', icon: <FaDiscord className="text-white hover:opacity-75" />, link: 'https://discord.gg/RPCtG7Em8g' },
+  const items = [
+    { label: "Home", link: "/", external: false },
+    { label: "Explore", link: "/explore", external: false },
+    { label: "Stats", link: "/stats", external: false },
+    {
+      label: "Terms Of Service",
+      link: "https://purrquinox.com/terms",
+      external: true,
+    },
+    {
+      label: "Privacy Policy",
+      link: "https://purrquinox.com/privacy",
+      external: true,
+    },
+    {
+      label: "Cookie Policy",
+      link: "https://purrquinox.com/cookies",
+      external: true,
+    },
+    { label: "Status", link: "https://status.purrquinox.com/", external: true },
   ];
 
-  // Function to sort items based on their original index
-  const sortByIndex = (a: { label: string; }, b: { label: string; }) => {
-    return items.findIndex(item => item.label === a.label) - items.findIndex(item => item.label === b.label);
-  };
-
-  items.sort(sortByIndex);
-  socialLinks.sort(sortByIndex);
+  const socialLinks = [
+    {
+      label: "GitHub",
+      icon: <FaGithub />,
+      link: "https://github.com/DscInflux/",
+    },
+    {
+      label: "Discord",
+      icon: <FaDiscord />,
+      link: "https://discord.gg/RPCtG7Em8g",
+    },
+    { label: "X", icon: <SiX />, link: "https://x.com/HeyDscInflux" },
+  ];
 
   return (
-    <div className="w-full flex justify-center px-10 lg:px-12 mt-10">
-      <footer className="max-w-7xl w-full py-6 pt-24">
-        <div className="rounded-lg md:py-8">
-          <div className="sm:flex sm:items-center sm:justify-between">
-            <Link href="/" legacyBehavior={true}>
-              <div className="cursor-pointer col-span-2 flex items-center mr-6">
-                <p className="pointer-events-none text-black dark:text-white font-semibold text-2xl">
-                  Dsc<span className="text-primary"></span>‎ Influx by Purrquinox
-                </p>
-              </div>
+    <div className="w-full flex justify-center px-6 sm:px-10 lg:px-12 mt-20 font-jakarta">
+      <footer className="w-full max-w-7xl text-white">
+        <div className="w-full border-t border-zinc-800 pt-12">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
+            <Link href="/" legacyBehavior>
+              <a className="text-2xl font-bold tracking-tight text-white hover:text-primary transition">
+                DscInflux
+                <span className="block text-sm font-normal text-zinc-400">
+                  by Purrquinox
+                </span>
+              </a>
             </Link>
-            <div className="flex space-x-4">
-              {/* Social media links with added margin */}
-              {socialLinks.map((socialLink, index) => (
+
+            <div className="flex space-x-3">
+              {socialLinks.map(({ label, icon, link }, index) => (
                 <a
                   key={index}
-                  href={socialLink.link}
+                  href={link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center w-8 h-8 bg-main-700 rounded-full mr-2"
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-primary text-white hover:text-white transition duration-200"
+                  title={label}
                 >
-                  {socialLink.icon}
-                  <span className="sr-only">{socialLink.label}</span>
+                  {icon}
+                  <span className="sr-only">{label}</span>
                 </a>
               ))}
-              <a
-                href="https://x.com/HeyInflux"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center w-8 h-8 bg-main-700 rounded-full mr-2"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
-                  <path
-                    fill="currentColor"
-                    d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"
-                  />
-                </svg>
-                <span className="sr-only">X</span>
-              </a>
             </div>
           </div>
-          <p className="mt-5 font-semibold text-white">
-            The best way to friend new friends.
-          </p>
-          <ul className="flex sm:flex-row flex-col mt-2 sm:mt-0 flex-wrap lg:items-center mb-6 gap-4 text-sm text-gray-500 sm:mb-0 dark:text-gray-400">
-            {items.map((item, index) => (
+
+          <ul className="flex flex-wrap gap-4 text-sm text-zinc-400 font-medium mb-8">
+            {items.map(({ label, link, external }, index) => (
               <li key={index}>
-                {item.external ? (
+                {external ? (
                   <a
-                    href={item.link}
-                    className="relative font-medium hover:text-black hover:dark:text-white transition-all duration-200"
+                    href={link}
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="hover:text-white transition flex items-center gap-1"
                   >
-                    {item.label} (External)
+                    {label}
+                    <FaExternalLinkAlt className="inline-block text-xs" />
                   </a>
                 ) : (
-                  <Link href={item.link} key={index} legacyBehavior={true}>
-                    <a className="relative font-medium hover:text-black hover:dark:text-white transition-all duration-200">
-                      {item.label}
-                    </a>
+                  <Link href={link} legacyBehavior>
+                    <a className="hover:text-white transition">{label}</a>
                   </Link>
                 )}
               </li>
             ))}
           </ul>
-        </div>
 
-        <div className="col-span-4 flex flex-col lg:flex-row justify-between items-center pt-2 md:pt-4 lg:pt-6 border-t border-slate-850 mt-2 md:mt-4 lg:mt-6">
-          <p className="text-slate-600 dark:text-zinc-400 font-medium">
-            &copy; {new Date().getFullYear()} © Purrquinox. All rights reserved.
-          </p>
+          <div className="text-sm text-zinc-500 border-t border-zinc-800 pt-6 text-center">
+            &copy; {new Date().getFullYear()} Purrquinox. All rights reserved.
+          </div>
         </div>
       </footer>
     </div>

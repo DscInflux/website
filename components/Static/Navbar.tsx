@@ -1,45 +1,61 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { signIn, signOut, useSession } from "next-auth/react";
 import {
   FaHome,
   FaCompass,
-  FaHandshake,
   FaUsers,
   FaCogs,
-  FaBars,
-  FaUser,
   FaDiscord,
+  FaUserPlus,
+  FaSignOutAlt,
+  FaBars,
+  FaTimes,
+  FaEdit,
+  FaEye,
 } from "react-icons/fa";
-import { useSession, signIn, signOut } from "next-auth/react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import ThemeSelector from "./ThemeSwitcher";
 
-export default function Navbar() {
-  const { data: session } = useSession();
+const Navbar: React.FC = () => {
   const pathname = usePathname();
-  const [menuOpen, setMenuOpen] = useState(false);
-  // Fetch entity for current user
-  const [entityUrl, setEntityUrl] = React.useState<string | null>(null);
-  React.useEffect(() => {
+  const { data: session } = useSession();
+  const [entityUrl, setEntityUrl] = useState<string | null>(null);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
     if (!session) return;
     fetch("/api/auth/me")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data && data.entity && data.entity.url) {
-          setEntityUrl(data.entity.url);
-        } else {
-          setEntityUrl(null);
-        }
+        if (data?.entity?.url) setEntityUrl(data.entity.url);
+        else setEntityUrl(null);
       })
       .catch(() => setEntityUrl(null));
   }, [session]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogin = () => signIn("discord", { callbackUrl: pathname });
+  const handleLogout = () => signOut({ callbackUrl: "/" });
+
   const items = [
     { label: "Home", icon: <FaHome />, link: "/" },
     { label: "Explore", icon: <FaCompass />, link: "/explore" },
-    { label: "Partners", icon: <FaHandshake />, link: "/partners" },
     { label: "Team", icon: <FaUsers />, link: "/team" },
     {
       label: "Discord",
@@ -49,177 +65,194 @@ export default function Navbar() {
     },
   ];
 
-  const handleLogin = () => signIn("discord", { callbackUrl: pathname });
-  const handleLogout = () => signOut();
-
   return (
-    <div className="w-full flex justify-center px-6 sm:px-10 3xl:px-0 font-jakarta z-50 relative">
-      <nav className="w-full max-w-7xl py-5 grid grid-cols-12 items-center">
-        {/* Left section */}
-        <div className="col-span-6 lg:col-span-4 flex items-center gap-4">
-          <Link href="/" legacyBehavior>
-            <a className="text-2xl font-bold tracking-tight text-black dark:text-white">
-              DscInflux
-            </a>
-          </Link>
-          <div className="hidden lg:flex gap-6">
-            {items.map((item) => (
+    <nav className="w-full z-50 relative">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <Link
+          href="/"
+          className="text-2xl font-bold text-black dark:text-white"
+        >
+          DscInflux
+        </Link>
+
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center space-x-6">
+          {items.map((item) =>
+            item.external ? (
+              <a
+                key={item.label}
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-1 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </a>
+            ) : (
               <Link
                 key={item.label}
                 href={item.link}
-                legacyBehavior
-                {...(item.external
-                  ? { target: "_blank", rel: "noopener noreferrer" }
-                  : {})}
+                className="flex items-center space-x-1 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
               >
-                <a className="text-sm text-slate-600 dark:text-zinc-400 hover:text-primary hover:dark:text-white font-medium transition duration-200 flex items-center gap-1">
-                  {item.icon}
-                  {item.label}
-                </a>
+                {item.icon}
+                <span>{item.label}</span>
               </Link>
-            ))}
-          </div>
-        </div>
+            ),
+          )}
 
-        {/* Right section */}
-        <div className="col-span-6 lg:col-span-8 flex justify-end items-center gap-4">
-          {/* Mobile Hamburger */}
-          <div className="lg:hidden">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="p-3 rounded-lg border border-transparent hover:bg-black/5 dark:hover:bg-white/5 transition"
-            >
-              <FaBars className="text-lg" />
-            </button>
-            {menuOpen && (
-              <div className="absolute top-20 right-6 w-60 bg-white dark:bg-zinc-900 rounded-lg shadow-2xl py-4 z-50 animate-fade-in-up">
-                {items.map((item) => (
-                  <Link
-                    key={item.label}
-                    href={item.link}
-                    legacyBehavior
-                    {...(item.external
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                  >
-                    <a className="block px-5 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded transition">
-                      {item.label}
-                    </a>
-                  </Link>
-                ))}
-                <div className="px-5 py-2">
-                  <ThemeSelector />
-                </div>
-                {session ? (
-                  <>
-                    {entityUrl ? (
-                      <>
-                        <Link href={"/user/new"} legacyBehavior>
-                          <a className="block px-5 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200">
-                            Edit your profile
-                          </a>
-                        </Link>
-                        <Link href={`/${entityUrl}`} legacyBehavior>
-                          <a className="block px-5 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200">
-                            View your profile
-                          </a>
-                        </Link>
-                      </>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          setMenuOpen(false);
-                          window.location.href = "/user/new";
-                        }}
-                        className="block w-full text-left px-5 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
-                      >
-                        Register your profile
-                      </button>
-                    )}
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-5 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
-                    >
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={handleLogin}
-                    className="w-full text-left px-5 py-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 transition flex items-center gap-2"
-                  >
-                    <FaDiscord /> Login
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
+          {session ? (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen((prev) => !prev)}
+                className="flex items-center space-x-2 focus:outline-none"
+              >
+                <img
+                  src={session.user?.avatar || ""}
+                  alt="avatar"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+                <span className="text-gray-800 dark:text-white font-medium">
+                  {session.user?.display_name ||
+                    session.user?.username ||
+                    "User"}
+                </span>
+              </button>
 
-          {/* Desktop user + theme */}
-          <div className="hidden lg:flex items-center gap-3">
-            {session ? (
-              <div className="relative group">
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition">
-                  {session.user?.avatar ? (
-                    <img
-                      src={session.user.avatar}
-                      alt="avatar"
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <FaUser className="text-xl" />
-                  )}
-                  <span className="text-sm font-medium text-black dark:text-white">
-                    {session.user?.display_name ||
-                      session.user?.username ||
-                      session.user?.name}
-                  </span>
-                </button>
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-zinc-800 rounded-md shadow-lg z-20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-lg rounded-md py-2 z-50">
                   {entityUrl ? (
                     <>
-                      <Link href={"/user/new"} legacyBehavior={true}>
-                        <a className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200">
-                          Edit your profile
-                        </a>
+                      <Link
+                        href="/user/new"
+                        className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
+                      >
+                        <FaEdit className="mr-2" />
+                        Edit Profile
                       </Link>
-                      <Link href={`/${entityUrl}`} legacyBehavior={true}>
-                        <a className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200">
-                          View your profile
-                        </a>
+                      <Link
+                        href={`/user/${entityUrl}`}
+                        className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
+                      >
+                        <FaEye className="mr-2" />
+                        View Profile
                       </Link>
                     </>
                   ) : (
                     <button
-                      onClick={() => {
-                        window.location.href = "/user/new";
-                      }}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
+                      onClick={() => (window.location.href = "/user/new")}
+                      className="w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
                     >
-                      Register your profile
+                      <FaUserPlus className="mr-2" />
+                      Register Profile
                     </button>
                   )}
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
+                    className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900"
                   >
+                    <FaSignOutAlt className="mr-2" />
                     Logout
                   </button>
                 </div>
-              </div>
-            ) : (
-              <button
-                onClick={handleLogin}
-                className="flex items-center gap-2 bg-primary text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition"
-              >
-                <FaDiscord className="text-base" />
-                Login
-              </button>
-            )}
-            <ThemeSelector />
-          </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+            >
+              <FaDiscord />
+              <span>Login</span>
+            </button>
+          )}
         </div>
-      </nav>
-    </div>
+
+        {/* Mobile toggle */}
+        <button
+          className="md:hidden text-2xl text-gray-800 dark:text-white"
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+        >
+          {isMobileOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      </div>
+
+      {/* Mobile Dropdown */}
+      {isMobileOpen && (
+        <div className="md:hidden px-4 pb-4 space-y-4">
+          {items.map((item) =>
+            item.external ? (
+              <a
+                key={item.label}
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </a>
+            ) : (
+              <Link
+                key={item.label}
+                href={item.link}
+                className="flex items-center space-x-2 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
+            ),
+          )}
+
+          {session ? (
+            <>
+              {entityUrl ? (
+                <>
+                  <Link
+                    href="/user/new"
+                    className="flex items-center space-x-2 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
+                  >
+                    <FaEdit />
+                    <span>Edit Profile</span>
+                  </Link>
+                  <Link
+                    href={`/user/${entityUrl}`}
+                    className="flex items-center space-x-2 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
+                  >
+                    <FaEye />
+                    <span>View Profile</span>
+                  </Link>
+                </>
+              ) : (
+                <button
+                  onClick={() => (window.location.href = "/user/new")}
+                  className="flex items-center space-x-2 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
+                >
+                  <FaUserPlus />
+                  <span>Register Profile</span>
+                </button>
+              )}
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-2 text-red-600 hover:text-red-800"
+              >
+                <FaSignOutAlt />
+                <span>Logout</span>
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+            >
+              <FaDiscord />
+              <span>Login</span>
+            </button>
+          )}
+        </div>
+      )}
+    </nav>
   );
-}
+};
+
+export default Navbar;
