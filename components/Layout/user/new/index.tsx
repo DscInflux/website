@@ -312,8 +312,19 @@ export default function EditProfilePage({
           body: formData,
         });
         const resp = await e.json();
-        if (type === "avatar") setAvatar(`${API_URL}/${resp.key}`);
-        if (type === "banner") setBanner(`${API_URL}/${resp.key}`);
+        let newUrl = `${API_URL}/${resp.key}`;
+        if (type === "avatar") setAvatar(newUrl);
+        if (type === "banner") setBanner(newUrl);
+        // Immediately update the DB with the new image and always send both avatar and banner
+        const payload = {
+          avatar: type === "avatar" ? newUrl : avatar,
+          banner: type === "banner" ? newUrl : banner,
+        };
+        await fetch("/api/post/entity/edit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
         setUploading(false);
       } catch (err) {
         setUploading(false);
