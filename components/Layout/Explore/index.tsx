@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import type { Entity } from "@/types/entity";
@@ -266,138 +266,140 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="max-w-7xl w-full py-24">
-        <div className="lg:grid grid-cols-1 lg:grid-cols-12 gap-6 px-10 2xl:px-0">
-          <div className="col-span-3 2xl:col-span-2">
-            <div className="flex items-center justify-between border-b border-zinc-500/5 pb-4">
-              <h1 className="text-2xl text-black dark:text-white lg:pb-2 font-bold flex items-center gap-2">
-                Users
-              </h1>
-              <Link
-                href={{ pathname }}
-                className="hidden lg:block text-primary text-sm font-light hover:underline"
-              >
-                Reset all filters
-              </Link>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="flex flex-col items-center justify-center">
+        <div className="max-w-7xl w-full py-24">
+          <div className="lg:grid grid-cols-1 lg:grid-cols-12 gap-6 px-10 2xl:px-0">
+            <div className="col-span-3 2xl:col-span-2">
+              <div className="flex items-center justify-between border-b border-zinc-500/5 pb-4">
+                <h1 className="text-2xl text-black dark:text-white lg:pb-2 font-bold flex items-center gap-2">
+                  Users
+                </h1>
+                <Link
+                  href={{ pathname }}
+                  className="hidden lg:block text-primary text-sm font-light hover:underline"
+                >
+                  Reset all filters
+                </Link>
+              </div>
+              <div className="hidden lg:flex flex-col gap-4 mt-4 space-y-6">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
+                      Sorting
+                    </h1>
+                    <Link
+                      href={{
+                        pathname,
+                        query: { ...getQueryObject(), sort: undefined },
+                      }}
+                      className="text-primary text-sm font-light hover:underline"
+                    >
+                      Reset
+                    </Link>
+                  </div>
+                  <RadioGroup
+                    items={sortings}
+                    value={active}
+                    onChange={handleSortChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
+                      Language
+                    </h1>
+                    <Link
+                      href={{
+                        pathname,
+                        query: { ...getQueryObject(), language: undefined },
+                      }}
+                      className="text-primary text-sm font-light hover:underline"
+                    >
+                      Reset
+                    </Link>
+                  </div>
+                  <RadioGroup
+                    items={languages.map((el) => ({ label: el }))}
+                    value={language}
+                    onChange={handleLanguageChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
+                      Roles
+                    </h1>
+                    <Link
+                      href={{
+                        pathname,
+                        query: { ...getQueryObject(), roles: undefined },
+                      }}
+                      className="text-primary text-sm font-light hover:underline"
+                    >
+                      Reset
+                    </Link>
+                  </div>
+                  <CheckboxGroup
+                    items={roles.map((el) => ({ label: el.name }))}
+                    value={
+                      getQueryObject().roles
+                        ? getQueryObject().roles.split(",")
+                        : []
+                    }
+                    onChange={handleRolesChange}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
+                      Skills
+                    </h1>
+                    <Link
+                      href={{
+                        pathname,
+                        query: { ...getQueryObject(), skills: undefined },
+                      }}
+                      className="text-primary text-sm font-light hover:underline"
+                    >
+                      Reset
+                    </Link>
+                  </div>
+                  <CheckboxGroup
+                    items={skills.map((el) => ({ label: el.name }))}
+                    value={
+                      getQueryObject().skills
+                        ? getQueryObject().skills.split(",")
+                        : []
+                    }
+                    onChange={handleSkillsChange}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="hidden lg:flex flex-col gap-4 mt-4 space-y-6">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
-                    Sorting
-                  </h1>
-                  <Link
-                    href={{
-                      pathname,
-                      query: { ...getQueryObject(), sort: undefined },
-                    }}
-                    className="text-primary text-sm font-light hover:underline"
-                  >
-                    Reset
-                  </Link>
-                </div>
-                <RadioGroup
-                  items={sortings}
-                  value={active}
-                  onChange={handleSortChange}
+            <InfiniteScrollComponent
+              url={`/api/get/entity/explore?page=%s&limit=9${searchParams.toString() ? `&${searchParams.toString()}` : ""}`}
+              dataPath={["data", "users"]}
+              container="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 w-full"
+              upperContainer="col-span-9 2xl:col-span-10 w-full"
+              preRenderCount={9}
+              preRender={(_, i) => (
+                <MiniCard key={i} entity={{} as Entity} isSkeleton />
+              )}
+              itemsCount={12}
+              render={(item, i) => (
+                <MiniCard
+                  key={i}
+                  entity={{
+                    ...item,
+                    isLiked: user ? item.like?.includes(user.id) : false,
+                  }}
                 />
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
-                    Language
-                  </h1>
-                  <Link
-                    href={{
-                      pathname,
-                      query: { ...getQueryObject(), language: undefined },
-                    }}
-                    className="text-primary text-sm font-light hover:underline"
-                  >
-                    Reset
-                  </Link>
-                </div>
-                <RadioGroup
-                  items={languages.map((el) => ({ label: el }))}
-                  value={language}
-                  onChange={handleLanguageChange}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
-                    Roles
-                  </h1>
-                  <Link
-                    href={{
-                      pathname,
-                      query: { ...getQueryObject(), roles: undefined },
-                    }}
-                    className="text-primary text-sm font-light hover:underline"
-                  >
-                    Reset
-                  </Link>
-                </div>
-                <CheckboxGroup
-                  items={roles.map((el) => ({ label: el.name }))}
-                  value={
-                    getQueryObject().roles
-                      ? getQueryObject().roles.split(",")
-                      : []
-                  }
-                  onChange={handleRolesChange}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
-                    Skills
-                  </h1>
-                  <Link
-                    href={{
-                      pathname,
-                      query: { ...getQueryObject(), skills: undefined },
-                    }}
-                    className="text-primary text-sm font-light hover:underline"
-                  >
-                    Reset
-                  </Link>
-                </div>
-                <CheckboxGroup
-                  items={skills.map((el) => ({ label: el.name }))}
-                  value={
-                    getQueryObject().skills
-                      ? getQueryObject().skills.split(",")
-                      : []
-                  }
-                  onChange={handleSkillsChange}
-                />
-              </div>
-            </div>
+              )}
+            />
           </div>
-          <InfiniteScrollComponent
-            url={`/api/get/entity/explore?page=%s&limit=9${searchParams.toString() ? `&${searchParams.toString()}` : ""}`}
-            dataPath={["data", "users"]}
-            container="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 w-full"
-            upperContainer="col-span-9 2xl:col-span-10 w-full"
-            preRenderCount={9}
-            preRender={(_, i) => (
-              <MiniCard key={i} entity={{} as Entity} isSkeleton />
-            )}
-            itemsCount={12}
-            render={(item, i) => (
-              <MiniCard
-                key={i}
-                entity={{
-                  ...item,
-                  isLiked: user ? item.like?.includes(user.id) : false,
-                }}
-              />
-            )}
-          />
         </div>
       </div>
-    </div>
+    </Suspense>
   );
 }
