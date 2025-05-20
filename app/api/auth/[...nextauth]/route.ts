@@ -1,8 +1,9 @@
 import NextAuth from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 import { prisma } from '@/lib/db/prisma';
+import type { Account, Profile, User as NextAuthUser, Session } from 'next-auth';
 
-const handler = NextAuth({
+const authOptions = {
   providers: [
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID!,
@@ -11,7 +12,7 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account, profile }: { user: NextAuthUser; account: Account | null; profile?: Profile | undefined }) {
       const discordProfile = profile as {
         id: string;
         username: string;
@@ -51,7 +52,7 @@ const handler = NextAuth({
             public_flags: 0,
             banner: discordProfile.banner
               ? `https://cdn.discordapp.com/banners/${discordProfile.id}/${discordProfile.banner}.png`
-              : undefined,
+              : '',
             banner_color: '',
             avatar_decoration: '',
             is_banned: false,
@@ -64,14 +65,14 @@ const handler = NextAuth({
       }
       return true;
     },
-    async jwt({ token, account, user, profile }) {
+    async jwt({ token, account, user, profile }: { token: any; account?: Account | null; user?: NextAuthUser; profile?: Profile | undefined }) {
       const discordProfile = profile as {
         id?: string;
         username?: string;
         global_name?: string;
         avatar?: string;
       };
-      if (account) {
+      if (account && user) {
         token.access_token = account.access_token ?? '';
         token.id = user.id;
         if (discordProfile) {
@@ -84,7 +85,7 @@ const handler = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: any }) {
       if (token) {
         session.user.id = token.id;
         session.user.access_token = token.access_token;
@@ -97,8 +98,10 @@ const handler = NextAuth({
   },
   secret: process.env.NEXT_AUTH_SECRET,
   session: {
-    strategy: 'jwt',
+    strategy: 'jwt' as const,
   },
-});
+};
 
-export { handler as GET, handler as POST };
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST, authOptions };
