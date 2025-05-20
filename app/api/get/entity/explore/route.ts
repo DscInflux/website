@@ -121,6 +121,7 @@ export async function GET(req: NextRequest) {
         isDeveloper: true,
         isPartner: true,
         staff: true,
+        avatar: true,
         createdAt: true,
         id: true,
         likes: true,
