@@ -161,6 +161,10 @@ export default function EditProfilePage({
 
   const [user, setUser] = useState<any>(null);
 
+  // New state for pronouns and website
+  const [pronouns, setPronouns] = useState("");
+  const [website, setWebsite] = useState("");
+
   useEffect(() => {
     async function fetchEntity() {
       setLoading(true);
@@ -193,6 +197,8 @@ export default function EditProfilePage({
             setIsLocationPrivate(data.entity.isLocationPrivate ?? true);
             setIsGenderPrivate(data.entity.isGenderPrivate ?? true);
             setLanguage(data.entity.language || "");
+            setPronouns(data.entity.pronouns || "");
+            setWebsite(data.entity.website || "");
           }
         }
       } catch (e) {
@@ -210,7 +216,8 @@ export default function EditProfilePage({
     setSuccess(null);
     setSaving(true);
 
-    const payload = {
+    // Only include banner/avatar if not empty string, otherwise let backend use default
+    const payload: any = {
       about,
       email,
       url,
@@ -221,9 +228,9 @@ export default function EditProfilePage({
       socials,
       skills,
       roles,
-      banner,
-      avatar,
       language,
+      pronouns,
+      website,
       privacy: {
         isShow,
         isEmailPrivate,
@@ -231,7 +238,10 @@ export default function EditProfilePage({
         isLocationPrivate,
         isGenderPrivate,
       },
+      staff: false,
     };
+    if (banner && banner.trim() !== "") payload.banner = banner;
+    if (avatar && avatar.trim() !== "") payload.avatar = avatar;
 
     try {
       const res = await fetch(
@@ -251,6 +261,7 @@ export default function EditProfilePage({
             ? "Profile updated successfully!"
             : "Profile created successfully!",
         );
+        // Only redirect if isSubmit is true and the user actually clicked the submit button
         if (isSubmit && data.entity?.url) {
           router.push("/user/" + data.entity.url);
         }
@@ -315,16 +326,18 @@ export default function EditProfilePage({
         let newUrl = `${API_URL}/${resp.key}`;
         if (type === "avatar") setAvatar(newUrl);
         if (type === "banner") setBanner(newUrl);
-        // Immediately update the DB with the new image and always send both avatar and banner
-        const payload = {
-          avatar: type === "avatar" ? newUrl : avatar,
-          banner: type === "banner" ? newUrl : banner,
-        };
-        await fetch("/api/post/entity/edit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+        // Only update DB if in edit mode
+        if (isEdit) {
+          const payload = {
+            avatar: type === "avatar" ? newUrl : avatar,
+            banner: type === "banner" ? newUrl : banner,
+          };
+          await fetch("/api/post/entity/edit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        }
         setUploading(false);
       } catch (err) {
         setUploading(false);
@@ -685,6 +698,32 @@ export default function EditProfilePage({
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             Separate multiple occupations with commas
                           </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Pronouns
+                          </label>
+                          <input
+                            type="text"
+                            value={pronouns}
+                            onChange={(e) => setPronouns(e.target.value)}
+                            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3.5 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
+                            placeholder="e.g. He/Him, She/Her, They/Them"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Website
+                          </label>
+                          <input
+                            type="text"
+                            value={website}
+                            onChange={(e) => setWebsite(e.target.value)}
+                            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3.5 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
+                            placeholder="https://yourwebsite.com"
+                          />
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
