@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
       case "oldest":
         return { createdAt: "asc" as const };
       case "popular":
-        return { like: "desc" as const };
+        return { likes: "desc" as const };
       case "newest":
       default:
         return { createdAt: "desc" as const };
