@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DscInflux
+
+DscInflux is a modern web platform for discovering and connecting with people who share your interests, primarily focused on Discord users. Built with Next.js, Prisma, and Tailwind CSS, it offers a beautiful, responsive UI and a rich set of features for both end-users and administrators.
+
+## Features
+
+- **User Profiles:** Create, edit, and showcase your Discord profile, including skills, roles, languages, and social links.
+- **Explore:** Find users by sorting (newest, oldest, popular, random) and filter by language, roles, and skills.
+- **Stats Dashboard:** View live statistics about users and entities on the platform.
+- **Team Page:** Meet the staff and contributors behind DscInflux.
+- **Admin Panel:** Manage users and entities, including banning and verifying users (admin only).
+- **Authentication:** Secure login via Discord OAuth using NextAuth.js.
+- **Modern UI:** Built with Tailwind CSS, Framer Motion, and React Icons for a sleek, animated experience.
+
+## Tech Stack
+
+- **Next.js** (App Router)
+- **TypeScript**
+- **Prisma ORM** (PostgreSQL)
+- **NextAuth.js** (Discord provider)
+- **Tailwind CSS**
+- **Framer Motion** (animations)
+- **React Icons**
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/yourusername/dscinflux.git
+   cd dscinflux
+   ```
+2. **Install dependencies:**
+   ```sh
+   bun install
+   # or
+   npm install
+   ```
+3. **Set up environment variables:**
+   - Copy `.env.example` to `.env` and fill in your Discord and database credentials.
+4. **Run database migrations:**
+   ```sh
+   bun run db:push
+   # or
+   npx prisma db push
+   ```
+5. **Start the development server:**
+   ```sh
+   bun run dev
+   # or
+   npm run dev
+   ```
+6. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Scripts
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `dev` – Start the development server
+- `build` – Build for production
+- `start` – Start the production server
+- `db:push` – Push Prisma schema to the database
+- `db:studio` – Open Prisma Studio
+- `lint` – Lint the codebase
+- `format` – Format code with Prettier
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Folder Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/` – Next.js app directory (routes, pages, API)
+- `components/` – Reusable React components (UI, layouts, cards)
+- `lib/` – Database and utility libraries
+- `prisma/` – Prisma schema and migrations
+- `types/` – TypeScript types
 
-## Learn More
+## Contributing
 
-To learn more about Next.js, take a look at the following resources:
+Contributions are welcome! Please open issues or pull requests for improvements or bug fixes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
