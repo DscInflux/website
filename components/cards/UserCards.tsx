@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -23,6 +23,10 @@ const MiniCard: React.FC<MiniCardProps> = ({
   isLiked = false,
 }) => {
   const [liked, setLiked] = useState(isLiked);
+
+  useEffect(() => {
+    setLiked(isLiked);
+  }, [isLiked]);
 
   async function sendRequest(endpoint: string, method: string) {
     try {

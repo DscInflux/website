@@ -137,10 +137,8 @@ const HeroLayout: React.FC = () => {
                 ? slides.map((entity) => (
                     <MiniCard
                       key={entity.id}
-                      entity={{
-                        ...entity,
-                        isLiked: user ? entity.like?.includes(user.id) : false,
-                      }}
+                      entity={entity}
+                      isLiked={user ? entity.likes?.includes(user.id) : false}
                     />
                   ))
                 : [<div key="no-users">No users found.</div>]
@@ -172,10 +170,8 @@ const HeroLayout: React.FC = () => {
                 ? slides.map((entity) => (
                     <MiniCard
                       key={entity.id}
-                      entity={{
-                        ...entity,
-                        isLiked: user ? entity.like?.includes(user.id) : false,
-                      }}
+                      entity={entity}
+                      isLiked={user ? entity.likes?.includes(user.id) : false}
                     />
                   ))
                 : [<div key="no-users">No users found.</div>]
@@ -207,10 +203,8 @@ const HeroLayout: React.FC = () => {
                 ? slides.map((entity) => (
                     <MiniCard
                       key={entity.id}
-                      entity={{
-                        ...entity,
-                        isLiked: user ? entity.like?.includes(user.id) : false,
-                      }}
+                      entity={entity}
+                      isLiked={user ? entity.likes?.includes(user.id) : false}
                     />
                   ))
                 : [<div key="no-users">No users found.</div>]

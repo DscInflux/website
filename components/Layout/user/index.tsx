@@ -41,7 +41,6 @@ export default function UserProfile({ username }: { username: string }) {
         }
         const userData = await response.json();
         setData(userData);
-        setLiked(userData.isLiked || false);
         setLikes(userData.likes?.length || 0);
       } catch (err) {
         setError("Failed to load user profile");
@@ -60,6 +59,15 @@ export default function UserProfile({ username }: { username: string }) {
     fetchUser();
     fetchCurrentUser();
   }, [username]);
+
+  // Set liked when both data and user are available
+  useEffect(() => {
+    if (data && user) {
+      setLiked(data.likes?.includes(user.id) || false);
+    } else if (data && !user) {
+      setLiked(false);
+    }
+  }, [data, user]);
 
   const toggleLike = async () => {
     if (!data) return;
