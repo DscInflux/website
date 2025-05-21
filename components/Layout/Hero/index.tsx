@@ -78,7 +78,7 @@ const HeroLayout: React.FC = () => {
             className="text-center lg:text-left w-full lg:max-w-2xl"
           >
             <div className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full mb-6 font-medium text-sm">
-              Discord Friend Finder
+              Find people the right way.
             </div>
             <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-black dark:text-white relative">
               Start <span className="text-primary relative">Finding <span className="absolute -bottom-2 left-0 w-full h-2 bg-primary/20 rounded-full"></span></span> Friends
