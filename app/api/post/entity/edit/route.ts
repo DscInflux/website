@@ -30,6 +30,34 @@ const entityEditSchema = z.object({
     .optional(),
 });
 
+// Social options for normalization (must match frontend)
+const SOCIAL_OPTIONS = [
+  { name: "Github", url: "https://github.com/{username}" },
+  { name: "Twitter/X", url: "https://x.com/{username}" },
+  { name: "Facebook", url: "https://facebook.com/{username}" },
+  { name: "Instagram", url: "https://instagram.com/{username}" },
+  { name: "LinkedIn", url: "https://linkedin.com/in/{username}" },
+  { name: "StackOverflow", url: "https://stackoverflow.com/users/{username}" },
+  { name: "Reddit", url: "https://reddit.com/user/{username}" },
+  { name: "YouTube", url: "https://youtube.com/channel/{username}" },
+  { name: "Steam", url: "https://steamcommunity.com/{username}" },
+  { name: "Twitch", url: "https://www.twitch.tv/{username}" },
+  { name: "MyAnimeList", url: "https://myanimelist.net/profile/{username}" },
+];
+
+function normalizeSocials(socials: any[] = []) {
+  return socials.map((social) => {
+    const config = SOCIAL_OPTIONS.find((s) => s.name === social.name);
+    if (config && social.username) {
+      return {
+        ...social,
+        url: config.url.replace("{username}", social.username),
+      };
+    }
+    return social;
+  });
+}
+
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user?.id) {
@@ -75,6 +103,13 @@ export async function POST(req: NextRequest) {
     updateData.isPronounsPrivate =
       data.privacy.isPronounsPrivate ?? entity.isPronounsPrivate;
     delete updateData.privacy;
+  }
+
+  // Normalize socials
+  if (data.socials) {
+    updateData.socials = normalizeSocials(data.socials);
+  } else {
+    updateData.socials = entity.socials;
   }
 
   // Convert birthday to Date if present

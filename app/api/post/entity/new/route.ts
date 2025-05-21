@@ -124,7 +124,6 @@ export async function POST(req: NextRequest) {
     discordId: session.user.id,
     isDeveloper: false,
     isPartner: false,
-    isPremium: false,
     isVerified: false,
     like: [],
     views: [],
