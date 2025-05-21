@@ -1,5 +1,5 @@
 import Explore from "@/components/Layout/Explore";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 
 const ExploresPage = () => {
   return (
