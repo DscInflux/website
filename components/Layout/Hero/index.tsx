@@ -149,7 +149,7 @@ const HeroLayout: React.FC = () => {
                 
                 <div className="absolute top-10 right-10 w-32 h-32 rounded-xl overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg">
                   <Image 
-                    src="/placeholder.svg?height=128&width=128" 
+                    src="https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75" 
                     alt="Discord user" 
                     width={128} 
                     height={128}
