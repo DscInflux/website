@@ -28,13 +28,22 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     if (!session) return;
-    fetch("/api/auth/me")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.entity?.url) setEntityUrl(data.entity.url);
-        else setEntityUrl(null);
-      })
-      .catch(() => setEntityUrl(null));
+    // Prefer to use the user's id (discordId) to fetch their entity, since username/url may not match
+    if (session.user?.id) {
+      fetch(`/api/get/entity?discordId=${session.user.id}`)
+        .then(async (res) => {
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.url) setEntityUrl(data.url);
+            else setEntityUrl(null);
+          } else {
+            setEntityUrl(null);
+          }
+        })
+        .catch(() => setEntityUrl(null));
+    } else {
+      setEntityUrl(null);
+    }
   }, [session]);
 
   useEffect(() => {
@@ -146,6 +155,16 @@ const Navbar: React.FC = () => {
                       <FaUserPlus className="mr-2" />
                       Register Profile
                     </button>
+                  )}
+                  {/* Admin Option */}
+                  {session.user?.is_admin && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 text-indigo-600 dark:text-indigo-400 font-semibold"
+                    >
+                      <FaCogs className="mr-2" />
+                      Admin
+                    </Link>
                   )}
                   <button
                     onClick={handleLogout}

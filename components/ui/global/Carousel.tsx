@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 type CarouselProps<T> = {
   header: (
@@ -34,41 +33,22 @@ export default function Carousel<T>({
   const slideChunk = slides.slice(page * perPage, page * perPage + perPage);
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-4">
       {header(handleNext, handlePrev, isPrev, isNext)}
 
-      <div className="relative">
-        {/* Arrows */}
-        {isPrev && (
-          <button
-            onClick={handlePrev}
-            className="absolute left-0 z-10 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 dark:bg-black/30 dark:hover:bg-black/60 backdrop-blur p-3 rounded-full shadow"
-            aria-label="Previous"
+      <div className="relative overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={page}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            <FaChevronLeft className="text-xl text-black dark:text-white" />
-          </button>
-        )}
-
-        {isNext && (
-          <button
-            onClick={handleNext}
-            className="absolute right-0 z-10 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 dark:bg-black/30 dark:hover:bg-black/60 backdrop-blur p-3 rounded-full shadow"
-            aria-label="Next"
-          >
-            <FaChevronRight className="text-xl text-black dark:text-white" />
-          </button>
-        )}
-
-        <motion.div
-          key={page}
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -100, opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {children(slideChunk)}
-        </motion.div>
+            {children(slideChunk)}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

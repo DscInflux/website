@@ -1,23 +1,19 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  FaHeart,
-  FaRegHeart,
-  FaUserShield,
-  FaCode,
-  FaHandshake,
-} from "react-icons/fa";
-import { CheckCircle } from "lucide-react";
+import { FaHeart, FaRegHeart, FaUserShield, FaCode, FaHandshake } from "react-icons/fa";
+import { FaCircleCheck } from "react-icons/fa6";
 import { motion } from "framer-motion";
 
-type MiniCardProps = {
+type UserCardProps = {
   entity: any;
   isSkeleton?: boolean;
   isLiked?: boolean;
 };
 
-const MiniCard: React.FC<MiniCardProps> = ({
+const UserCard: React.FC<UserCardProps> = ({
   entity,
   isSkeleton = false,
   isLiked = false,
@@ -64,7 +60,7 @@ const MiniCard: React.FC<MiniCardProps> = ({
 
   if (isSkeleton) {
     return (
-      <div className="w-full h-[350px] bg-light dark:bg-dark rounded-lg overflow-hidden animate-pulse p-4" />
+      <div className="w-full h-[250px] bg-gray-100 dark:bg-dark rounded-xl overflow-hidden animate-pulse p-4" />
     );
   }
 
@@ -73,16 +69,17 @@ const MiniCard: React.FC<MiniCardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="w-full h-[250px] w-[500px] bg-light dark:bg-dark rounded-lg overflow-hidden select-none p-4 flex flex-col justify-between"
+      transition={{ duration: 0.3 }}
+      className="w-full h-[250px] bg-white dark:bg-dark rounded-xl overflow-hidden select-none p-5 flex flex-col justify-between shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800"
     >
-      {/* --- Top: avatar + name --- */}
+      {/* Top: avatar + name */}
       <div className="flex items-center gap-4">
-        <div className="relative w-16 h-16 rounded-full ring-4 ring-light dark:ring-dark overflow-hidden">
+        <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-primary/20">
           <Image
             src={
               entity.avatar ||
               "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"
-            }
+             }
             alt={`${entity.discordUsername} avatar`}
             fill
             sizes="64px"
@@ -94,10 +91,10 @@ const MiniCard: React.FC<MiniCardProps> = ({
           />
         </div>
         <div>
-          <h1 className="text-black dark:text-white text-lg font-medium flex items-center gap-1">
+          <h1 className="text-black dark:text-white text-lg font-bold flex items-center gap-1.5">
             {entity.discordUsername}
             {entity.isVerified && (
-              <CheckCircle size={18} className="text-blue-500" />
+              <FaCircleCheck size={18} className="text-primary" />
             )}
             {entity.staff && (
               <FaUserShield className="text-red-500" title="Staff" />
@@ -109,39 +106,44 @@ const MiniCard: React.FC<MiniCardProps> = ({
               <FaHandshake className="text-yellow-500" title="Partner" />
             )}
           </h1>
-          <p className="text-sm text-black dark:text-gray-500 font-medium">
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
             @{entity.url}
           </p>
         </div>
       </div>
 
-      {/* --- Middle: about text --- */}
-      <p className="text-sm text-black/75 dark:text-gray-500 font-medium overflow-hidden flex-grow mt-4 line-clamp-3">
+      {/* Middle: about text */}
+      <p className="text-sm text-gray-600 dark:text-gray-300 font-medium overflow-hidden flex-grow mt-4 line-clamp-3">
         {typeof entity.about === "string"
           ? entity.about
           : JSON.stringify(entity.about)}
       </p>
 
-      {/* --- Bottom: actions --- */}
-      <div className="flex justify-end items-center gap-4 mt-4">
-        <Link href={`/user/${entity.url}`} legacyBehavior>
-          <a className="w-full h-12 inline-flex justify-center items-center border border-transparent rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            View Profile
-          </a>
+      {/* Bottom: actions */}
+      <div className="flex justify-between items-center gap-4 mt-4">
+        <Link 
+          href={`/user/${entity.url}`}
+          className="flex-grow py-2.5 px-4 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-medium transition-all duration-200 text-center"
+        >
+          View Profile
         </Link>
 
         <button
           onClick={toggleLike}
-          className="w-12 h-12 flex justify-center items-center bg-transparent border-none cursor-pointer text-red-600 text-xl"
+          className="w-10 h-10 flex justify-center items-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
           aria-pressed={liked}
           aria-label={liked ? "Unlike" : "Like"}
           type="button"
         >
-          {liked ? <FaHeart color="#ef4444" /> : <FaRegHeart />}
+          {liked ? (
+            <FaHeart className="text-red-500" size={18} />
+          ) : (
+            <FaRegHeart className="text-gray-500 dark:text-gray-400" size={18} />
+          )}
         </button>
       </div>
     </motion.div>
   );
 };
 
-export default MiniCard;
+export default UserCard;

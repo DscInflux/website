@@ -102,6 +102,20 @@ const authOptions = {
         global_name?: string;
         avatar?: string;
       };
+      // Always fetch the latest user from the database using discordId if available
+      let dbUser = null;
+      if (user && user.id) {
+        dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+      } else if (token && token.id) {
+        dbUser = await prisma.user.findUnique({ where: { id: token.id } });
+      }
+      if (dbUser) {
+        token.is_banned = dbUser.is_banned ?? false;
+        token.is_admin = dbUser.is_admin ?? false;
+      } else {
+        token.is_banned = user?.is_banned ?? false;
+        token.is_admin = user?.is_admin ?? false;
+      }
       if (account && user) {
         token.access_token = account.access_token ?? "";
         token.id = user.id;
@@ -127,6 +141,8 @@ const authOptions = {
           typeof token.username === "string" ? token.username : "";
         session.user.display_name =
           typeof token.display_name === "string" ? token.display_name : "";
+        session.user.is_banned = token.is_banned ?? false;
+        session.user.is_admin = token.is_admin ?? false;
       }
       return session;
     },

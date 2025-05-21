@@ -1,21 +1,36 @@
-"use client";
-import React, { Suspense, useEffect, useState } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import Link from "next/link";
-import type { Entity } from "@/types/entity";
-import type { User } from "@/types/users";
-import MiniCard from "@/components/cards/UserCards";
+"use client"
+
+import type React from "react"
+import { Suspense, useEffect, useState } from "react"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import type { Entity } from "@/types/entity"
+import UserCard from "@/components/cards/UserCards";
+import { useSession } from "next-auth/react"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+  HiOutlineAdjustments,
+  HiOutlineFilter,
+  HiOutlineRefresh,
+  HiOutlineSearch,
+  HiOutlineSortAscending,
+  HiOutlineSortDescending,
+  HiOutlineHeart,
+  HiOutlineSparkles,
+  HiOutlineX,
+  HiChevronDown,
+  HiChevronUp,
+} from "react-icons/hi"
 
 // InfiniteScrollComponent Props
 interface InfiniteScrollComponentProps {
-  url: string;
-  dataPath: string[];
-  container: string;
-  upperContainer: string;
-  preRenderCount: number;
-  preRender: (item: any, i: number) => React.ReactNode;
-  itemsCount: number;
-  render: (item: any, i: number) => React.ReactNode;
+  url: string
+  dataPath: string[]
+  container: string
+  upperContainer: string
+  preRenderCount: number
+  preRender: (item: any, i: number) => React.ReactNode
+  itemsCount: number
+  render: (item: any, i: number) => React.ReactNode
 }
 
 const InfiniteScrollComponent: React.FC<InfiniteScrollComponentProps> = ({
@@ -28,367 +43,508 @@ const InfiniteScrollComponent: React.FC<InfiniteScrollComponentProps> = ({
   itemsCount,
   render,
 }) => {
-  const [items, setItems] = useState<any[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [items, setItems] = useState<any[]>([])
+  const [page, setPage] = useState<number>(1)
+  const [hasMore, setHasMore] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch(url.replace("%s", page.toString()));
-      const data = await res.json();
-      const newItems = Array.isArray(data.data) ? data.data : [];
-      setItems((prevItems) => [...prevItems, ...newItems]);
-      setHasMore(newItems.length > 0);
-    };
-    fetchData();
-  }, [page, url]);
+      setIsLoading(true)
+      try {
+        const res = await fetch(url.replace("%s", page.toString()))
+        const data = await res.json()
+        const newItems = Array.isArray(data.data) ? data.data : []
+        setItems((prevItems) => [...prevItems, ...newItems])
+        setHasMore(newItems.length > 0)
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchData()
+  }, [page, url])
 
   useEffect(() => {
     const handleScroll = () => {
       if (
-        window.innerHeight + document.documentElement.scrollTop !==
-          document.documentElement.offsetHeight ||
-        !hasMore
+        window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight ||
+        !hasMore ||
+        isLoading
       )
-        return;
-      setPage((prevPage) => prevPage + 1);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasMore]);
+        return
+      setPage((prevPage) => prevPage + 1)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [hasMore, isLoading])
 
   return (
     <div className={upperContainer}>
       <div className={container}>
         {items.length === 0
-          ? Array.from({ length: preRenderCount }).map((_, i) =>
-              preRender(null, i),
-            )
+          ? Array.from({ length: preRenderCount }).map((_, i) => preRender(null, i))
           : items.map((item, i) => render(item, i))}
       </div>
+      {isLoading && items.length > 0 && (
+        <div className="flex justify-center mt-8 mb-12">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
     </div>
-  );
-};
+  )
+}
 
 // RadioGroup Props
 interface RadioGroupItem {
-  label: string;
-  value?: any;
-  icon?: any;
-  default?: boolean;
+  label: string
+  value?: any
+  icon?: React.ReactNode
+  default?: boolean
 }
+
 interface RadioGroupProps {
-  items: RadioGroupItem[];
-  value: number | null;
-  onChange: (item: RadioGroupItem) => void;
+  items: RadioGroupItem[]
+  value: number | null
+  onChange: (item: RadioGroupItem) => void
 }
+
 const RadioGroup: React.FC<RadioGroupProps> = ({ items, value, onChange }) => {
   return (
     <div className="space-y-2">
       {items.map((item, index) => (
-        <div key={index} className="flex items-center">
-          <input
-            type="radio"
-            id={`radio-${index}`}
-            name="radio-group"
-            checked={value === index}
-            onChange={() => onChange({ label: item.label, value: index })}
-            className="mr-2"
-          />
-          <label htmlFor={`radio-${index}`}>{item.label}</label>
-        </div>
+        <motion.div
+          key={index}
+          className={`flex items-center p-2 rounded-lg cursor-pointer transition-all ${
+            value === index ? "bg-primary/10 text-primary font-medium" : "hover:bg-gray-100 dark:hover:bg-gray-800"
+          }`}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => onChange({ label: item.label, value: item.value })}
+        >
+          <div
+            className={`w-4 h-4 rounded-full mr-3 flex items-center justify-center border ${
+              value === index ? "border-primary" : "border-gray-300 dark:border-gray-600"
+            }`}
+          >
+            {value === index && <div className="w-2 h-2 rounded-full bg-primary"></div>}
+          </div>
+          <div className="flex items-center gap-2">
+            {item.icon && <span>{item.icon}</span>}
+            <span>{item.label}</span>
+          </div>
+        </motion.div>
       ))}
     </div>
-  );
-};
+  )
+}
 
 // CheckboxGroup Props
 interface CheckboxGroupItem {
-  label: string;
+  label: string
 }
+
 interface CheckboxGroupProps {
-  items: CheckboxGroupItem[];
-  value: string[];
-  query?: any;
-  onChange: (value: string[]) => void;
+  items: CheckboxGroupItem[]
+  value: string[]
+  query?: any
+  onChange: (value: string[]) => void
 }
-const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
-  items,
-  value,
-  onChange,
-}) => {
+
+const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, value, onChange }) => {
   const handleCheckboxChange = (itemLabel: string) => {
-    const newValue = value.includes(itemLabel)
-      ? value.filter((v) => v !== itemLabel)
-      : [...value, itemLabel];
-    onChange(newValue);
-  };
+    const newValue = value.includes(itemLabel) ? value.filter((v) => v !== itemLabel) : [...value, itemLabel]
+    onChange(newValue)
+  }
+
   return (
     <div className="space-y-2">
       {items.map((item, index) => (
-        <div key={index} className="flex items-center">
-          <input
-            type="checkbox"
-            id={`checkbox-${index}`}
-            checked={value.includes(item.label)}
-            onChange={() => handleCheckboxChange(item.label)}
-            className="mr-2"
-          />
-          <label htmlFor={`checkbox-${index}`}>{item.label}</label>
-        </div>
+        <motion.div
+          key={index}
+          className={`flex items-center p-2 rounded-lg cursor-pointer transition-all ${
+            value.includes(item.label)
+              ? "bg-primary/10 text-primary font-medium"
+              : "hover:bg-gray-100 dark:hover:bg-gray-800"
+          }`}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => handleCheckboxChange(item.label)}
+        >
+          <div
+            className={`w-4 h-4 rounded mr-3 flex items-center justify-center ${
+              value.includes(item.label) ? "bg-primary border-primary" : "border border-gray-300 dark:border-gray-600"
+            }`}
+          >
+            {value.includes(item.label) && <HiOutlineX className="text-white" size={12} />}
+          </div>
+          <span>{item.label}</span>
+        </motion.div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default function Home() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const [active, setActive] = useState<number>(0);
-  const [language, setLanguage] = useState<number | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const meRes = await fetch("/api/auth/me");
-      const meData = meRes.ok ? await meRes.json() : null;
-      setUser(meData?.user || null);
-    };
-    fetchUser();
-  }, []);
+export default function ExplorePage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const { data: session } = useSession()
+  const [active, setActive] = useState<number>(0)
+  const [language, setLanguage] = useState<number | null>(null)
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [expandedSections, setExpandedSections] = useState({
+    sorting: true,
+    language: true,
+    roles: true,
+    skills: true,
+  })
+  const user = session?.user || null
 
   const sortings: RadioGroupItem[] = [
     {
       label: "Newest",
       value: "newest",
-      icon: { value: "fas fa-sort-amount-down", label: "Newest" },
+      icon: <HiOutlineSortDescending className="text-lg" />,
       default: true,
     },
     {
       label: "Oldest",
       value: "oldest",
-      icon: { value: "fas fa-sort-amount-up", label: "Oldest" },
+      icon: <HiOutlineSortAscending className="text-lg" />,
     },
     {
       label: "Popular",
       value: "popular",
-      icon: { value: "fas fa-heart", label: "Popular" },
+      icon: <HiOutlineHeart className="text-lg" />,
     },
     {
       label: "Random",
       value: "random",
-      icon: { value: "fas fa-random", label: "Random" },
+      icon: <HiOutlineSparkles className="text-lg" />,
     },
-  ];
-  const languages: string[] = [
-    "English",
-    "Spanish",
-    "French",
-    "German",
-    "Chinese",
-  ];
+  ]
+
+  const languages: string[] = ["English", "Spanish", "French", "German", "Chinese"]
+
   const roles = [
     { name: "Developer", slug: "developer" },
     { name: "Designer", slug: "designer" },
     { name: "Manager", slug: "manager" },
-  ];
+  ]
+
   const skills = [
     { name: "JavaScript", slug: "javascript" },
     { name: "Python", slug: "python" },
     { name: "Java", slug: "java" },
-  ];
+  ]
 
   // Helper to get query params as object
   function getQueryObject() {
-    const obj: Record<string, string> = {};
+    const obj: Record<string, string> = {}
     searchParams.forEach((value, key) => {
-      obj[key] = value;
-    });
-    return obj;
+      obj[key] = value
+    })
+    return obj
   }
 
   useEffect(() => {
-    const query = getQueryObject();
+    const query = getQueryObject()
     if (query.sort) {
-      const index = sortings.findIndex((item) => item.value === query.sort);
+      const index = sortings.findIndex((item) => item.value === query.sort)
       if (index !== -1) {
-        setActive(index);
+        setActive(index)
       } else {
-        const defaultIndex = sortings.findIndex((item) => item.default);
-        setActive(defaultIndex);
+        const defaultIndex = sortings.findIndex((item) => item.default)
+        setActive(defaultIndex)
       }
     } else {
-      const defaultIndex = sortings.findIndex((item) => item.default);
-      setActive(defaultIndex);
+      const defaultIndex = sortings.findIndex((item) => item.default)
+      setActive(defaultIndex)
     }
     if (query.language) {
-      const findIndex = languages.findIndex((item) => item === query.language);
+      const findIndex = languages.findIndex((item) => item === query.language)
       if (findIndex !== -1) {
-        setLanguage(findIndex);
+        setLanguage(findIndex)
       } else {
-        setLanguage(null);
+        setLanguage(null)
       }
     } else {
-      setLanguage(null);
+      setLanguage(null)
     }
-  }, [searchParams]);
+  }, [searchParams])
 
   // Helper to update query params
   function updateQuery(newQuery: Record<string, any>) {
-    const params = new URLSearchParams(getQueryObject());
+    const params = new URLSearchParams(getQueryObject())
     Object.entries(newQuery).forEach(([key, value]) => {
       if (value === undefined || value === null || value === "") {
-        params.delete(key);
+        params.delete(key)
       } else {
-        params.set(key, value);
+        params.set(key, value)
       }
-    });
-    router.push(`${pathname}?${params.toString()}`);
+    })
+    router.push(`${pathname}?${params.toString()}`)
   }
 
   const handleSortChange = (item: RadioGroupItem) => {
-    updateQuery({ sort: item.value });
-    setActive(sortings.findIndex((i) => i.value === item.value));
-  };
+    updateQuery({ sort: item.value })
+    setActive(sortings.findIndex((i) => i.value === item.value))
+  }
 
   const handleLanguageChange = (item: RadioGroupItem) => {
-    updateQuery({ language: item.label });
-    setLanguage(languages.findIndex((i) => i === item.label));
-  };
+    updateQuery({ language: item.label })
+    setLanguage(languages.findIndex((i) => i === item.label))
+  }
 
   const handleRolesChange = (selectedRoles: string[]) => {
-    updateQuery({ roles: selectedRoles.join(",") });
-  };
+    updateQuery({ roles: selectedRoles.join(",") })
+  }
 
   const handleSkillsChange = (selectedSkills: string[]) => {
-    updateQuery({ skills: selectedSkills.join(",") });
-  };
+    updateQuery({ skills: selectedSkills.join(",") })
+  }
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }))
+  }
+
+  const resetAllFilters = () => {
+    router.push(pathname)
+  }
+
+  const FilterSection = ({
+    title,
+    section,
+    resetQuery,
+    children,
+  }: {
+    title: string
+    section: keyof typeof expandedSections
+    resetQuery: Record<string, undefined>
+    children: React.ReactNode
+  }) => (
+    <div className="border-b border-gray-200 dark:border-gray-800 pb-4">
+      <div className="flex items-center justify-between py-3 cursor-pointer" onClick={() => toggleSection(section)}>
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          {title}
+          {Object.keys(resetQuery)[0] && getQueryObject()[Object.keys(resetQuery)[0]] && (
+            <span className="text-white text-xs font-medium px-2 py-0.5 rounded-full">Active</span>
+          )}
+        </h2>
+        <div className="flex items-center gap-2">
+          {Object.keys(resetQuery)[0] && getQueryObject()[Object.keys(resetQuery)[0]] && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                updateQuery(resetQuery)
+              }}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              aria-label="Reset filter"
+            >
+              <HiOutlineRefresh size={18} />
+            </button>
+          )}
+          {expandedSections[section] ? (
+            <HiChevronUp className="text-gray-500" />
+          ) : (
+            <HiChevronDown className="text-gray-500" />
+          )}
+        </div>
+      </div>
+      <AnimatePresence>
+        {expandedSections[section] && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div className="flex flex-col items-center justify-center">
-        <div className="max-w-7xl w-full py-24">
-          <div className="lg:grid grid-cols-1 lg:grid-cols-12 gap-6 px-10 2xl:px-0">
-            <div className="col-span-3 2xl:col-span-2">
-              <div className="flex items-center justify-between border-b border-zinc-500/5 pb-4">
-                <h1 className="text-2xl text-black dark:text-white lg:pb-2 font-bold flex items-center gap-2">
-                  Users
-                </h1>
-                <Link
-                  href={{ pathname }}
-                  className="hidden lg:block text-primary text-sm font-light hover:underline"
-                >
-                  Reset all filters
-                </Link>
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      }
+    >
+      <div className="min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Explore Users</h1>
+              <p className="mt-1 text-gray-500 dark:text-gray-400">
+                Find and connect with people from around the world who meet your interests.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <HiOutlineSearch
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
+                <input
+                  type="text"
+                  placeholder="Search users..."
+                  className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                />
               </div>
-              <div className="hidden lg:flex flex-col gap-4 mt-4 space-y-6">
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
-                      Sorting
-                    </h1>
-                    <Link
-                      href={{
-                        pathname,
-                        query: { ...getQueryObject(), sort: undefined },
-                      }}
-                      className="text-primary text-sm font-light hover:underline"
-                    >
-                      Reset
-                    </Link>
-                  </div>
-                  <RadioGroup
-                    items={sortings}
-                    value={active}
-                    onChange={handleSortChange}
-                  />
+
+              <button
+                onClick={() => setMobileFiltersOpen(true)}
+                className="md:hidden flex items-center gap-2 bg-white dark:bg-gray-800 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200"
+              >
+                <HiOutlineFilter size={20} />
+                Filters
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Sidebar Filters - Desktop */}
+            <div className="hidden md:block w-64 flex-shrink-0">
+              <div className="rounded-xl shadow-sm p-5 sticky top-20">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <HiOutlineAdjustments size={20} />
+                    Filters
+                  </h2>
+                  <button onClick={resetAllFilters} className="text-primary hover:text-primary/80 text-sm font-medium">
+                    Reset all
+                  </button>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
-                      Language
-                    </h1>
-                    <Link
-                      href={{
-                        pathname,
-                        query: { ...getQueryObject(), language: undefined },
-                      }}
-                      className="text-primary text-sm font-light hover:underline"
-                    >
-                      Reset
-                    </Link>
-                  </div>
+
+                <FilterSection title="Sort By" section="sorting" resetQuery={{ sort: undefined }}>
+                  <RadioGroup items={sortings} value={active} onChange={handleSortChange} />
+                </FilterSection>
+
+                <FilterSection title="Language" section="language" resetQuery={{ language: undefined }}>
                   <RadioGroup
                     items={languages.map((el) => ({ label: el }))}
                     value={language}
                     onChange={handleLanguageChange}
                   />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
-                      Roles
-                    </h1>
-                    <Link
-                      href={{
-                        pathname,
-                        query: { ...getQueryObject(), roles: undefined },
-                      }}
-                      className="text-primary text-sm font-light hover:underline"
-                    >
-                      Reset
-                    </Link>
-                  </div>
+                </FilterSection>
+
+                <FilterSection title="Roles" section="roles" resetQuery={{ roles: undefined }}>
                   <CheckboxGroup
                     items={roles.map((el) => ({ label: el.name }))}
-                    value={
-                      getQueryObject().roles
-                        ? getQueryObject().roles.split(",")
-                        : []
-                    }
+                    value={getQueryObject().roles ? getQueryObject().roles.split(",") : []}
                     onChange={handleRolesChange}
                   />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <h1 className="text-lg text-black dark:text-white pb-2 font-bold">
-                      Skills
-                    </h1>
-                    <Link
-                      href={{
-                        pathname,
-                        query: { ...getQueryObject(), skills: undefined },
-                      }}
-                      className="text-primary text-sm font-light hover:underline"
-                    >
-                      Reset
-                    </Link>
-                  </div>
+                </FilterSection>
+
+                <FilterSection title="Skills" section="skills" resetQuery={{ skills: undefined }}>
                   <CheckboxGroup
                     items={skills.map((el) => ({ label: el.name }))}
-                    value={
-                      getQueryObject().skills
-                        ? getQueryObject().skills.split(",")
-                        : []
-                    }
+                    value={getQueryObject().skills ? getQueryObject().skills.split(",") : []}
                     onChange={handleSkillsChange}
                   />
-                </div>
+                </FilterSection>
               </div>
             </div>
+
+            {/* Mobile Filters */}
+            <AnimatePresence>
+              {mobileFiltersOpen && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 bg-black/50 z-50 md:hidden"
+                  onClick={() => setMobileFiltersOpen(false)}
+                >
+                  <motion.div
+                    initial={{ x: "100%" }}
+                    animate={{ x: 0 }}
+                    exit={{ x: "100%" }}
+                    transition={{ type: "spring", damping: 25 }}
+                    className="absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-800 p-5 overflow-y-auto"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <HiOutlineAdjustments size={20} />
+                        Filters
+                      </h2>
+                      <button
+                        onClick={() => setMobileFiltersOpen(false)}
+                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <HiOutlineX size={20} />
+                      </button>
+                    </div>
+
+                    <FilterSection title="Sort By" section="sorting" resetQuery={{ sort: undefined }}>
+                      <RadioGroup items={sortings} value={active} onChange={handleSortChange} />
+                    </FilterSection>
+
+                    <FilterSection title="Language" section="language" resetQuery={{ language: undefined }}>
+                      <RadioGroup
+                        items={languages.map((el) => ({ label: el }))}
+                        value={language}
+                        onChange={handleLanguageChange}
+                      />
+                    </FilterSection>
+
+                    <FilterSection title="Roles" section="roles" resetQuery={{ roles: undefined }}>
+                      <CheckboxGroup
+                        items={roles.map((el) => ({ label: el.name }))}
+                        value={getQueryObject().roles ? getQueryObject().roles.split(",") : []}
+                        onChange={handleRolesChange}
+                      />
+                    </FilterSection>
+
+                    <FilterSection title="Skills" section="skills" resetQuery={{ skills: undefined }}>
+                      <CheckboxGroup
+                        items={skills.map((el) => ({ label: el.name }))}
+                        value={getQueryObject().skills ? getQueryObject().skills.split(",") : []}
+                        onChange={handleSkillsChange}
+                      />
+                    </FilterSection>
+
+                    <div className="mt-6 flex gap-3">
+                      <button
+                        onClick={resetAllFilters}
+                        className="flex-1 py-3 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-200 font-medium"
+                      >
+                        Reset all
+                      </button>
+                      <button
+                        onClick={() => setMobileFiltersOpen(false)}
+                        className="flex-1 py-3 bg-primary text-white rounded-lg font-medium"
+                      >
+                        Apply filters
+                      </button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* User Grid */}
             <InfiniteScrollComponent
               url={`/api/get/entity/explore?page=%s&limit=9${searchParams.toString() ? `&${searchParams.toString()}` : ""}`}
               dataPath={["data", "users"]}
-              container="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 w-full"
-              upperContainer="col-span-9 2xl:col-span-10 w-full"
+              container="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
+              upperContainer="flex-1"
               preRenderCount={9}
-              preRender={(_, i) => (
-                <MiniCard key={i} entity={{} as Entity} isSkeleton />
-              )}
+              preRender={(_, i) => <UserCard key={i} entity={{} as Entity} isSkeleton />}
               itemsCount={12}
               render={(item, i) => (
-                <MiniCard
+                <UserCard
                   key={i}
                   entity={{
                     ...item,
@@ -401,5 +557,5 @@ export default function Home() {
         </div>
       </div>
     </Suspense>
-  );
+  )
 }

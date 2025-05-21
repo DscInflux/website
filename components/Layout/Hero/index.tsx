@@ -2,49 +2,52 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Carousel from "@/components/ui/global/Carousel";
-import CarouselHeader from "@/components/ui/global/Carousel-Header";
-import MiniCard from "@/components/cards/UserCards";
-import { FaFire, FaDice, FaArrowRight } from "react-icons/fa";
-import type { Entity } from "@/types/entity";
-import type { User } from "@/types/users";
+import Image from "next/image";
 import Link from "next/link";
+import Carousel from "@/components/ui/global/Carousel"
+import CarouselHeader from "@/components/ui/global/Carousel-Header"
+import UserCard from "@/components/cards/UserCards"
+import { FaFire, FaDice, FaArrowRight, FaSearch, FaDiscord } from "react-icons/fa";
+import type { Entity } from "@/types/entity";
+import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
 
 const HeroLayout: React.FC = () => {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [popularUsers, setPopularUsers] = useState<Entity[]>([]);
   const [randomUsers, setRandomUsers] = useState<Entity[]>([]);
   const [newestUsers, setNewestUsers] = useState<Entity[]>([]);
-  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const user = session?.user || null;
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setIsLoading(true);
       try {
-        const [popularRes, newestRes, randomRes, meRes] = await Promise.all([
+        const [popularRes, newestRes, randomRes] = await Promise.all([
           fetch("/api/get/entity/all?sort=popular&limit=10"),
           fetch("/api/get/entity/all?sort=newest&limit=10"),
           fetch("/api/get/entity/all?sort=random&limit=10"),
-          fetch("/api/auth/me"),
         ]);
 
-        const [popularData, newestData, randomData, meData] = await Promise.all(
-          [
-            popularRes.json(),
-            newestRes.json(),
-            randomRes.json(),
-            meRes.ok ? meRes.json() : Promise.resolve(null),
-          ],
-        );
+        const [popularData, newestData, randomData] = await Promise.all([
+          popularRes.json(),
+          newestRes.json(),
+          randomRes.json(),
+        ]);
 
         setPopularUsers(popularData?.data || []);
         setNewestUsers(newestData?.data || []);
         setRandomUsers(randomData?.data || []);
-        setUser(meData?.user || null);
-      } catch {
+      } catch (error) {
+        console.error("Error fetching data:", error);
         setPopularUsers([]);
         setNewestUsers([]);
         setRandomUsers([]);
-        setUser(null);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -66,62 +69,125 @@ const HeroLayout: React.FC = () => {
       <div className="background-shapes absolute inset-0"></div>
 
       <div className="max-w-7xl mx-auto">
+        {/* Hero Section */}
         <section className="flex flex-col lg:flex-row items-center justify-between py-24 gap-12">
-          <div className="text-center lg:text-left w-full lg:max-w-2xl">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center lg:text-left w-full lg:max-w-2xl"
+          >
+            <div className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full mb-6 font-medium text-sm">
+              Find people the right way.
+            </div>
             <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-black dark:text-white relative">
-              Start <span className="text-primary">Finding</span> Friends
-              <span className="absolute text-[8rem] font-extrabold opacity-5 top-0 left-0 hidden lg:block pointer-events-none select-none text-primary">
+              Start <span className="text-primary relative">Finding <span className="absolute -bottom-2 left-0 w-full h-2 bg-primary/20 rounded-full"></span></span> Friends
+              <span className="absolute text-[8rem] font-extrabold opacity-5 -top-10 -left-4 hidden lg:block pointer-events-none select-none text-primary">
                 introducing
               </span>
             </h1>
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 font-medium">
-              Find & add new friends on Discord the easy way.
+            <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 font-medium max-w-xl">
+              Find & add new friends on Discord the easy way. Connect with people who share your interests.
             </p>
 
             {user?.appId ? (
-              <div className="mt-6">
-                <Link href="/explore" legacyBehavior>
-                  <a className="inline-flex items-center gap-3 bg-primary text-white px-6 py-3 rounded-full hover:bg-secondary transition-all font-semibold">
-                    Explore
-                    <FaArrowRight className="ml-2" />
-                  </a>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className="mt-8"
+              >
+                <Link href="/explore" className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl transition-all font-semibold shadow-lg hover:shadow-xl hover:shadow-primary/20">
+                  Explore
+                  <FaArrowRight className="ml-1" />
                 </Link>
-              </div>
+              </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="mt-6 w-full max-w-xl">
+              <motion.form 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                onSubmit={handleSubmit} 
+                className="mt-8 w-full max-w-xl"
+              >
                 <div className="flex flex-col sm:flex-row items-center gap-4">
-                  <div className="flex-grow w-full">
+                  <div className="flex-grow w-full relative">
+                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                      <FaSearch />
+                    </div>
                     <input
                       type="text"
                       name="username"
-                      placeholder="RanveerSoni"
+                      placeholder="Enter Discord username"
                       required
-                      className="w-full h-[50px] px-4 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white rounded-md outline-none focus:ring-2 focus:ring-primary transition-all"
+                      className="w-full h-[56px] pl-10 pr-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-primary transition-all shadow-sm"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="h-[50px] w-full sm:w-auto px-8 bg-primary text-white font-semibold rounded-md hover:bg-secondary transition-colors"
+                    className="h-[56px] w-full sm:w-auto px-8 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
                   >
+                    <FaDiscord className="text-lg" />
                     Find
                   </button>
                 </div>
-              </form>
+              </motion.form>
             )}
-          </div>
+          </motion.div>
 
-          {/* Optional illustration/image could be here */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            className="hidden lg:block w-full max-w-md perspective-right"
+          >
+            <div className="relative w-full h-[400px] bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl overflow-hidden shadow-xl border border-gray-100 dark:border-gray-800">
+              <div className="absolute top-6 left-6 right-6 bottom-6">
+                <div className="absolute top-0 left-0 w-16 h-16 bg-primary/20 rounded-full"></div>
+                <div className="absolute bottom-12 right-4 w-24 h-24 bg-primary/10 rounded-full"></div>
+                <div className="absolute top-1/3 right-8 w-8 h-8 bg-primary/30 rounded-full"></div>
+                
+                <div className="absolute top-10 right-10 w-32 h-32 rounded-xl overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg">
+                  <Image 
+                    src="https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75" 
+                    alt="Discord user" 
+                    width={128} 
+                    height={128}
+                    className="object-cover"
+                  />
+                </div>
+                
+                <div className="absolute bottom-10 left-10 w-64 h-32 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                      <FaDiscord />
+                    </div>
+                    <div>
+                      <div className="font-bold text-black dark:text-white">DiscordUser</div>
+                      <div className="text-xs text-gray-500">@username</div>
+                    </div>
+                  </div>
+                  <div className="mt-3 text-xs text-gray-600 dark:text-gray-400">
+                    Connect with friends who share your interests in gaming, art, music and more!
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </section>
 
         {/* Popular Users */}
-        <section className="mt-20">
+        <motion.section 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="mt-20"
+        >
           <Carousel
             header={(next, prev, isPrev, isNext) => (
               <CarouselHeader
                 title="Popular Users"
-                icon={
-                  <FaFire className="text-primary text-5xl hidden lg:block" />
-                }
+                icon={<FaFire />}
                 seeAll="/explore?sort=likes"
                 description="The most popular profiles on DscInflux"
                 next={next}
@@ -133,28 +199,35 @@ const HeroLayout: React.FC = () => {
             slides={popularUsers}
           >
             {(slides: Entity[]) =>
-              slides.length > 0
+              isLoading
+                ? Array(3).fill(0).map((_, i) => (
+                    <UserCard key={`skeleton-${i}`} entity={{}} isSkeleton={true} />
+                  ))
+                : slides.length > 0
                 ? slides.map((entity) => (
-                    <MiniCard
+                    <UserCard
                       key={entity.id}
                       entity={entity}
                       isLiked={user ? entity.likes?.includes(user.id) : false}
                     />
                   ))
-                : [<div key="no-users">No users found.</div>]
+                : [<div key="no-users" className="col-span-3 text-center py-10 text-gray-500">No users found.</div>]
             }
           </Carousel>
-        </section>
+        </motion.section>
 
         {/* Newest Users */}
-        <section className="mt-10">
+        <motion.section 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="mt-16"
+        >
           <Carousel
             header={(next, prev, isPrev, isNext) => (
               <CarouselHeader
                 title="Newest Users"
-                icon={
-                  <FaDice className="text-primary text-5xl hidden lg:block" />
-                }
+                icon={<FaDice />}
                 seeAll="/explore?sort=newest"
                 description="Some newest profiles on DscInflux"
                 next={next}
@@ -166,28 +239,35 @@ const HeroLayout: React.FC = () => {
             slides={newestUsers}
           >
             {(slides: Entity[]) =>
-              slides.length > 0
+              isLoading
+                ? Array(3).fill(0).map((_, i) => (
+                    <UserCard key={`skeleton-${i}`} entity={{}} isSkeleton={true} />
+                  ))
+                : slides.length > 0
                 ? slides.map((entity) => (
-                    <MiniCard
+                    <UserCard
                       key={entity.id}
                       entity={entity}
                       isLiked={user ? entity.likes?.includes(user.id) : false}
                     />
                   ))
-                : [<div key="no-users">No users found.</div>]
+                : [<div key="no-users" className="col-span-3 text-center py-10 text-gray-500">No users found.</div>]
             }
           </Carousel>
-        </section>
+        </motion.section>
 
         {/* Random Users */}
-        <section className="mt-10">
+        <motion.section 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="mt-16 mb-20"
+        >
           <Carousel
             header={(next, prev, isPrev, isNext) => (
               <CarouselHeader
                 title="Random Users"
-                icon={
-                  <FaDice className="text-primary text-5xl hidden lg:block" />
-                }
+                icon={<FaDice />}
                 seeAll="/explore?sort=random"
                 description="Some random profiles on DscInflux"
                 next={next}
@@ -199,18 +279,22 @@ const HeroLayout: React.FC = () => {
             slides={randomUsers}
           >
             {(slides: Entity[]) =>
-              slides.length > 0
+              isLoading
+                ? Array(3).fill(0).map((_, i) => (
+                    <UserCard key={`skeleton-${i}`} entity={{}} isSkeleton={true} />
+                  ))
+                : slides.length > 0
                 ? slides.map((entity) => (
-                    <MiniCard
+                    <UserCard
                       key={entity.id}
                       entity={entity}
                       isLiked={user ? entity.likes?.includes(user.id) : false}
                     />
                   ))
-                : [<div key="no-users">No users found.</div>]
+                : [<div key="no-users" className="col-span-3 text-center py-10 text-gray-500">No users found.</div>]
             }
           </Carousel>
-        </section>
+        </motion.section>
       </div>
     </div>
   );

@@ -3,7 +3,8 @@ import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 
 const querySchema = z.object({
-  name: z.string(),
+  name: z.string().optional(),
+  discordId: z.string().optional(),
 });
 
 export async function GET(req: NextRequest) {
@@ -19,11 +20,18 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const { name } = parseResult.data;
+  const { name, discordId } = parseResult.data;
 
   try {
+    const orConditions = [{ url: name }] as any[];
+    if (discordId) {
+      orConditions.push({ discordId });
+    }
+
     const entity = await prisma.entity.findFirst({
-      where: { url: name },
+      where: {
+        OR: orConditions,
+      },
     });
 
     if (!entity) {

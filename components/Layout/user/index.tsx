@@ -23,14 +23,16 @@ import { MdVerified } from "react-icons/md";
 import type { User } from "@/types/users";
 import type { Entity } from "@/types/entity";
 import { Code, Handshake, Shield } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export default function UserProfile({ username }: { username: string }) {
+  const { data: session } = useSession();
   const [data, setData] = useState<Entity | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(0);
-  const [user, setUser] = useState<User | null>(null);
+  const user = session?.user || null;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -50,14 +52,7 @@ export default function UserProfile({ username }: { username: string }) {
       }
     };
 
-    const fetchCurrentUser = async () => {
-      const meRes = await fetch("/api/auth/me");
-      const meData = meRes.ok ? await meRes.json() : null;
-      setUser(meData?.user || null);
-    };
-
     fetchUser();
-    fetchCurrentUser();
   }, [username]);
 
   // Set liked when both data and user are available

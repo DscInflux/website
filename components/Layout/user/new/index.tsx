@@ -4,6 +4,7 @@ import type React from "react";
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   User,
   Settings,
@@ -115,6 +116,9 @@ export default function EditProfilePage({
   isSubmit?: boolean;
 }) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const user = session?.user || null;
+  const [entity, setEntity] = useState<any>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -159,8 +163,6 @@ export default function EditProfilePage({
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
 
-  const [user, setUser] = useState<any>(null);
-
   // New state for pronouns and website
   const [pronouns, setPronouns] = useState("");
   const [website, setWebsite] = useState("");
@@ -169,36 +171,33 @@ export default function EditProfilePage({
     async function fetchEntity() {
       setLoading(true);
       try {
-        const res = await fetch("/api/auth/me");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.user) {
-            setUser(data.user);
-          }
-          if (data.entity) {
+        // Fetch entity for the current user (if logged in)
+        if (user?.username) {
+          const res = await fetch(`/api/get/entity?discordId=${user.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            setEntity(data);
             setIsEdit(true);
-            setAbout(data.entity.about || "");
-            setEmail(data.entity.email || "");
-            setUrl(data.entity.url || "");
-            setGender(data.entity.gender || "");
-            setBirthday(
-              data.entity.birthday ? data.entity.birthday.slice(0, 10) : "",
-            );
-            setLocation(data.entity.location || "");
-            setOccupation(data.entity.occupation?.join(", ") || "");
-            setSocials(data.entity.socials || []);
-            setSkills(data.entity.skills || []);
-            setRoles(data.entity.roles || []);
-            setBanner(data.entity.banner || "");
-            setAvatar(data.entity.avatar || "");
-            setIsShow(data.entity.isShow ?? true);
-            setIsEmailPrivate(data.entity.isEmailPrivate ?? true);
-            setIsBirthdayPrivate(data.entity.isBirthdayPrivate ?? true);
-            setIsLocationPrivate(data.entity.isLocationPrivate ?? true);
-            setIsGenderPrivate(data.entity.isGenderPrivate ?? true);
-            setLanguage(data.entity.language || "");
-            setPronouns(data.entity.pronouns || "");
-            setWebsite(data.entity.website || "");
+            setAbout(data.about || "");
+            setEmail(data.email || "");
+            setUrl(data.url || "");
+            setGender(data.gender || "");
+            setBirthday(data.birthday ? data.birthday.slice(0, 10) : "");
+            setLocation(data.location || "");
+            setOccupation(data.occupation?.join(", ") || "");
+            setSocials(data.socials || []);
+            setSkills(data.skills || []);
+            setRoles(data.roles || []);
+            setBanner(data.banner || "");
+            setAvatar(data.avatar || "");
+            setIsShow(data.isShow ?? true);
+            setIsEmailPrivate(data.isEmailPrivate ?? true);
+            setIsBirthdayPrivate(data.isBirthdayPrivate ?? true);
+            setIsLocationPrivate(data.isLocationPrivate ?? true);
+            setIsGenderPrivate(data.isGenderPrivate ?? true);
+            setLanguage(data.language || "");
+            setPronouns(data.pronouns || "");
+            setWebsite(data.website || "");
           }
         }
       } catch (e) {
@@ -208,7 +207,7 @@ export default function EditProfilePage({
       }
     }
     fetchEntity();
-  }, []);
+  }, [user]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -253,7 +252,7 @@ export default function EditProfilePage({
         },
       );
 
-      const data = await res.json();
+      const data = await res.json(); // god is dead, and we have killed him.
 
       if (res.ok) {
         setSuccess(
