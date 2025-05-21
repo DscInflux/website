@@ -30,7 +30,6 @@ model Entity {
   pronouns           String
   language           String
   website            String?
-  like               String[]
   isDeveloper        Boolean
   isPartner          Boolean
   email              String?

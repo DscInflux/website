@@ -22,8 +22,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Entity not found" }, { status: 404 });
   }
 
-  let updatedLikes: string[] = Array.isArray(entity.like)
-    ? [...entity.like]
+  let updatedLikes: string[] = Array.isArray(entity.likes)
+    ? [...entity.likes]
     : [];
   const userId = session.user.id;
 
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
   await prisma.entity.update({
     where: { id: entity.id },
-    data: { like: updatedLikes },
+    data: { likes: updatedLikes },
   });
 
   return NextResponse.json({
