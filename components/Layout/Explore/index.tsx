@@ -1,15 +1,13 @@
 "use client"
 
 import type React from "react"
-import { Suspense, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import type { Entity } from "@/types/entity"
-import UserCard from "@/components/cards/UserCards";
+import UserCard from "@/components/cards/UserCards"
 import { useSession } from "next-auth/react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   HiOutlineAdjustments,
-  HiOutlineFilter,
   HiOutlineRefresh,
   HiOutlineSearch,
   HiOutlineSortAscending,
@@ -18,85 +16,8 @@ import {
   HiOutlineSparkles,
   HiOutlineX,
   HiChevronDown,
-  HiChevronUp,
 } from "react-icons/hi"
 
-// InfiniteScrollComponent Props
-interface InfiniteScrollComponentProps {
-  url: string
-  dataPath: string[]
-  container: string
-  upperContainer: string
-  preRenderCount: number
-  preRender: (item: any, i: number) => React.ReactNode
-  itemsCount: number
-  render: (item: any, i: number) => React.ReactNode
-}
-
-const InfiniteScrollComponent: React.FC<InfiniteScrollComponentProps> = ({
-  url,
-  dataPath,
-  container,
-  upperContainer,
-  preRenderCount,
-  preRender,
-  itemsCount,
-  render,
-}) => {
-  const [items, setItems] = useState<any[]>([])
-  const [page, setPage] = useState<number>(1)
-  const [hasMore, setHasMore] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      try {
-        const res = await fetch(url.replace("%s", page.toString()))
-        const data = await res.json()
-        const newItems = Array.isArray(data.data) ? data.data : []
-        setItems((prevItems) => [...prevItems, ...newItems])
-        setHasMore(newItems.length > 0)
-      } catch (error) {
-        console.error("Error fetching data:", error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    fetchData()
-  }, [page, url])
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight ||
-        !hasMore ||
-        isLoading
-      )
-        return
-      setPage((prevPage) => prevPage + 1)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [hasMore, isLoading])
-
-  return (
-    <div className={upperContainer}>
-      <div className={container}>
-        {items.length === 0
-          ? Array.from({ length: preRenderCount }).map((_, i) => preRender(null, i))
-          : items.map((item, i) => render(item, i))}
-      </div>
-      {isLoading && items.length > 0 && (
-        <div className="flex justify-center mt-8 mb-12">
-          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-// RadioGroup Props
 interface RadioGroupItem {
   label: string
   value?: any
@@ -116,22 +37,25 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ items, value, onChange }) => {
       {items.map((item, index) => (
         <motion.div
           key={index}
-          className={`flex items-center p-2 rounded-lg cursor-pointer transition-all ${
-            value === index ? "bg-primary/10 text-primary font-medium" : "hover:bg-gray-100 dark:hover:bg-gray-800"
+          className={`flex items-center p-3 rounded-xl cursor-pointer transition-all ${
+            value === index
+              ? "bg-primary/10 text-primary font-medium shadow-sm"
+              : "hover:bg-gray-100 dark:hover:bg-gray-800/50"
           }`}
+          whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onChange({ label: item.label, value: item.value })}
         >
           <div
-            className={`w-4 h-4 rounded-full mr-3 flex items-center justify-center border ${
+            className={`w-5 h-5 rounded-full mr-3 flex items-center justify-center border-2 transition-colors ${
               value === index ? "border-primary" : "border-gray-300 dark:border-gray-600"
             }`}
           >
-            {value === index && <div className="w-2 h-2 rounded-full bg-primary"></div>}
+            {value === index && <div className="w-2.5 h-2.5 rounded-full bg-primary"></div>}
           </div>
           <div className="flex items-center gap-2">
-            {item.icon && <span>{item.icon}</span>}
-            <span>{item.label}</span>
+            {item.icon && <span className="text-xl">{item.icon}</span>}
+            <span className="text-base">{item.label}</span>
           </div>
         </motion.div>
       ))}
@@ -162,22 +86,23 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, value, onChange })
       {items.map((item, index) => (
         <motion.div
           key={index}
-          className={`flex items-center p-2 rounded-lg cursor-pointer transition-all ${
+          className={`flex items-center p-3 rounded-xl cursor-pointer transition-all ${
             value.includes(item.label)
-              ? "bg-primary/10 text-primary font-medium"
-              : "hover:bg-gray-100 dark:hover:bg-gray-800"
+              ? "bg-primary/10 text-primary font-medium shadow-sm"
+              : "hover:bg-gray-100 dark:hover:bg-gray-800/50"
           }`}
+          whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleCheckboxChange(item.label)}
         >
           <div
-            className={`w-4 h-4 rounded mr-3 flex items-center justify-center ${
-              value.includes(item.label) ? "bg-primary border-primary" : "border border-gray-300 dark:border-gray-600"
+            className={`w-5 h-5 rounded-md mr-3 flex items-center justify-center transition-colors ${
+              value.includes(item.label) ? "bg-primary border-primary" : "border-2 border-gray-300 dark:border-gray-600"
             }`}
           >
-            {value.includes(item.label) && <HiOutlineX className="text-white" size={12} />}
+            {value.includes(item.label) && <HiOutlineX className="text-white" size={14} />}
           </div>
-          <span>{item.label}</span>
+          <span className="text-base">{item.label}</span>
         </motion.div>
       ))}
     </div>
@@ -198,6 +123,8 @@ export default function ExplorePage() {
     roles: true,
     skills: true,
   })
+  const [search, setSearch] = useState<string>("")
+
   const user = session?.user || null
 
   const sortings: RadioGroupItem[] = [
@@ -224,19 +151,53 @@ export default function ExplorePage() {
     },
   ]
 
-  const languages: string[] = ["English", "Spanish", "French", "German", "Chinese"]
+  // --- CLIENT-SIDE FILTER & SORT ---
+  // Store all fetched items for client-side filtering/sorting
+  const [allItems, setAllItems] = useState<any[]>([])
+  const [filteredItems, setFilteredItems] = useState<any[]>([])
 
-  const roles = [
-    { name: "Developer", slug: "developer" },
-    { name: "Designer", slug: "designer" },
-    { name: "Manager", slug: "manager" },
-  ]
+  // --- DYNAMIC FILTER OPTIONS ---
+  // Extract unique roles, languages, and skills from allItems
+  const [dynamicRoles, setDynamicRoles] = useState<{ name: string; slug: string }[]>([])
+  const [dynamicSkills, setDynamicSkills] = useState<{ name: string; slug: string }[]>([])
+  const [dynamicLanguages, setDynamicLanguages] = useState<string[]>([])
 
-  const skills = [
-    { name: "JavaScript", slug: "javascript" },
-    { name: "Python", slug: "python" },
-    { name: "Java", slug: "java" },
-  ]
+  useEffect(() => {
+    if (allItems.length > 0) {
+      // Roles
+      const rolesSet = new Set<string>()
+      allItems.forEach((item) => {
+        if (Array.isArray(item.roles)) {
+          item.roles.forEach((role: string) => rolesSet.add(role))
+        }
+      })
+      setDynamicRoles(
+        Array.from(rolesSet)
+          .filter(Boolean)
+          .map((r) => ({ name: r, slug: r.toLowerCase().replace(/\s+/g, "-") })),
+      )
+      // Skills
+      const skillsSet = new Set<string>()
+      allItems.forEach((item) => {
+        if (Array.isArray(item.skills)) {
+          item.skills.forEach((skill: string) => skillsSet.add(skill))
+        }
+      })
+      setDynamicSkills(
+        Array.from(skillsSet)
+          .filter(Boolean)
+          .map((s) => ({ name: s, slug: s.toLowerCase().replace(/\s+/g, "-") })),
+      )
+      // Languages
+      const langSet = new Set<string>()
+      allItems.forEach((item) => {
+        if (typeof item.language === "string" && item.language.trim()) {
+          item.language.split(/,|\//).forEach((lang: string) => langSet.add(lang.trim()))
+        }
+      })
+      setDynamicLanguages(Array.from(langSet).filter(Boolean))
+    }
+  }, [allItems])
 
   // Helper to get query params as object
   function getQueryObject() {
@@ -262,7 +223,7 @@ export default function ExplorePage() {
       setActive(defaultIndex)
     }
     if (query.language) {
-      const findIndex = languages.findIndex((item) => item === query.language)
+      const findIndex = dynamicLanguages.findIndex((item) => item === query.language)
       if (findIndex !== -1) {
         setLanguage(findIndex)
       } else {
@@ -270,6 +231,11 @@ export default function ExplorePage() {
       }
     } else {
       setLanguage(null)
+    }
+    if (query.name) {
+      setSearch(query.name)
+    } else {
+      setSearch("")
     }
   }, [searchParams])
 
@@ -293,7 +259,7 @@ export default function ExplorePage() {
 
   const handleLanguageChange = (item: RadioGroupItem) => {
     updateQuery({ language: item.label })
-    setLanguage(languages.findIndex((i) => i === item.label))
+    setLanguage(dynamicLanguages.findIndex((i) => i === item.label))
   }
 
   const handleRolesChange = (selectedRoles: string[]) => {
@@ -304,64 +270,103 @@ export default function ExplorePage() {
     updateQuery({ skills: selectedSkills.join(",") })
   }
 
-  const toggleSection = (section: keyof typeof expandedSections) => {
-    setExpandedSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }))
-  }
+  // Fetch all user data from API on mount
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const res = await fetch("/api/get/entity/explore?page=1&limit=100")
+        const data = await res.json()
+        setAllItems(Array.isArray(data.data) ? data.data : [])
+        setFilteredItems(Array.isArray(data.data) ? data.data : [])
+      } catch (e) {
+        setAllItems([])
+        setFilteredItems([])
+      }
+    }
+    fetchAll()
+  }, [])
 
-  const resetAllFilters = () => {
-    router.push(pathname)
+  // Filter and sort users client-side
+  useEffect(() => {
+    let filtered = [...allItems]
+    // Search
+    if (search) {
+      filtered = filtered.filter((item) => {
+        const username = item.discordUsername?.toLowerCase() || ""
+        const displayName = item.discordDisplayName?.toLowerCase() || ""
+        return username.includes(search.toLowerCase()) || displayName.includes(search.toLowerCase())
+      })
+    }
+    // Language filter
+    const query = getQueryObject()
+    if (query.language) {
+      filtered = filtered.filter((item) => {
+        if (!item.language) return false
+        return item.language
+          .split(/,|\//)
+          .map((l: string) => l.trim())
+          .includes(query.language)
+      })
+    }
+    // Roles filter
+    if (query.roles) {
+      const selectedRoles = query.roles.split(",")
+      filtered = filtered.filter(
+        (item) => Array.isArray(item.roles) && selectedRoles.every((role) => item.roles.includes(role)),
+      )
+    }
+    // Skills filter
+    if (query.skills) {
+      const selectedSkills = query.skills.split(",")
+      filtered = filtered.filter(
+        (item) => Array.isArray(item.skills) && selectedSkills.every((skill) => item.skills.includes(skill)),
+      )
+    }
+    // Sort
+    if (sortings[active]?.value === "newest") {
+      filtered = filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    } else if (sortings[active]?.value === "oldest") {
+      filtered = filtered.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    } else if (sortings[active]?.value === "popular") {
+      filtered = filtered.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
+    } else if (sortings[active]?.value === "random") {
+      filtered = filtered.sort(() => Math.random() - 0.5)
+    }
+    setFilteredItems(filtered)
+  }, [search, active, allItems, searchParams])
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections({
+      ...expandedSections,
+      [section]: !expandedSections[section],
+    })
   }
 
   const FilterSection = ({
     title,
-    section,
-    resetQuery,
+    expanded,
+    onToggle,
     children,
   }: {
     title: string
-    section: keyof typeof expandedSections
-    resetQuery: Record<string, undefined>
+    expanded: boolean
+    onToggle: () => void
     children: React.ReactNode
   }) => (
-    <div className="border-b border-gray-200 dark:border-gray-800 pb-4">
-      <div className="flex items-center justify-between py-3 cursor-pointer" onClick={() => toggleSection(section)}>
-        <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          {title}
-          {Object.keys(resetQuery)[0] && getQueryObject()[Object.keys(resetQuery)[0]] && (
-            <span className="text-white text-xs font-medium px-2 py-0.5 rounded-full">Active</span>
-          )}
-        </h2>
-        <div className="flex items-center gap-2">
-          {Object.keys(resetQuery)[0] && getQueryObject()[Object.keys(resetQuery)[0]] && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                updateQuery(resetQuery)
-              }}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              aria-label="Reset filter"
-            >
-              <HiOutlineRefresh size={18} />
-            </button>
-          )}
-          {expandedSections[section] ? (
-            <HiChevronUp className="text-gray-500" />
-          ) : (
-            <HiChevronDown className="text-gray-500" />
-          )}
-        </div>
+    <div className="mb-6">
+      <div className="flex items-center justify-between cursor-pointer mb-3" onClick={onToggle}>
+        <h3 className="text-lg font-semibold">{title}</h3>
+        <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+          <HiChevronDown className="text-xl text-gray-500" />
+        </motion.div>
       </div>
       <AnimatePresence>
-        {expandedSections[section] && (
+        {expanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden"
           >
             {children}
           </motion.div>
@@ -371,191 +376,285 @@ export default function ExplorePage() {
   )
 
   return (
-    <Suspense
-      fallback={
-        <div className="flex justify-center items-center min-h-screen">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      }
-    >
-      <div className="min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Explore Users</h1>
-              <p className="mt-1 text-gray-500 dark:text-gray-400">
-                Find and connect with people from around the world who meet your interests.
-              </p>
-            </div>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Mobile Filter Button - Fixed at bottom for mobile */}
+      <div className="lg:hidden fixed bottom-6 right-6 z-10">
+        <motion.button
+          onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+          className="flex items-center gap-2 px-4 py-3 bg-primary text-white rounded-full shadow-lg"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <HiOutlineAdjustments className="text-lg" />
+          <span>{mobileFiltersOpen ? "Hide Filters" : "Show Filters"}</span>
+        </motion.button>
+      </div>
 
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <HiOutlineSearch
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  type="text"
-                  placeholder="Search users..."
-                  className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-
-              <button
-                onClick={() => setMobileFiltersOpen(true)}
-                className="md:hidden flex items-center gap-2 bg-white dark:bg-gray-800 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200"
-              >
-                <HiOutlineFilter size={20} />
-                Filters
-              </button>
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row gap-8">
-            {/* Sidebar Filters - Desktop */}
-            <div className="hidden md:block w-64 flex-shrink-0">
-              <div className="rounded-xl shadow-sm p-5 sticky top-20">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <HiOutlineAdjustments size={20} />
-                    Filters
-                  </h2>
-                  <button onClick={resetAllFilters} className="text-primary hover:text-primary/80 text-sm font-medium">
-                    Reset all
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Filters Section */}
+        <AnimatePresence>
+          {(mobileFiltersOpen || window.innerWidth >= 1024) && (
+            <motion.div
+              className={`lg:w-1/4 lg:static fixed inset-0 z-50 lg:z-0 ${
+                mobileFiltersOpen ? "block" : "hidden lg:block"
+              }`}
+              initial={{ x: -300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              <div className="p-6 rounded-2xl shadow-lg bg-black h-full lg:h-auto overflow-auto">
+                <div className="flex items-center justify-between mb-6 lg:hidden">
+                  <h2 className="text-xl font-bold">Filters</h2>
+                  <button
+                    onClick={() => setMobileFiltersOpen(false)}
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    <HiOutlineX className="text-xl" />
                   </button>
                 </div>
 
-                <FilterSection title="Sort By" section="sorting" resetQuery={{ sort: undefined }}>
+                <FilterSection
+                  title="Sort By"
+                  expanded={expandedSections.sorting}
+                  onToggle={() => toggleSection("sorting")}
+                >
                   <RadioGroup items={sortings} value={active} onChange={handleSortChange} />
                 </FilterSection>
 
-                <FilterSection title="Language" section="language" resetQuery={{ language: undefined }}>
-                  <RadioGroup
-                    items={languages.map((el) => ({ label: el }))}
-                    value={language}
-                    onChange={handleLanguageChange}
+                <FilterSection
+                  title="Language"
+                  expanded={expandedSections.language}
+                  onToggle={() => toggleSection("language")}
+                >
+                  <CheckboxGroup
+                    items={dynamicLanguages.map((lang) => ({ label: lang }))}
+                    value={language !== null ? [dynamicLanguages[language]] : []}
+                    onChange={(selected) => {
+                      const index = dynamicLanguages.findIndex((lang) => lang === selected[0])
+                      setLanguage(index)
+                      updateQuery({ language: index !== -1 ? dynamicLanguages[index] : undefined })
+                    }}
                   />
                 </FilterSection>
 
-                <FilterSection title="Roles" section="roles" resetQuery={{ roles: undefined }}>
+                <FilterSection title="Roles" expanded={expandedSections.roles} onToggle={() => toggleSection("roles")}>
                   <CheckboxGroup
-                    items={roles.map((el) => ({ label: el.name }))}
-                    value={getQueryObject().roles ? getQueryObject().roles.split(",") : []}
+                    items={dynamicRoles.map((r) => ({ label: r.name }))}
+                    value={searchParams.get("roles") ? searchParams.get("roles")!.split(",") : []}
                     onChange={handleRolesChange}
                   />
                 </FilterSection>
 
-                <FilterSection title="Skills" section="skills" resetQuery={{ skills: undefined }}>
+                <FilterSection
+                  title="Skills"
+                  expanded={expandedSections.skills}
+                  onToggle={() => toggleSection("skills")}
+                >
                   <CheckboxGroup
-                    items={skills.map((el) => ({ label: el.name }))}
-                    value={getQueryObject().skills ? getQueryObject().skills.split(",") : []}
+                    items={dynamicSkills.map((s) => ({ label: s.name }))}
+                    value={searchParams.get("skills") ? searchParams.get("skills")!.split(",") : []}
                     onChange={handleSkillsChange}
                   />
                 </FilterSection>
               </div>
-            </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-            {/* Mobile Filters */}
-            <AnimatePresence>
-              {mobileFiltersOpen && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="fixed inset-0 bg-black/50 z-50 md:hidden"
-                  onClick={() => setMobileFiltersOpen(false)}
-                >
-                  <motion.div
-                    initial={{ x: "100%" }}
-                    animate={{ x: 0 }}
-                    exit={{ x: "100%" }}
-                    transition={{ type: "spring", damping: 25 }}
-                    className="absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-800 p-5 overflow-y-auto"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <HiOutlineAdjustments size={20} />
-                        Filters
-                      </h2>
-                      <button
-                        onClick={() => setMobileFiltersOpen(false)}
-                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <HiOutlineX size={20} />
-                      </button>
-                    </div>
-
-                    <FilterSection title="Sort By" section="sorting" resetQuery={{ sort: undefined }}>
-                      <RadioGroup items={sortings} value={active} onChange={handleSortChange} />
-                    </FilterSection>
-
-                    <FilterSection title="Language" section="language" resetQuery={{ language: undefined }}>
-                      <RadioGroup
-                        items={languages.map((el) => ({ label: el }))}
-                        value={language}
-                        onChange={handleLanguageChange}
-                      />
-                    </FilterSection>
-
-                    <FilterSection title="Roles" section="roles" resetQuery={{ roles: undefined }}>
-                      <CheckboxGroup
-                        items={roles.map((el) => ({ label: el.name }))}
-                        value={getQueryObject().roles ? getQueryObject().roles.split(",") : []}
-                        onChange={handleRolesChange}
-                      />
-                    </FilterSection>
-
-                    <FilterSection title="Skills" section="skills" resetQuery={{ skills: undefined }}>
-                      <CheckboxGroup
-                        items={skills.map((el) => ({ label: el.name }))}
-                        value={getQueryObject().skills ? getQueryObject().skills.split(",") : []}
-                        onChange={handleSkillsChange}
-                      />
-                    </FilterSection>
-
-                    <div className="mt-6 flex gap-3">
-                      <button
-                        onClick={resetAllFilters}
-                        className="flex-1 py-3 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-200 font-medium"
-                      >
-                        Reset all
-                      </button>
-                      <button
-                        onClick={() => setMobileFiltersOpen(false)}
-                        className="flex-1 py-3 bg-primary text-white rounded-lg font-medium"
-                      >
-                        Apply filters
-                      </button>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* User Grid */}
-            <InfiniteScrollComponent
-              url={`/api/get/entity/explore?page=%s&limit=9${searchParams.toString() ? `&${searchParams.toString()}` : ""}`}
-              dataPath={["data", "users"]}
-              container="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
-              upperContainer="flex-1"
-              preRenderCount={9}
-              preRender={(_, i) => <UserCard key={i} entity={{} as Entity} isSkeleton />}
-              itemsCount={12}
-              render={(item, i) => (
-                <UserCard
-                  key={i}
-                  entity={{
-                    ...item,
-                    isLiked: user ? item.like?.includes(user.id) : false,
+        {/* Main Content Section */}
+        <div className="flex-1">
+          {/* Search Bar */}
+          <div className="mb-6">
+            <div className="relative bg-black">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value)
+                  if (e.target.value === "") {
+                    updateQuery({ name: undefined })
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    updateQuery({ name: search })
+                  }
+                }}
+                className="w-full p-4 pl-12  rounded-xl transition-all"
+                placeholder="Search users..."
+              />
+              <HiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+              {search && (
+                <button
+                  onClick={() => {
+                    setSearch("")
+                    updateQuery({ name: undefined })
                   }}
-                />
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                >
+                  <HiOutlineX className="text-xl" />
+                </button>
               )}
-            />
+            </div>
           </div>
+
+          {/* Active Filters */}
+          <div className="mb-6 flex flex-wrap gap-2">
+            {searchParams.get("language") && (
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full"
+              >
+                <span>Language: {searchParams.get("language")}</span>
+                <button
+                  onClick={() => updateQuery({ language: undefined })}
+                  className="hover:bg-primary/20 rounded-full p-0.5"
+                >
+                  <HiOutlineX className="text-sm" />
+                </button>
+              </motion.div>
+            )}
+            {searchParams.get("roles") &&
+              searchParams
+                .get("roles")!
+                .split(",")
+                .map((role) => (
+                  <motion.div
+                    key={role}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full"
+                  >
+                    <span>Role: {role}</span>
+                    <button
+                      onClick={() => {
+                        const roles = searchParams
+                          .get("roles")!
+                          .split(",")
+                          .filter((r) => r !== role)
+                        updateQuery({ roles: roles.length ? roles.join(",") : undefined })
+                      }}
+                      className="hover:bg-primary/20 rounded-full p-0.5"
+                    >
+                      <HiOutlineX className="text-sm" />
+                    </button>
+                  </motion.div>
+                ))}
+            {searchParams.get("skills") &&
+              searchParams
+                .get("skills")!
+                .split(",")
+                .map((skill) => (
+                  <motion.div
+                    key={skill}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-full"
+                  >
+                    <span>Skill: {skill}</span>
+                    <button
+                      onClick={() => {
+                        const skills = searchParams
+                          .get("skills")!
+                          .split(",")
+                          .filter((s) => s !== skill)
+                        updateQuery({ skills: skills.length ? skills.join(",") : undefined })
+                      }}
+                      className="hover:bg-primary/20 rounded-full p-0.5"
+                    >
+                      <HiOutlineX className="text-sm" />
+                    </button>
+                  </motion.div>
+                ))}
+            {(searchParams.get("language") || searchParams.get("roles") || searchParams.get("skills")) && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  updateQuery({ language: undefined, roles: undefined, skills: undefined })
+                }}
+                className="flex items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700"
+              >
+                <HiOutlineRefresh className="text-sm" />
+                <span>Clear all</span>
+              </motion.button>
+            )}
+          </div>
+
+          {/* Results Count */}
+          <div className="mb-4 text-gray-500 dark:text-gray-400">
+            Found {filteredItems.length} {filteredItems.length === 1 ? "user" : "users"}
+          </div>
+
+          {/* Users Grid */}
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.05,
+                },
+              },
+              hidden: {},
+            }}
+          >
+            {filteredItems.length === 0 && (
+              <motion.div
+                className="col-span-3 text-center py-16 rounded-2xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <HiOutlineSearch className="mx-auto text-5xl text-gray-300 dark:text-gray-600 mb-4" />
+                <h2 className="text-xl font-semibold mb-2">No results found</h2>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">Try adjusting your search or filters.</p>
+                <button
+                  onClick={() => {
+                    setSearch("")
+                    updateQuery({
+                      name: undefined,
+                      language: undefined,
+                      roles: undefined,
+                      skills: undefined,
+                    })
+                  }}
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Reset all filters
+                </button>
+              </motion.div>
+            )}
+            {filteredItems.map((user) => (
+              <motion.div
+                key={user.id}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+                }}
+              >
+                <UserCard entity={user} />
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Load More Button */}
+          {filteredItems.length > 0 && (
+            <div className="mt-10 text-center">
+              <motion.button
+                className="px-6 py-3 bg-primary text-white rounded-xl shadow-md hover:shadow-lg transition-all"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                Load More
+              </motion.button>
+            </div>
+          )}
         </div>
       </div>
-    </Suspense>
+    </div>
   )
 }

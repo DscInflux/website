@@ -19,6 +19,7 @@ const HeroLayout: React.FC = () => {
   const [randomUsers, setRandomUsers] = useState<Entity[]>([]);
   const [newestUsers, setNewestUsers] = useState<Entity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   const user = session?.user || null;
 
@@ -60,7 +61,7 @@ const HeroLayout: React.FC = () => {
       e.currentTarget.username as HTMLInputElement
     ).value.trim();
     if (username) {
-      router.push(`/submit?url=${encodeURIComponent(username)}`);
+      router.push(`/explore?name=${encodeURIComponent(username)}`);
     }
   };
 
