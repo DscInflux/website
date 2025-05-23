@@ -1,16 +1,10 @@
 "use client"
 
-import type React from "react"
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react";
 import Image from "next/image"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
 import {
-  FaHeart,
-  FaRegHeart,
-  FaUserShield,
-  FaCode,
-  FaHandshake,
   FaSearch,
   FaTrash,
   FaShieldAlt,
@@ -18,10 +12,10 @@ import {
   FaUsers,
   FaCheckCircle,
 } from "react-icons/fa"
-import { FaCircleCheck } from "react-icons/fa6"
 import { motion, AnimatePresence } from "framer-motion"
 import UserCard from "@/components/cards/UserCards";
 import { Entity } from "@/types/entity"
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // Types
 interface Stats {
@@ -32,12 +26,40 @@ interface Stats {
 
 
 export default function AdminPanel() {
-  const { data: session, status } = useSession()
-  const [stats, setStats] = useState<Stats | null>(null)
-  const [entities, setEntities] = useState<Entity[]>([])
-  const [filteredEntities, setFilteredEntities] = useState<Entity[]>([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: session, status } = useSession();
+  const queryClient = useQueryClient();
+
+  // Fetch stats with React Query
+  const {
+    data: statsData,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useQuery({
+    queryKey: ['admin-stats'],
+    queryFn: async () => {
+      const res = await fetch('/api/get/stats');
+      if (!res.ok) throw new Error('Failed to fetch stats');
+      return (await res.json()).stats;
+    },
+  });
+
+  // Fetch entities with React Query
+  const {
+    data: entitiesData,
+    isLoading: entitiesLoading,
+    error: entitiesError,
+  } = useQuery({
+    queryKey: ['admin-entities'],
+    queryFn: async () => {
+      const res = await fetch('/api/get/entity/all');
+      if (!res.ok) throw new Error('Failed to fetch entities');
+      const data = await res.json();
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.data)) return data.data;
+      return [];
+    },
+  });
+
   const [banningUser, setBanningUser] = useState<string | null>(null)
   const [notification, setNotification] = useState<{
     message: string
@@ -46,75 +68,34 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<"all" | "verified" | "banned">("all")
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [userToBan, setUserToBan] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Check if user is admin
-  const isAdmin = session?.user?.is_admin
-
-  // Fetch stats
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await fetch("/api/get/stats")
-        const data = await response.json()
-        setStats(data.stats)
-      } catch (error) {
-        console.error("Failed to fetch stats:", error)
-      }
-    }
-
-    fetchStats()
-  }, [])
-
-  // Fetch entities
-  useEffect(() => {
-    const fetchEntities = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fetch("/api/get/entity/all")
-        const data = await response.json()
-        // Debug: log the API response
-        console.log("Fetched entities data:", data)
-        // If data is an array, use it; if it's an object with a 'data' array property, use that; else fallback to []
-        let safeEntities = []
-        if (Array.isArray(data)) {
-          safeEntities = data
-        } else if (data && Array.isArray(data.data)) {
-          safeEntities = data.data
-        }
-        setEntities(safeEntities)
-        setFilteredEntities(safeEntities)
-      } catch (error) {
-        console.error("Failed to fetch entities:", error)
-        setEntities([])
-        setFilteredEntities([])
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchEntities()
-  }, [])
-
-  // Filter entities based on search term and active tab
-  useEffect(() => {
-    let filtered = entities
-
-    // Filter by tab
-    if (activeTab === "verified") {
-      filtered = filtered.filter((entity) => entity.isVerified)
-    }
-
-    // Filter by search term
-    if (searchTerm.trim() !== "") {
-      filtered = filtered.filter(
-        (entity) =>
-          entity.discordUsername.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          entity.url.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-    }
-
-    setFilteredEntities(filtered)
-  }, [searchTerm, entities, activeTab])
+  // Ban user mutation
+  const banUserMutation = useMutation({
+    mutationFn: async (username: string) => {
+      const response = await fetch('/api/post/admin/entity/ban', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to ban user');
+      return { username };
+    },
+    onSuccess: ({ username }) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-entities'] });
+      setNotification({ message: `Successfully banned ${username}`, type: 'success' });
+      setTimeout(() => setNotification(null), 3000);
+    },
+    onError: (error: any) => {
+      setNotification({ message: error.message || 'Failed to ban user', type: 'error' });
+      setTimeout(() => setNotification(null), 3000);
+    },
+    onSettled: () => {
+      setBanningUser(null);
+      setUserToBan(null);
+    },
+  });
 
   // Show confirmation modal
   const confirmBan = (username: string) => {
@@ -122,65 +103,28 @@ export default function AdminPanel() {
     setShowConfirmModal(true)
   }
 
-  // Ban user function
-  const banUser = async () => {
-    if (!userToBan) return
+  // Replace banUser with mutation
+  const banUser = () => {
+    if (!userToBan) return;
+    setBanningUser(userToBan);
+    setShowConfirmModal(false);
+    banUserMutation.mutate(userToBan);
+  };
 
-    setBanningUser(userToBan)
-    setShowConfirmModal(false)
-
-    try {
-      const response = await fetch("/api/post/admin/entity/ban", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: userToBan }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setNotification({
-          message: `Successfully banned ${userToBan}`,
-          type: "success",
-        })
-
-        // Update the entities list to reflect the ban
-        setEntities(
-          entities.map((entity) => (entity.discordUsername === userToBan ? { ...entity, is_banned: true } : entity)),
-        )
-
-        // Clear notification after 3 seconds
-        setTimeout(() => {
-          setNotification(null)
-        }, 3000)
-      } else {
-        setNotification({
-          message: data.error || "Failed to ban user",
-          type: "error",
-        })
-
-        // Clear notification after 3 seconds
-        setTimeout(() => {
-          setNotification(null)
-        }, 3000)
-      }
-    } catch (error) {
-      setNotification({
-        message: "An error occurred while banning the user",
-        type: "error",
-      })
-
-      // Clear notification after 3 seconds
-      setTimeout(() => {
-        setNotification(null)
-      }, 3000)
-    } finally {
-      setBanningUser(null)
-      setUserToBan(null)
+  // --- Filtering logic (client-side, derived) ---
+  const filteredEntities = React.useMemo(() => {
+    let filtered = (entitiesData || []) as Entity[];
+    if (activeTab === "verified") {
+      filtered = filtered.filter((entity: Entity) => entity.isVerified);
     }
-  }
+    if (searchTerm.trim() !== "") {
+      filtered = filtered.filter((entity: Entity) =>
+        entity.discordUsername.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        entity.url.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    return filtered;
+  }, [entitiesData, activeTab, searchTerm]);
 
   // If loading, show loading screen
   if (status === "loading") {
@@ -193,6 +137,9 @@ export default function AdminPanel() {
       </div>
     )
   }
+
+  // Check if user is admin
+  const isAdmin = session?.user?.is_admin
 
   // If not admin, show access denied
   if (!isAdmin) {
@@ -263,7 +210,7 @@ export default function AdminPanel() {
               </div>
               <div>
                 <p className="text-gray-400 font-medium">Total Users</p>
-                <h3 className="text-3xl font-bold">{stats?.users || "..."}</h3>
+                <h3 className="text-3xl font-bold">{statsData?.users || "..."}</h3>
               </div>
             </div>
           </motion.div>
@@ -280,7 +227,7 @@ export default function AdminPanel() {
               </div>
               <div>
                 <p className="text-gray-400 font-medium">Total Entities</p>
-                <h3 className="text-3xl font-bold">{stats?.entities || "..."}</h3>
+                <h3 className="text-3xl font-bold">{statsData?.entities || "..."}</h3>
               </div>
             </div>
           </motion.div>
@@ -297,7 +244,7 @@ export default function AdminPanel() {
               </div>
               <div>
                 <p className="text-gray-400 font-medium">Verified Entities</p>
-                <h3 className="text-3xl font-bold">{stats?.entitiesVerified || "..."}</h3>
+                <h3 className="text-3xl font-bold">{statsData?.entitiesVerified || "..."}</h3>
               </div>
             </div>
           </motion.div>
@@ -370,7 +317,7 @@ export default function AdminPanel() {
           </div>
 
           {/* Entities Grid */}
-          {isLoading ? (
+          {entitiesLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, index) => (
                 <UserCard key={index} entity={{}} isSkeleton={true} />

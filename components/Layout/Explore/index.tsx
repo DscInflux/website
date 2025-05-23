@@ -1,7 +1,6 @@
 "use client"
 
-import type React from "react"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import UserCard from "@/components/cards/UserCards"
 import { useSession } from "next-auth/react"
@@ -17,6 +16,7 @@ import {
   HiOutlineX,
   HiChevronDown,
 } from "react-icons/hi"
+import { useQuery } from "@tanstack/react-query"
 
 interface RadioGroupItem {
   label: string
@@ -151,13 +151,21 @@ export default function ExplorePage() {
     },
   ]
 
-  // --- CLIENT-SIDE FILTER & SORT ---
-  // Store all fetched items for client-side filtering/sorting
-  const [allItems, setAllItems] = useState<any[]>([])
-  const [filteredItems, setFilteredItems] = useState<any[]>([])
+  // --- React Query: Fetch all user data ---
+  const {
+    data: allItems = [],
+    isLoading: allItemsLoading,
+    error: allItemsError,
+  } = useQuery({
+    queryKey: ['explore-entities', searchParams.toString()],
+    queryFn: async () => {
+      const res = await fetch(`/api/get/entity/explore?page=1&limit=100&${searchParams.toString()}`);
+      const data = await res.json();
+      return Array.isArray(data.data) ? data.data : [];
+    },
+  });
 
   // --- DYNAMIC FILTER OPTIONS ---
-  // Extract unique roles, languages, and skills from allItems
   const [dynamicRoles, setDynamicRoles] = useState<{ name: string; slug: string }[]>([])
   const [dynamicSkills, setDynamicSkills] = useState<{ name: string; slug: string }[]>([])
   const [dynamicLanguages, setDynamicLanguages] = useState<string[]>([])
@@ -166,7 +174,7 @@ export default function ExplorePage() {
     if (allItems.length > 0) {
       // Roles
       const rolesSet = new Set<string>()
-      allItems.forEach((item) => {
+      allItems.forEach((item: any) => {
         if (Array.isArray(item.roles)) {
           item.roles.forEach((role: string) => rolesSet.add(role))
         }
@@ -178,7 +186,7 @@ export default function ExplorePage() {
       )
       // Skills
       const skillsSet = new Set<string>()
-      allItems.forEach((item) => {
+      allItems.forEach((item: any) => {
         if (Array.isArray(item.skills)) {
           item.skills.forEach((skill: string) => skillsSet.add(skill))
         }
@@ -190,7 +198,7 @@ export default function ExplorePage() {
       )
       // Languages
       const langSet = new Set<string>()
-      allItems.forEach((item) => {
+      allItems.forEach((item: any) => {
         if (typeof item.language === "string" && item.language.trim()) {
           item.language.split(/,|\//).forEach((lang: string) => langSet.add(lang.trim()))
         }
@@ -270,37 +278,22 @@ export default function ExplorePage() {
     updateQuery({ skills: selectedSkills.join(",") })
   }
 
-  // Fetch all user data from API on mount
-  useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        const res = await fetch("/api/get/entity/explore?page=1&limit=100")
-        const data = await res.json()
-        setAllItems(Array.isArray(data.data) ? data.data : [])
-        setFilteredItems(Array.isArray(data.data) ? data.data : [])
-      } catch (e) {
-        setAllItems([])
-        setFilteredItems([])
-      }
-    }
-    fetchAll()
-  }, [])
-
+  // --- FILTER & SORT ---
   // Filter and sort users client-side
-  useEffect(() => {
+  const filteredItems = useMemo(() => {
     let filtered = [...allItems]
     // Search
     if (search) {
-      filtered = filtered.filter((item) => {
-        const username = item.discordUsername?.toLowerCase() || ""
-        const displayName = item.discordDisplayName?.toLowerCase() || ""
-        return username.includes(search.toLowerCase()) || displayName.includes(search.toLowerCase())
+      filtered = filtered.filter((item: any) => {
+        const uname = item.discordUsername?.toLowerCase() || ""
+        const dname = item.discordDisplayName?.toLowerCase() || ""
+        return uname.includes(search.toLowerCase()) || dname.includes(search.toLowerCase())
       })
     }
     // Language filter
     const query = getQueryObject()
     if (query.language) {
-      filtered = filtered.filter((item) => {
+      filtered = filtered.filter((item: any) => {
         if (!item.language) return false
         return item.language
           .split(/,|\//)
@@ -312,14 +305,14 @@ export default function ExplorePage() {
     if (query.roles) {
       const selectedRoles = query.roles.split(",")
       filtered = filtered.filter(
-        (item) => Array.isArray(item.roles) && selectedRoles.every((role) => item.roles.includes(role)),
+        (item: any) => Array.isArray(item.roles) && selectedRoles.every((role) => item.roles.includes(role)),
       )
     }
     // Skills filter
     if (query.skills) {
       const selectedSkills = query.skills.split(",")
       filtered = filtered.filter(
-        (item) => Array.isArray(item.skills) && selectedSkills.every((skill) => item.skills.includes(skill)),
+        (item: any) => Array.isArray(item.skills) && selectedSkills.every((skill) => item.skills.includes(skill)),
       )
     }
     // Sort
@@ -332,8 +325,8 @@ export default function ExplorePage() {
     } else if (sortings[active]?.value === "random") {
       filtered = filtered.sort(() => Math.random() - 0.5)
     }
-    setFilteredItems(filtered)
-  }, [search, active, allItems, searchParams])
+    return filtered
+  }, [allItems, search, active, searchParams, dynamicLanguages, sortings])
 
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections({

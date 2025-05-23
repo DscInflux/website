@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,49 +11,53 @@ import { FaFire, FaDice, FaArrowRight, FaSearch, FaDiscord } from "react-icons/f
 import type { Entity } from "@/types/entity";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import { useQuery } from '@tanstack/react-query';
 
-const HeroLayout: React.FC = () => {
+const HeroLayout = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [popularUsers, setPopularUsers] = useState<Entity[]>([]);
-  const [randomUsers, setRandomUsers] = useState<Entity[]>([]);
-  const [newestUsers, setNewestUsers] = useState<Entity[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
 
   const user = session?.user || null;
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setIsLoading(true);
-      try {
-        const [popularRes, newestRes, randomRes] = await Promise.all([
-          fetch("/api/get/entity/all?sort=popular&limit=10"),
-          fetch("/api/get/entity/all?sort=newest&limit=10"),
-          fetch("/api/get/entity/all?sort=random&limit=10"),
-        ]);
-
-        const [popularData, newestData, randomData] = await Promise.all([
-          popularRes.json(),
-          newestRes.json(),
-          randomRes.json(),
-        ]);
-
-        setPopularUsers(popularData?.data || []);
-        setNewestUsers(newestData?.data || []);
-        setRandomUsers(randomData?.data || []);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setPopularUsers([]);
-        setNewestUsers([]);
-        setRandomUsers([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+  // --- React Query: Fetch users for carousels ---
+  const {
+    data: popularUsers = [],
+    isLoading: popularLoading,
+    error: popularError,
+  } = useQuery({
+    queryKey: ['hero-popular-users'],
+    queryFn: async () => {
+      const res = await fetch('/api/get/entity/all?sort=popular&limit=10');
+      const data = await res.json();
+      return data?.data || [];
+    },
+  });
+  const {
+    data: newestUsers = [],
+    isLoading: newestLoading,
+    error: newestError,
+  } = useQuery({
+    queryKey: ['hero-newest-users'],
+    queryFn: async () => {
+      const res = await fetch('/api/get/entity/all?sort=newest&limit=10');
+      const data = await res.json();
+      return data?.data || [];
+    },
+  });
+  const {
+    data: randomUsers = [],
+    isLoading: randomLoading,
+    error: randomError,
+  } = useQuery({
+    queryKey: ['hero-random-users'],
+    queryFn: async () => {
+      const res = await fetch('/api/get/entity/all?sort=random&limit=10');
+      const data = await res.json();
+      return data?.data || [];
+    },
+  });
+  const isLoading = popularLoading || newestLoading || randomLoading;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

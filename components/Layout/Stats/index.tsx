@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import { FiUsers, FiBox, FiCheckCircle } from "react-icons/fi";
 import { motion } from "framer-motion";
 import {
@@ -12,6 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useQuery } from "@tanstack/react-query";
 
 export interface Stats {
   entities: number;
@@ -114,28 +114,21 @@ const StatLoader = () => {
 };
 
 export default function StatsComponent() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [isLoading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("/api/get/stats");
-        const data = await response.json();
-        setStats(data.stats);
-      } catch (error) {
-        console.error("Failed to fetch stats:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-
-    const interval = setInterval(fetchStats, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  // --- React Query: Fetch stats ---
+  const {
+    data: stats,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['stats'],
+    queryFn: async () => {
+      const response = await fetch("/api/get/stats");
+      if (!response.ok) throw new Error("Failed to fetch stats");
+      const data = await response.json();
+      return data.stats;
+    },
+    refetchInterval: 30000,
+  });
 
   const data = [
     { name: "Entities", value: stats?.entities || 0 },
