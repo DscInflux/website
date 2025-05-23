@@ -1,5 +1,3 @@
-"use client";
-
 import EditPage from "@/components/Layout/user/new";
 import { Metadata } from "next";
 import { website_url } from "@/lib/siteConfig";
