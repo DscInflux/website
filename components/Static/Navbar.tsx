@@ -252,15 +252,15 @@ const Navbar: React.FC = () => {
                 </button>
               )}
               {/* Admin Option */}
-                  {session.user?.is_admin && (
-                    <Link
-                      href="/admin"
-                      className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 text-indigo-600 dark:text-indigo-400 font-semibold"
-                    >
-                      <FaCogs className="mr-2" />
-                      Admin
-                    </Link>
-                  )}
+              {session.user?.is_admin && (
+                <Link
+                  href="/admin"
+                  className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 text-indigo-600 dark:text-indigo-400 font-semibold"
+                >
+                  <FaCogs className="mr-2" />
+                  Admin
+                </Link>
+              )}
               <button
                 onClick={handleLogout}
                 className="flex items-center space-x-2 text-red-600 hover:text-red-800"

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image"
-import Link from "next/link"
-import { useSession } from "next-auth/react"
+import Image from "next/image";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import {
   FaSearch,
   FaTrash,
@@ -11,19 +11,18 @@ import {
   FaChartBar,
   FaUsers,
   FaCheckCircle,
-} from "react-icons/fa"
-import { motion, AnimatePresence } from "framer-motion"
+} from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 import UserCard from "@/components/cards/UserCards";
-import { Entity } from "@/types/entity"
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Entity } from "@/types/entity";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Types
 interface Stats {
-  entities: number
-  users: number
-  entitiesVerified: number
+  entities: number;
+  users: number;
+  entitiesVerified: number;
 }
-
 
 export default function AdminPanel() {
   const { data: session, status } = useSession();
@@ -35,10 +34,10 @@ export default function AdminPanel() {
     isLoading: statsLoading,
     error: statsError,
   } = useQuery({
-    queryKey: ['admin-stats'],
+    queryKey: ["admin-stats"],
     queryFn: async () => {
-      const res = await fetch('/api/get/stats');
-      if (!res.ok) throw new Error('Failed to fetch stats');
+      const res = await fetch("/api/get/stats");
+      if (!res.ok) throw new Error("Failed to fetch stats");
       return (await res.json()).stats;
     },
   });
@@ -49,10 +48,10 @@ export default function AdminPanel() {
     isLoading: entitiesLoading,
     error: entitiesError,
   } = useQuery({
-    queryKey: ['admin-entities'],
+    queryKey: ["admin-entities"],
     queryFn: async () => {
-      const res = await fetch('/api/get/entity/all');
-      if (!res.ok) throw new Error('Failed to fetch entities');
+      const res = await fetch("/api/get/entity/all");
+      if (!res.ok) throw new Error("Failed to fetch entities");
       const data = await res.json();
       if (Array.isArray(data)) return data;
       if (data && Array.isArray(data.data)) return data.data;
@@ -60,35 +59,43 @@ export default function AdminPanel() {
     },
   });
 
-  const [banningUser, setBanningUser] = useState<string | null>(null)
+  const [banningUser, setBanningUser] = useState<string | null>(null);
   const [notification, setNotification] = useState<{
-    message: string
-    type: "success" | "error"
-  } | null>(null)
-  const [activeTab, setActiveTab] = useState<"all" | "verified" | "banned">("all")
-  const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const [userToBan, setUserToBan] = useState<string | null>(null)
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+  const [activeTab, setActiveTab] = useState<"all" | "verified" | "banned">(
+    "all",
+  );
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [userToBan, setUserToBan] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   // Ban user mutation
   const banUserMutation = useMutation({
     mutationFn: async (username: string) => {
-      const response = await fetch('/api/post/admin/entity/ban', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/post/admin/entity/ban", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to ban user');
+      if (!response.ok) throw new Error(data.error || "Failed to ban user");
       return { username };
     },
     onSuccess: ({ username }) => {
-      queryClient.invalidateQueries({ queryKey: ['admin-entities'] });
-      setNotification({ message: `Successfully banned ${username}`, type: 'success' });
+      queryClient.invalidateQueries({ queryKey: ["admin-entities"] });
+      setNotification({
+        message: `Successfully banned ${username}`,
+        type: "success",
+      });
       setTimeout(() => setNotification(null), 3000);
     },
     onError: (error: any) => {
-      setNotification({ message: error.message || 'Failed to ban user', type: 'error' });
+      setNotification({
+        message: error.message || "Failed to ban user",
+        type: "error",
+      });
       setTimeout(() => setNotification(null), 3000);
     },
     onSettled: () => {
@@ -99,9 +106,9 @@ export default function AdminPanel() {
 
   // Show confirmation modal
   const confirmBan = (username: string) => {
-    setUserToBan(username)
-    setShowConfirmModal(true)
-  }
+    setUserToBan(username);
+    setShowConfirmModal(true);
+  };
 
   // Replace banUser with mutation
   const banUser = () => {
@@ -118,9 +125,12 @@ export default function AdminPanel() {
       filtered = filtered.filter((entity: Entity) => entity.isVerified);
     }
     if (searchTerm.trim() !== "") {
-      filtered = filtered.filter((entity: Entity) =>
-        entity.discordUsername.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        entity.url.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (entity: Entity) =>
+          entity.discordUsername
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          entity.url.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
     return filtered;
@@ -132,14 +142,16 @@ export default function AdminPanel() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary mb-4"></div>
-          <h2 className="text-white text-xl font-semibold">Loading Admin Panel...</h2>
+          <h2 className="text-white text-xl font-semibold">
+            Loading Admin Panel...
+          </h2>
         </div>
       </div>
-    )
+    );
   }
 
   // Check if user is admin
-  const isAdmin = session?.user?.is_admin
+  const isAdmin = session?.user?.is_admin;
 
   // If not admin, show access denied
   if (!isAdmin) {
@@ -148,7 +160,8 @@ export default function AdminPanel() {
         <FaShieldAlt className="text-red-500 text-6xl mb-6" />
         <h1 className="text-4xl font-bold text-white mb-4">Access Denied</h1>
         <p className="text-gray-300 max-w-md text-lg">
-          You don't have permission to access the admin panel. This area is restricted to administrators only.
+          You don't have permission to access the admin panel. This area is
+          restricted to administrators only.
         </p>
         <Link
           href="/"
@@ -157,7 +170,7 @@ export default function AdminPanel() {
           Return to Homepage
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -178,7 +191,9 @@ export default function AdminPanel() {
           {session?.user && (
             <div className="flex items-center bg-gray-800/50 p-2 rounded-xl">
               <div className="mr-3">
-                <p className="text-sm font-medium">{session.user.name || session.user.email}</p>
+                <p className="text-sm font-medium">
+                  {session.user.name || session.user.email}
+                </p>
                 <p className="text-xs text-primary">Administrator</p>
               </div>
               {session.user.image && (
@@ -210,7 +225,9 @@ export default function AdminPanel() {
               </div>
               <div>
                 <p className="text-gray-400 font-medium">Total Users</p>
-                <h3 className="text-3xl font-bold">{statsData?.users || "..."}</h3>
+                <h3 className="text-3xl font-bold">
+                  {statsData?.users || "..."}
+                </h3>
               </div>
             </div>
           </motion.div>
@@ -227,7 +244,9 @@ export default function AdminPanel() {
               </div>
               <div>
                 <p className="text-gray-400 font-medium">Total Entities</p>
-                <h3 className="text-3xl font-bold">{statsData?.entities || "..."}</h3>
+                <h3 className="text-3xl font-bold">
+                  {statsData?.entities || "..."}
+                </h3>
               </div>
             </div>
           </motion.div>
@@ -244,7 +263,9 @@ export default function AdminPanel() {
               </div>
               <div>
                 <p className="text-gray-400 font-medium">Verified Entities</p>
-                <h3 className="text-3xl font-bold">{statsData?.entitiesVerified || "..."}</h3>
+                <h3 className="text-3xl font-bold">
+                  {statsData?.entitiesVerified || "..."}
+                </h3>
               </div>
             </div>
           </motion.div>
@@ -279,7 +300,9 @@ export default function AdminPanel() {
                 <button
                   onClick={() => setActiveTab("all")}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    activeTab === "all" ? "bg-primary text-white" : "text-gray-400 hover:text-white"
+                    activeTab === "all"
+                      ? "bg-primary text-white"
+                      : "text-gray-400 hover:text-white"
                   }`}
                 >
                   All
@@ -287,7 +310,9 @@ export default function AdminPanel() {
                 <button
                   onClick={() => setActiveTab("verified")}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    activeTab === "verified" ? "bg-primary text-white" : "text-gray-400 hover:text-white"
+                    activeTab === "verified"
+                      ? "bg-primary text-white"
+                      : "text-gray-400 hover:text-white"
                   }`}
                 >
                   Verified
@@ -295,7 +320,9 @@ export default function AdminPanel() {
                 <button
                   onClick={() => setActiveTab("banned")}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    activeTab === "banned" ? "bg-primary text-white" : "text-gray-400 hover:text-white"
+                    activeTab === "banned"
+                      ? "bg-primary text-white"
+                      : "text-gray-400 hover:text-white"
                   }`}
                 >
                   Banned
@@ -311,7 +338,10 @@ export default function AdminPanel() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-700 bg-gray-800/80 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent"
                 />
-                <FaSearch className="absolute left-3 top-3.5 text-gray-500" size={16} />
+                <FaSearch
+                  className="absolute left-3 top-3.5 text-gray-500"
+                  size={16}
+                />
               </div>
             </div>
           </div>
@@ -326,11 +356,13 @@ export default function AdminPanel() {
           ) : filteredEntities.length === 0 ? (
             <div className="text-center py-16">
               <FaSearch className="mx-auto text-gray-600 text-4xl mb-4" />
-              <p className="text-gray-400 text-lg">No entities found matching your criteria.</p>
+              <p className="text-gray-400 text-lg">
+                No entities found matching your criteria.
+              </p>
               <button
                 onClick={() => {
-                  setSearchTerm("")
-                  setActiveTab("all")
+                  setSearchTerm("");
+                  setActiveTab("all");
                 }}
                 className="mt-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors"
               >
@@ -340,7 +372,10 @@ export default function AdminPanel() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredEntities.map((entity) => (
-                <div key={entity.id || entity.url} className="flex flex-col gap-2">
+                <div
+                  key={entity.id || entity.url}
+                  className="flex flex-col gap-2"
+                >
                   <UserCard entity={entity} />
                   <button
                     className="w-full py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-semibold text-white transition-colors flex items-center justify-center gap-2"
@@ -373,8 +408,9 @@ export default function AdminPanel() {
             </div>
 
             <p className="text-gray-300 mb-6">
-              Are you sure you want to ban <span className="font-semibold text-white">{userToBan}</span>? This action
-              cannot be easily undone.
+              Are you sure you want to ban{" "}
+              <span className="font-semibold text-white">{userToBan}</span>?
+              This action cannot be easily undone.
             </p>
 
             <div className="flex justify-end gap-3">
@@ -396,5 +432,5 @@ export default function AdminPanel() {
         </div>
       )}
     </div>
-  )
+  );
 }

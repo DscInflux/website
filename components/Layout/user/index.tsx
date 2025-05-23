@@ -25,7 +25,7 @@ import type { Entity } from "@/types/entity";
 import { Code, Handshake, Shield } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { generateUserMetadata } from "@/lib/Metadata";
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function UserProfile({ username }: { username: string }) {
   const { data: session } = useSession();
@@ -52,9 +52,12 @@ export default function UserProfile({ username }: { username: string }) {
   const likeMutation = useMutation({
     mutationFn: async (action: "like" | "unlike") => {
       if (!data) throw new Error("No user data");
-      const res = await fetch(`/api/post/entity/heart?action=${action}&url=${data.url}`, {
-        method: "POST",
-      });
+      const res = await fetch(
+        `/api/post/entity/heart?action=${action}&url=${data.url}`,
+        {
+          method: "POST",
+        },
+      );
       return res.json();
     },
     onSuccess: (_, action) => {
@@ -74,8 +77,14 @@ export default function UserProfile({ username }: { username: string }) {
         profilePicture: data.avatar,
         banner: data.banner,
         biography: data.about,
-        keywords: [data.discordDisplayName || username, ...(data.occupation || []), "User", "DscInflux"],
-        canonicalUrl: typeof window !== 'undefined' ? window.location.href : undefined
+        keywords: [
+          data.discordDisplayName || username,
+          ...(data.occupation || []),
+          "User",
+          "DscInflux",
+        ],
+        canonicalUrl:
+          typeof window !== "undefined" ? window.location.href : undefined,
       });
     }
   }, [data, username]);

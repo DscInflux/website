@@ -28,7 +28,11 @@ export function SessionProviders({ children }: ProvidersProps) {
   return <SessionProvider>{children}</SessionProvider>;
 }
 
-export function ReactQueryProviders({ children }: { children: React.ReactNode }) {
+export function ReactQueryProviders({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}

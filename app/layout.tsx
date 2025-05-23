@@ -4,7 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Static/Navbar";
 import Footer from "@/components/Static/Footer";
 import { ThemeProvider, SessionProviders } from "../components/Provider";
-import { generateMetadata } from '@/lib/Metadata';
+import { generateMetadata } from "@/lib/Metadata";
 import { ReactQueryProviders } from "@/components/Provider";
 
 const geistSans = Geist({

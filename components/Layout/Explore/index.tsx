@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState, useMemo } from "react"
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import UserCard from "@/components/cards/UserCards"
-import { useSession } from "next-auth/react"
-import { motion, AnimatePresence } from "framer-motion"
+import React, { useEffect, useState, useMemo } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import UserCard from "@/components/cards/UserCards";
+import { useSession } from "next-auth/react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   HiOutlineAdjustments,
   HiOutlineRefresh,
@@ -15,20 +15,20 @@ import {
   HiOutlineSparkles,
   HiOutlineX,
   HiChevronDown,
-} from "react-icons/hi"
-import { useQuery } from "@tanstack/react-query"
+} from "react-icons/hi";
+import { useQuery } from "@tanstack/react-query";
 
 interface RadioGroupItem {
-  label: string
-  value?: any
-  icon?: React.ReactNode
-  default?: boolean
+  label: string;
+  value?: any;
+  icon?: React.ReactNode;
+  default?: boolean;
 }
 
 interface RadioGroupProps {
-  items: RadioGroupItem[]
-  value: number | null
-  onChange: (item: RadioGroupItem) => void
+  items: RadioGroupItem[];
+  value: number | null;
+  onChange: (item: RadioGroupItem) => void;
 }
 
 const RadioGroup: React.FC<RadioGroupProps> = ({ items, value, onChange }) => {
@@ -48,10 +48,14 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ items, value, onChange }) => {
         >
           <div
             className={`w-5 h-5 rounded-full mr-3 flex items-center justify-center border-2 transition-colors ${
-              value === index ? "border-primary" : "border-gray-300 dark:border-gray-600"
+              value === index
+                ? "border-primary"
+                : "border-gray-300 dark:border-gray-600"
             }`}
           >
-            {value === index && <div className="w-2.5 h-2.5 rounded-full bg-primary"></div>}
+            {value === index && (
+              <div className="w-2.5 h-2.5 rounded-full bg-primary"></div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             {item.icon && <span className="text-xl">{item.icon}</span>}
@@ -60,26 +64,32 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ items, value, onChange }) => {
         </motion.div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 // CheckboxGroup Props
 interface CheckboxGroupItem {
-  label: string
+  label: string;
 }
 
 interface CheckboxGroupProps {
-  items: CheckboxGroupItem[]
-  value: string[]
-  query?: any
-  onChange: (value: string[]) => void
+  items: CheckboxGroupItem[];
+  value: string[];
+  query?: any;
+  onChange: (value: string[]) => void;
 }
 
-const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, value, onChange }) => {
+const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
+  items,
+  value,
+  onChange,
+}) => {
   const handleCheckboxChange = (itemLabel: string) => {
-    const newValue = value.includes(itemLabel) ? value.filter((v) => v !== itemLabel) : [...value, itemLabel]
-    onChange(newValue)
-  }
+    const newValue = value.includes(itemLabel)
+      ? value.filter((v) => v !== itemLabel)
+      : [...value, itemLabel];
+    onChange(newValue);
+  };
 
   return (
     <div className="space-y-2">
@@ -97,35 +107,39 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, value, onChange })
         >
           <div
             className={`w-5 h-5 rounded-md mr-3 flex items-center justify-center transition-colors ${
-              value.includes(item.label) ? "bg-primary border-primary" : "border-2 border-gray-300 dark:border-gray-600"
+              value.includes(item.label)
+                ? "bg-primary border-primary"
+                : "border-2 border-gray-300 dark:border-gray-600"
             }`}
           >
-            {value.includes(item.label) && <HiOutlineX className="text-white" size={14} />}
+            {value.includes(item.label) && (
+              <HiOutlineX className="text-white" size={14} />
+            )}
           </div>
           <span className="text-base">{item.label}</span>
         </motion.div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 export default function ExplorePage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const pathname = usePathname()
-  const { data: session } = useSession()
-  const [active, setActive] = useState<number>(0)
-  const [language, setLanguage] = useState<number | null>(null)
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const [active, setActive] = useState<number>(0);
+  const [language, setLanguage] = useState<number | null>(null);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
     sorting: true,
     language: true,
     roles: true,
     skills: true,
-  })
-  const [search, setSearch] = useState<string>("")
+  });
+  const [search, setSearch] = useState<string>("");
 
-  const user = session?.user || null
+  const user = session?.user || null;
 
   const sortings: RadioGroupItem[] = [
     {
@@ -149,7 +163,7 @@ export default function ExplorePage() {
       value: "random",
       icon: <HiOutlineSparkles className="text-lg" />,
     },
-  ]
+  ];
 
   // --- React Query: Fetch all user data ---
   const {
@@ -157,183 +171,214 @@ export default function ExplorePage() {
     isLoading: allItemsLoading,
     error: allItemsError,
   } = useQuery({
-    queryKey: ['explore-entities', searchParams.toString()],
+    queryKey: ["explore-entities", searchParams.toString()],
     queryFn: async () => {
-      const res = await fetch(`/api/get/entity/explore?page=1&limit=100&${searchParams.toString()}`);
+      const res = await fetch(
+        `/api/get/entity/explore?page=1&limit=100&${searchParams.toString()}`,
+      );
       const data = await res.json();
       return Array.isArray(data.data) ? data.data : [];
     },
   });
 
   // --- DYNAMIC FILTER OPTIONS ---
-  const [dynamicRoles, setDynamicRoles] = useState<{ name: string; slug: string }[]>([])
-  const [dynamicSkills, setDynamicSkills] = useState<{ name: string; slug: string }[]>([])
-  const [dynamicLanguages, setDynamicLanguages] = useState<string[]>([])
+  const [dynamicRoles, setDynamicRoles] = useState<
+    { name: string; slug: string }[]
+  >([]);
+  const [dynamicSkills, setDynamicSkills] = useState<
+    { name: string; slug: string }[]
+  >([]);
+  const [dynamicLanguages, setDynamicLanguages] = useState<string[]>([]);
 
   useEffect(() => {
     if (allItems.length > 0) {
       // Roles
-      const rolesSet = new Set<string>()
+      const rolesSet = new Set<string>();
       allItems.forEach((item: any) => {
         if (Array.isArray(item.roles)) {
-          item.roles.forEach((role: string) => rolesSet.add(role))
+          item.roles.forEach((role: string) => rolesSet.add(role));
         }
-      })
+      });
       setDynamicRoles(
         Array.from(rolesSet)
           .filter(Boolean)
-          .map((r) => ({ name: r, slug: r.toLowerCase().replace(/\s+/g, "-") })),
-      )
+          .map((r) => ({
+            name: r,
+            slug: r.toLowerCase().replace(/\s+/g, "-"),
+          })),
+      );
       // Skills
-      const skillsSet = new Set<string>()
+      const skillsSet = new Set<string>();
       allItems.forEach((item: any) => {
         if (Array.isArray(item.skills)) {
-          item.skills.forEach((skill: string) => skillsSet.add(skill))
+          item.skills.forEach((skill: string) => skillsSet.add(skill));
         }
-      })
+      });
       setDynamicSkills(
         Array.from(skillsSet)
           .filter(Boolean)
-          .map((s) => ({ name: s, slug: s.toLowerCase().replace(/\s+/g, "-") })),
-      )
+          .map((s) => ({
+            name: s,
+            slug: s.toLowerCase().replace(/\s+/g, "-"),
+          })),
+      );
       // Languages
-      const langSet = new Set<string>()
+      const langSet = new Set<string>();
       allItems.forEach((item: any) => {
         if (typeof item.language === "string" && item.language.trim()) {
-          item.language.split(/,|\//).forEach((lang: string) => langSet.add(lang.trim()))
+          item.language
+            .split(/,|\//)
+            .forEach((lang: string) => langSet.add(lang.trim()));
         }
-      })
-      setDynamicLanguages(Array.from(langSet).filter(Boolean))
+      });
+      setDynamicLanguages(Array.from(langSet).filter(Boolean));
     }
-  }, [allItems])
+  }, [allItems]);
 
   // Helper to get query params as object
   function getQueryObject() {
-    const obj: Record<string, string> = {}
+    const obj: Record<string, string> = {};
     searchParams.forEach((value, key) => {
-      obj[key] = value
-    })
-    return obj
+      obj[key] = value;
+    });
+    return obj;
   }
 
   useEffect(() => {
-    const query = getQueryObject()
+    const query = getQueryObject();
     if (query.sort) {
-      const index = sortings.findIndex((item) => item.value === query.sort)
+      const index = sortings.findIndex((item) => item.value === query.sort);
       if (index !== -1) {
-        setActive(index)
+        setActive(index);
       } else {
-        const defaultIndex = sortings.findIndex((item) => item.default)
-        setActive(defaultIndex)
+        const defaultIndex = sortings.findIndex((item) => item.default);
+        setActive(defaultIndex);
       }
     } else {
-      const defaultIndex = sortings.findIndex((item) => item.default)
-      setActive(defaultIndex)
+      const defaultIndex = sortings.findIndex((item) => item.default);
+      setActive(defaultIndex);
     }
     if (query.language) {
-      const findIndex = dynamicLanguages.findIndex((item) => item === query.language)
+      const findIndex = dynamicLanguages.findIndex(
+        (item) => item === query.language,
+      );
       if (findIndex !== -1) {
-        setLanguage(findIndex)
+        setLanguage(findIndex);
       } else {
-        setLanguage(null)
+        setLanguage(null);
       }
     } else {
-      setLanguage(null)
+      setLanguage(null);
     }
     if (query.name) {
-      setSearch(query.name)
+      setSearch(query.name);
     } else {
-      setSearch("")
+      setSearch("");
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   // Helper to update query params
   function updateQuery(newQuery: Record<string, any>) {
-    const params = new URLSearchParams(getQueryObject())
+    const params = new URLSearchParams(getQueryObject());
     Object.entries(newQuery).forEach(([key, value]) => {
       if (value === undefined || value === null || value === "") {
-        params.delete(key)
+        params.delete(key);
       } else {
-        params.set(key, value)
+        params.set(key, value);
       }
-    })
-    router.push(`${pathname}?${params.toString()}`)
+    });
+    router.push(`${pathname}?${params.toString()}`);
   }
 
   const handleSortChange = (item: RadioGroupItem) => {
-    updateQuery({ sort: item.value })
-    setActive(sortings.findIndex((i) => i.value === item.value))
-  }
+    updateQuery({ sort: item.value });
+    setActive(sortings.findIndex((i) => i.value === item.value));
+  };
 
   const handleLanguageChange = (item: RadioGroupItem) => {
-    updateQuery({ language: item.label })
-    setLanguage(dynamicLanguages.findIndex((i) => i === item.label))
-  }
+    updateQuery({ language: item.label });
+    setLanguage(dynamicLanguages.findIndex((i) => i === item.label));
+  };
 
   const handleRolesChange = (selectedRoles: string[]) => {
-    updateQuery({ roles: selectedRoles.join(",") })
-  }
+    updateQuery({ roles: selectedRoles.join(",") });
+  };
 
   const handleSkillsChange = (selectedSkills: string[]) => {
-    updateQuery({ skills: selectedSkills.join(",") })
-  }
+    updateQuery({ skills: selectedSkills.join(",") });
+  };
 
   // --- FILTER & SORT ---
   // Filter and sort users client-side
   const filteredItems = useMemo(() => {
-    let filtered = [...allItems]
+    let filtered = [...allItems];
     // Search
     if (search) {
       filtered = filtered.filter((item: any) => {
-        const uname = item.discordUsername?.toLowerCase() || ""
-        const dname = item.discordDisplayName?.toLowerCase() || ""
-        return uname.includes(search.toLowerCase()) || dname.includes(search.toLowerCase())
-      })
+        const uname = item.discordUsername?.toLowerCase() || "";
+        const dname = item.discordDisplayName?.toLowerCase() || "";
+        return (
+          uname.includes(search.toLowerCase()) ||
+          dname.includes(search.toLowerCase())
+        );
+      });
     }
     // Language filter
-    const query = getQueryObject()
+    const query = getQueryObject();
     if (query.language) {
       filtered = filtered.filter((item: any) => {
-        if (!item.language) return false
+        if (!item.language) return false;
         return item.language
           .split(/,|\//)
           .map((l: string) => l.trim())
-          .includes(query.language)
-      })
+          .includes(query.language);
+      });
     }
     // Roles filter
     if (query.roles) {
-      const selectedRoles = query.roles.split(",")
+      const selectedRoles = query.roles.split(",");
       filtered = filtered.filter(
-        (item: any) => Array.isArray(item.roles) && selectedRoles.every((role) => item.roles.includes(role)),
-      )
+        (item: any) =>
+          Array.isArray(item.roles) &&
+          selectedRoles.every((role) => item.roles.includes(role)),
+      );
     }
     // Skills filter
     if (query.skills) {
-      const selectedSkills = query.skills.split(",")
+      const selectedSkills = query.skills.split(",");
       filtered = filtered.filter(
-        (item: any) => Array.isArray(item.skills) && selectedSkills.every((skill) => item.skills.includes(skill)),
-      )
+        (item: any) =>
+          Array.isArray(item.skills) &&
+          selectedSkills.every((skill) => item.skills.includes(skill)),
+      );
     }
     // Sort
     if (sortings[active]?.value === "newest") {
-      filtered = filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      filtered = filtered.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
     } else if (sortings[active]?.value === "oldest") {
-      filtered = filtered.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      filtered = filtered.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      );
     } else if (sortings[active]?.value === "popular") {
-      filtered = filtered.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
+      filtered = filtered.sort(
+        (a, b) => (b.likes?.length || 0) - (a.likes?.length || 0),
+      );
     } else if (sortings[active]?.value === "random") {
-      filtered = filtered.sort(() => Math.random() - 0.5)
+      filtered = filtered.sort(() => Math.random() - 0.5);
     }
-    return filtered
-  }, [allItems, search, active, searchParams, dynamicLanguages, sortings])
+    return filtered;
+  }, [allItems, search, active, searchParams, dynamicLanguages, sortings]);
 
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections({
       ...expandedSections,
       [section]: !expandedSections[section],
-    })
-  }
+    });
+  };
 
   const FilterSection = ({
     title,
@@ -341,15 +386,21 @@ export default function ExplorePage() {
     onToggle,
     children,
   }: {
-    title: string
-    expanded: boolean
-    onToggle: () => void
-    children: React.ReactNode
+    title: string;
+    expanded: boolean;
+    onToggle: () => void;
+    children: React.ReactNode;
   }) => (
     <div className="mb-6">
-      <div className="flex items-center justify-between cursor-pointer mb-3" onClick={onToggle}>
+      <div
+        className="flex items-center justify-between cursor-pointer mb-3"
+        onClick={onToggle}
+      >
         <h3 className="text-lg font-semibold">{title}</h3>
-        <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+        <motion.div
+          animate={{ rotate: expanded ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
           <HiChevronDown className="text-xl text-gray-500" />
         </motion.div>
       </div>
@@ -366,7 +417,7 @@ export default function ExplorePage() {
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -412,7 +463,11 @@ export default function ExplorePage() {
                   expanded={expandedSections.sorting}
                   onToggle={() => toggleSection("sorting")}
                 >
-                  <RadioGroup items={sortings} value={active} onChange={handleSortChange} />
+                  <RadioGroup
+                    items={sortings}
+                    value={active}
+                    onChange={handleSortChange}
+                  />
                 </FilterSection>
 
                 <FilterSection
@@ -422,19 +477,34 @@ export default function ExplorePage() {
                 >
                   <CheckboxGroup
                     items={dynamicLanguages.map((lang) => ({ label: lang }))}
-                    value={language !== null ? [dynamicLanguages[language]] : []}
+                    value={
+                      language !== null ? [dynamicLanguages[language]] : []
+                    }
                     onChange={(selected) => {
-                      const index = dynamicLanguages.findIndex((lang) => lang === selected[0])
-                      setLanguage(index)
-                      updateQuery({ language: index !== -1 ? dynamicLanguages[index] : undefined })
+                      const index = dynamicLanguages.findIndex(
+                        (lang) => lang === selected[0],
+                      );
+                      setLanguage(index);
+                      updateQuery({
+                        language:
+                          index !== -1 ? dynamicLanguages[index] : undefined,
+                      });
                     }}
                   />
                 </FilterSection>
 
-                <FilterSection title="Roles" expanded={expandedSections.roles} onToggle={() => toggleSection("roles")}>
+                <FilterSection
+                  title="Roles"
+                  expanded={expandedSections.roles}
+                  onToggle={() => toggleSection("roles")}
+                >
                   <CheckboxGroup
                     items={dynamicRoles.map((r) => ({ label: r.name }))}
-                    value={searchParams.get("roles") ? searchParams.get("roles")!.split(",") : []}
+                    value={
+                      searchParams.get("roles")
+                        ? searchParams.get("roles")!.split(",")
+                        : []
+                    }
                     onChange={handleRolesChange}
                   />
                 </FilterSection>
@@ -446,7 +516,11 @@ export default function ExplorePage() {
                 >
                   <CheckboxGroup
                     items={dynamicSkills.map((s) => ({ label: s.name }))}
-                    value={searchParams.get("skills") ? searchParams.get("skills")!.split(",") : []}
+                    value={
+                      searchParams.get("skills")
+                        ? searchParams.get("skills")!.split(",")
+                        : []
+                    }
                     onChange={handleSkillsChange}
                   />
                 </FilterSection>
@@ -464,14 +538,14 @@ export default function ExplorePage() {
                 type="text"
                 value={search}
                 onChange={(e) => {
-                  setSearch(e.target.value)
+                  setSearch(e.target.value);
                   if (e.target.value === "") {
-                    updateQuery({ name: undefined })
+                    updateQuery({ name: undefined });
                   }
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    updateQuery({ name: search })
+                    updateQuery({ name: search });
                   }
                 }}
                 className="w-full p-4 pl-12  rounded-xl transition-all"
@@ -481,8 +555,8 @@ export default function ExplorePage() {
               {search && (
                 <button
                   onClick={() => {
-                    setSearch("")
-                    updateQuery({ name: undefined })
+                    setSearch("");
+                    updateQuery({ name: undefined });
                   }}
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                 >
@@ -526,8 +600,10 @@ export default function ExplorePage() {
                         const roles = searchParams
                           .get("roles")!
                           .split(",")
-                          .filter((r) => r !== role)
-                        updateQuery({ roles: roles.length ? roles.join(",") : undefined })
+                          .filter((r) => r !== role);
+                        updateQuery({
+                          roles: roles.length ? roles.join(",") : undefined,
+                        });
                       }}
                       className="hover:bg-primary/20 rounded-full p-0.5"
                     >
@@ -552,8 +628,10 @@ export default function ExplorePage() {
                         const skills = searchParams
                           .get("skills")!
                           .split(",")
-                          .filter((s) => s !== skill)
-                        updateQuery({ skills: skills.length ? skills.join(",") : undefined })
+                          .filter((s) => s !== skill);
+                        updateQuery({
+                          skills: skills.length ? skills.join(",") : undefined,
+                        });
                       }}
                       className="hover:bg-primary/20 rounded-full p-0.5"
                     >
@@ -561,12 +639,18 @@ export default function ExplorePage() {
                     </button>
                   </motion.div>
                 ))}
-            {(searchParams.get("language") || searchParams.get("roles") || searchParams.get("skills")) && (
+            {(searchParams.get("language") ||
+              searchParams.get("roles") ||
+              searchParams.get("skills")) && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  updateQuery({ language: undefined, roles: undefined, skills: undefined })
+                  updateQuery({
+                    language: undefined,
+                    roles: undefined,
+                    skills: undefined,
+                  });
                 }}
                 className="flex items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700"
               >
@@ -578,7 +662,8 @@ export default function ExplorePage() {
 
           {/* Results Count */}
           <div className="mb-4 text-gray-500 dark:text-gray-400">
-            Found {filteredItems.length} {filteredItems.length === 1 ? "user" : "users"}
+            Found {filteredItems.length}{" "}
+            {filteredItems.length === 1 ? "user" : "users"}
           </div>
 
           {/* Users Grid */}
@@ -604,16 +689,18 @@ export default function ExplorePage() {
               >
                 <HiOutlineSearch className="mx-auto text-5xl text-gray-300 dark:text-gray-600 mb-4" />
                 <h2 className="text-xl font-semibold mb-2">No results found</h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-6">Try adjusting your search or filters.</p>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">
+                  Try adjusting your search or filters.
+                </p>
                 <button
                   onClick={() => {
-                    setSearch("")
+                    setSearch("");
                     updateQuery({
                       name: undefined,
                       language: undefined,
                       roles: undefined,
                       skills: undefined,
-                    })
+                    });
                   }}
                   className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
                 >
@@ -649,5 +736,5 @@ export default function ExplorePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

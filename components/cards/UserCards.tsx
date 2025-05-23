@@ -3,7 +3,13 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaHeart, FaRegHeart, FaUserShield, FaCode, FaHandshake } from "react-icons/fa";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaUserShield,
+  FaCode,
+  FaHandshake,
+} from "react-icons/fa";
 import { FaCircleCheck } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,10 +25,16 @@ const UserCard: React.FC<UserCardProps> = ({
   isSkeleton = false,
   isLiked = false,
 }) => {
-  const { data: likeData, isLoading: likeLoading, refetch: refetchLike } = useQuery({
+  const {
+    data: likeData,
+    isLoading: likeLoading,
+    refetch: refetchLike,
+  } = useQuery({
     queryKey: ["user-like", entity.url],
     queryFn: async () => {
-      const res = await fetch(`/api/post/entity/heart?action=status&url=${entity.url}`);
+      const res = await fetch(
+        `/api/post/entity/heart?action=status&url=${entity.url}`,
+      );
       if (!res.ok) throw new Error("Failed to fetch like status");
       return res.json();
     },
@@ -70,7 +82,7 @@ const UserCard: React.FC<UserCardProps> = ({
             src={
               entity.avatar ||
               "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"
-             }
+            }
             alt={`${entity.discordUsername} avatar`}
             fill
             sizes="64px"
@@ -112,7 +124,7 @@ const UserCard: React.FC<UserCardProps> = ({
 
       {/* Bottom: actions */}
       <div className="flex justify-between items-center gap-4 mt-4">
-        <Link 
+        <Link
           href={`/user/${entity.url}`}
           className="flex-grow py-2.5 px-4 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-medium transition-all duration-200 text-center"
         >
@@ -129,7 +141,10 @@ const UserCard: React.FC<UserCardProps> = ({
           {liked ? (
             <FaHeart className="text-red-500" size={18} />
           ) : (
-            <FaRegHeart className="text-gray-500 dark:text-gray-400" size={18} />
+            <FaRegHeart
+              className="text-gray-500 dark:text-gray-400"
+              size={18}
+            />
           )}
         </button>
       </div>

@@ -21,7 +21,7 @@ export default function CarouselHeader({
   next,
   prev,
   isPrev,
-  isNext
+  isNext,
 }: CarouselHeaderProps) {
   return (
     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between px-1 gap-4 mb-6">
@@ -49,8 +49,8 @@ export default function CarouselHeader({
             onClick={prev}
             disabled={!isPrev}
             className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-              isPrev 
-                ? "bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300" 
+              isPrev
+                ? "bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                 : "bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-600 cursor-not-allowed"
             }`}
             aria-label="Previous"
@@ -61,8 +61,8 @@ export default function CarouselHeader({
             onClick={next}
             disabled={!isNext}
             className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-              isNext 
-                ? "bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300" 
+              isNext
+                ? "bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
                 : "bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-600 cursor-not-allowed"
             }`}
             aria-label="Next"

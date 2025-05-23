@@ -120,7 +120,7 @@ export default function StatsComponent() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['stats'],
+    queryKey: ["stats"],
     queryFn: async () => {
       const response = await fetch("/api/get/stats");
       if (!response.ok) throw new Error("Failed to fetch stats");
