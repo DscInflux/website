@@ -24,6 +24,7 @@ import type { User } from "@/types/users";
 import type { Entity } from "@/types/entity";
 import { Code, Handshake, Shield } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { generateUserMetadata } from "@/lib/Metadata";
 
 export default function UserProfile({ username }: { username: string }) {
   const { data: session } = useSession();
@@ -63,6 +64,20 @@ export default function UserProfile({ username }: { username: string }) {
       setLiked(false);
     }
   }, [data, user]);
+
+  // Generate dynamic metadata for the user
+  useEffect(() => {
+    if (data) {
+      generateUserMetadata({
+        name: data.discordDisplayName || username,
+        profilePicture: data.avatar,
+        banner: data.banner,
+        biography: data.about,
+        keywords: [data.discordDisplayName || username, ...(data.occupation || []), "User", "DscInflux"],
+        canonicalUrl: typeof window !== 'undefined' ? window.location.href : undefined
+      });
+    }
+  }, [data, username]);
 
   const toggleLike = async () => {
     if (!data) return;
@@ -499,7 +514,7 @@ export default function UserProfile({ username }: { username: string }) {
                 {data.roles.map((role, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-2  border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200"
+                    className="flex items-center gap-2 bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200"
                   >
                     {role}
                   </div>
@@ -568,14 +583,14 @@ export default function UserProfile({ username }: { username: string }) {
                 This information is not set. Why you may ask? idk
               </p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 text-white">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 text-white ">
                 {data.socials.map((social, i) => (
                   <a
                     href={social.url + "?utm_source=dscinflux.xyz"}
                     target="_blank"
                     rel="noopener noreferrer"
                     key={i}
-                    className="flex items-center text-white justify-between relative border border-gray-100 dark:border-gray-800 hover:border-primary/20 active:border-primary/50 rounded-xl px-6 py-4 transition-all duration-200 cursor-pointer hover:shadow-lg group"
+                    className="flex items-center flex items-center gap-2 bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200 text-white justify-between relative border border-gray-100 dark:border-gray-800 hover:border-primary/20 active:border-primary/50 rounded-xl px-6 py-4 transition-all duration-200 cursor-pointer hover:shadow-lg group"
                     style={{ color: social.color || "currentColor" }}
                   >
                     <h1 className="capitalize text-md text-white font-medium select-none">

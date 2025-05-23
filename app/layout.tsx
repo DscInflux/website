@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Static/Navbar";
 import Footer from "@/components/Static/Footer";
 import { ThemeProvider, SessionProviders } from "../components/Provider";
+import { generateMetadata } from '@/lib/Metadata';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,43 +16,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "DscInflux",
-  description: "Connecting people with the same interests",
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
-  },
-  openGraph: {
-    title: "DscInflux",
-    description: "Connecting people with the same interests",
-    url: "https://dscinflux.xyz",
-    siteName: "DscInflux",
-    images: [
-      {
-        url: "https://avatars.githubusercontent.com/u/144157365?s=400&u=01ff974164b5dae27dbe879c10fe2d7ca94a8f74&v=4",
-        width: 800,
-        height: 600,
-      },
-    ],
-    locale: "en-US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "DscInflux",
-    description: "Connecting people with the same interests",
-    images: [
-      {
-        url: "https://avatars.githubusercontent.com/u/144157365?s=400&u=01ff974164b5dae27dbe879c10fe2d7ca94a8f74&v=4",
-        width: 800,
-        height: 600,
-      },
-    ],
-    creator: "@heypurrquinox",
-  },
-};
+export const metadata: Metadata = generateMetadata({});
 
 export default function RootLayout({
   children,
