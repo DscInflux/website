@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { FaUsers, FaGithub, FaTwitter, FaEnvelope } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
 import { useTheme } from "next-themes";
+import { useQuery } from "@tanstack/react-query";
 
 interface StaffMember {
   id: string;
@@ -17,27 +18,20 @@ interface TeamData {
 }
 
 const TeamPage = () => {
-  const [teamData, setTeamData] = useState<TeamData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
-
-  useEffect(() => {
-    const fetchTeamData = async () => {
-      try {
-        const response = await fetch("/api/get/team");
-        if (!response.ok) throw new Error("Network response was not ok");
-        const data: TeamData = await response.json();
-        setTeamData(data);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to load team data. Please try again later.");
-        setLoading(false);
-      }
-    };
-
-    fetchTeamData();
-  }, []);
+  // --- React Query: Fetch team data ---
+  const {
+    data: teamData,
+    isLoading: loading,
+    error,
+  } = useQuery({
+    queryKey: ["team"],
+    queryFn: async () => {
+      const response = await fetch("/api/get/team");
+      if (!response.ok) throw new Error("Network response was not ok");
+      return (await response.json()) as TeamData;
+    },
+  });
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -95,7 +89,9 @@ const TeamPage = () => {
           <h2 className="text-2xl font-bold text-red-700 dark:text-red-400 mb-2">
             Error
           </h2>
-          <p className="text-red-600 dark:text-red-300">{error}</p>
+          <p className="text-red-600 dark:text-red-300">
+            {error instanceof Error ? error.message : String(error)}
+          </p>
         </div>
       </div>
     );

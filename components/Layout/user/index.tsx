@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,82 +24,74 @@ import type { User } from "@/types/users";
 import type { Entity } from "@/types/entity";
 import { Code, Handshake, Shield } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { generateUserMetadata } from "@/lib/Metadata";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function UserProfile({ username }: { username: string }) {
   const { data: session } = useSession();
-  const [data, setData] = useState<Entity | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(0);
   const user = session?.user || null;
+  const queryClient = useQueryClient();
 
+  // Fetch user profile data
+  const {
+    data,
+    isLoading: loading,
+    error,
+  } = useQuery<Entity, Error>({
+    queryKey: ["user-profile", username],
+    queryFn: async () => {
+      const response = await fetch(`/api/get/entity?name=${username}`);
+      if (!response.ok) throw new Error("Failed to fetch user data");
+      return response.json();
+    },
+    staleTime: 60 * 1000, // 1 minute
+    refetchOnWindowFocus: false,
+  });
+
+  // Like/unlike mutation
+  const likeMutation = useMutation({
+    mutationFn: async (action: "like" | "unlike") => {
+      if (!data) throw new Error("No user data");
+      const res = await fetch(
+        `/api/post/entity/heart?action=${action}&url=${data.url}`,
+        {
+          method: "POST",
+        },
+      );
+      return res.json();
+    },
+    onSuccess: (_, action) => {
+      queryClient.invalidateQueries({ queryKey: ["user-profile", username] });
+    },
+  });
+
+  // Set liked and likes count
+  const liked = data && user ? data.likes?.includes(user.id) : false;
+  const likes = data?.likes?.length || 0;
+
+  // Generate dynamic metadata for the user
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`/api/get/entity?name=${username}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch user data");
-        }
-        const userData = await response.json();
-        setData(userData);
-        setLikes(userData.likes?.length || 0);
-      } catch (err) {
-        setError("Failed to load user profile");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [username]);
-
-  // Set liked when both data and user are available
-  useEffect(() => {
-    if (data && user) {
-      setLiked(data.likes?.includes(user.id) || false);
-    } else if (data && !user) {
-      setLiked(false);
+    if (data) {
+      generateUserMetadata({
+        name: data.discordDisplayName || username,
+        profilePicture: data.avatar,
+        banner: data.banner,
+        biography: data.about,
+        keywords: [
+          data.discordDisplayName || username,
+          ...(data.occupation || []),
+          "User",
+          "DscInflux",
+        ],
+        canonicalUrl:
+          typeof window !== "undefined" ? window.location.href : undefined,
+      });
     }
-  }, [data, user]);
+  }, [data, username]);
 
-  const toggleLike = async () => {
-    if (!data) return;
-
-    try {
-      if (liked) {
-        const res = await fetch(
-          `/api/post/entity/heart?action=unlike&url=${data.url}`,
-          {
-            method: "POST",
-          },
-        );
-        const req = await res.json();
-        if (req.success) {
-          setLiked(false);
-          setLikes((prev) => prev - 1);
-        } else if (req.data?.length > 0) {
-          setLiked((old: any) => req.data[0]?.isLiked ?? old);
-        }
-      } else {
-        const res = await fetch(
-          `/api/post/entity/heart?action=like&url=${data.url}`,
-          {
-            method: "POST",
-          },
-        );
-        const req = await res.json();
-        if (req.success) {
-          setLiked(true);
-          setLikes((prev) => prev + 1);
-        } else if (req.data?.length > 0) {
-          setLiked((old: any) => req.data[0]?.isLiked ?? old);
-        }
-      }
-    } catch (error) {
-      console.error("Error toggling like:", error);
-    }
+  const toggleLike = () => {
+    if (!data || likeMutation.isPending) return;
+    likeMutation.mutate(liked ? "unlike" : "like");
   };
 
   if (loading) {
@@ -126,7 +118,7 @@ export default function UserProfile({ username }: { username: string }) {
             User Not Found
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            {error ||
+            {error?.message ||
               "The user you're looking for doesn't exist or has been removed."}
           </p>
         </div>
@@ -367,6 +359,7 @@ export default function UserProfile({ username }: { username: string }) {
                         : "bg-white dark:bg-dark/80 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-500 hover:shadow-lg hover:shadow-red-500/10"
                     }`}
                     onClick={toggleLike}
+                    disabled={likeMutation.isPending}
                   >
                     {liked ? (
                       <Heart className="w-5 h-5" />
@@ -499,7 +492,7 @@ export default function UserProfile({ username }: { username: string }) {
                 {data.roles.map((role, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-2  border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200"
+                    className="flex items-center gap-2 bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200"
                   >
                     {role}
                   </div>
@@ -568,14 +561,14 @@ export default function UserProfile({ username }: { username: string }) {
                 This information is not set. Why you may ask? idk
               </p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 text-white">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 text-white ">
                 {data.socials.map((social, i) => (
                   <a
                     href={social.url + "?utm_source=dscinflux.xyz"}
                     target="_blank"
                     rel="noopener noreferrer"
                     key={i}
-                    className="flex items-center text-white justify-between relative border border-gray-100 dark:border-gray-800 hover:border-primary/20 active:border-primary/50 rounded-xl px-6 py-4 transition-all duration-200 cursor-pointer hover:shadow-lg group"
+                    className="flex items-center flex items-center gap-2 bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200 text-white justify-between relative border border-gray-100 dark:border-gray-800 hover:border-primary/20 active:border-primary/50 rounded-xl px-6 py-4 transition-all duration-200 cursor-pointer hover:shadow-lg group"
                     style={{ color: social.color || "currentColor" }}
                   >
                     <h1 className="capitalize text-md text-white font-medium select-none">
