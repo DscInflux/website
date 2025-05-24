@@ -1,7 +1,6 @@
 import { getServerSession } from "next-auth/next";
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { authOptions } from "../../../auth/[...nextauth]/route";
 import { z } from "zod";
 
 const entityEditSchema = z.object({
@@ -59,7 +58,7 @@ function normalizeSocials(socials: any[] = []) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   if (!session || !session.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
