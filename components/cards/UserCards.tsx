@@ -13,6 +13,7 @@ import {
 import { FaCircleCheck } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 type UserCardProps = {
   entity: any;
@@ -25,45 +26,61 @@ const UserCard: React.FC<UserCardProps> = ({
   isSkeleton = false,
   isLiked = false,
 }) => {
-  const {
-    data: likeData,
-    isLoading: likeLoading,
-    refetch: refetchLike,
-  } = useQuery({
-    queryKey: ["user-like", entity.url],
-    queryFn: async () => {
-      const res = await fetch(
-        `/api/post/entity/heart?action=status&url=${entity.url}`,
-      );
-      if (!res.ok) throw new Error("Failed to fetch like status");
-      return res.json();
-    },
-    enabled: !!entity.url,
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+  const user = session?.user;
+  
+  // Check if current user has liked this entity based on the likes array
+  const [liked, setLiked] = useState(() => {
+    if (!user?.id || !entity.likes) return isLiked;
+    return entity.likes.includes(user.id);
   });
 
-  const [liked, setLiked] = useState(isLiked);
-
   useEffect(() => {
-    if (likeData && typeof likeData.isLiked === "boolean") {
-      setLiked(likeData.isLiked);
+    if (user?.id && entity.likes) {
+      setLiked(entity.likes.includes(user.id));
     } else {
       setLiked(isLiked);
     }
-  }, [likeData, isLiked]);
+  }, [entity.likes, user?.id, isLiked]);
+
+  const likeMutation = useMutation({
+    mutationFn: async (action: 'like' | 'unlike') => {
+      const endpoint = `/api/post/entity/heart?action=${action}&url=${entity.url}`;
+      const res = await fetch(endpoint, { method: "POST" });
+      if (!res.ok) throw new Error(`Failed to ${action}`);
+      return res.json();
+    },
+    onSuccess: () => {
+      // Invalidate and refetch relevant queries
+      queryClient.invalidateQueries({ queryKey: ["hero-popular-users"] });
+      queryClient.invalidateQueries({ queryKey: ["hero-newest-users"] });
+      queryClient.invalidateQueries({ queryKey: ["hero-random-users"] });
+    },
+    onError: (error) => {
+      console.error("Like/Unlike error:", error);
+      // Revert the optimistic update
+      setLiked(!liked);
+    }
+  });
 
   const toggleLike = async () => {
-    const endpoint = liked
-      ? `/api/post/entity/heart?action=unlike&url=${entity.url}`
-      : `/api/post/entity/heart?action=like&url=${entity.url}`;
-    const res = await fetch(endpoint, { method: "POST" });
-    if (res.ok) {
-      refetchLike();
+    if (!user?.id) {
+      // Redirect to login or show auth modal
+      return;
     }
+
+    // Optimistic update
+    setLiked(!liked);
+    
+    // Perform the mutation
+    const action = liked ? 'unlike' : 'like';
+    likeMutation.mutate(action);
   };
 
   if (isSkeleton) {
     return (
-      <div className="w-full h-[250px] bg-gray-100 dark:bg-dark rounded-xl overflow-hidden animate-pulse p-4" />
+      <div className="w-full h-[250px] bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden animate-pulse p-4" />
     );
   }
 
