@@ -1,9 +1,11 @@
+// @ts-ignore
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
+import { authOptions } from "@/app/api/auth/authOptions";
 
 export async function POST(req: Request) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session || !session.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
