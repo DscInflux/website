@@ -266,7 +266,9 @@ export default function UserProfile({ username }: { username: string }) {
         />
         <meta
           property="og:url"
-          content={typeof window !== "undefined" ? window.location.href : undefined}
+          content={
+            typeof window !== "undefined" ? window.location.href : undefined
+          }
         />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
@@ -296,7 +298,7 @@ export default function UserProfile({ username }: { username: string }) {
                   data.banner || "http://purrquinox.com/banner.png",
                   `${data.discordUsername || username}'s Banner`,
                   "banner",
-                  data.discordUsername || username
+                  data.discordUsername || username,
                 )
               }
               tabIndex={0}
@@ -344,7 +346,7 @@ export default function UserProfile({ username }: { username: string }) {
                         data.avatar,
                         `${data.discordUsername || username}'s Avatar`,
                         "avatar",
-                        data.discordUsername || username
+                        data.discordUsername || username,
                       )
                     }
                   />

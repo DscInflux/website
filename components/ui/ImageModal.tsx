@@ -20,7 +20,7 @@ export default function ImageModal({
   src,
   alt,
   type,
-  username = "User"
+  username = "User",
 }: ImageModalProps) {
   const [isZoomed, setIsZoomed] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -258,7 +258,7 @@ export function useImageModal() {
     src: string,
     alt: string,
     type: "avatar" | "banner",
-    username?: string
+    username?: string,
   ) => {
     setModalState({
       isOpen: true,

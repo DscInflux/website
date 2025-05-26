@@ -172,10 +172,7 @@ export default function EditProfilePage({
   const [timeZone, setTimeZone] = useState("");
 
   // Fetch entity for the current user (if logged in) using React Query
-  const {
-    data: entityData,
-    isLoading: entityLoading,
-  } = useQuery({
+  const { data: entityData, isLoading: entityLoading } = useQuery({
     queryKey: ["edit-entity", user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
@@ -760,11 +757,13 @@ export default function EditProfilePage({
                           <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-1">
                             {isSexualityPrivate ? (
                               <>
-                                <EyeOff className="w-3.5 h-3.5" /> This is currently private
+                                <EyeOff className="w-3.5 h-3.5" /> This is
+                                currently private
                               </>
                             ) : (
                               <>
-                                <Eye className="w-3.5 h-3.5" /> This is currently public
+                                <Eye className="w-3.5 h-3.5" /> This is
+                                currently public
                               </>
                             )}
                           </p>
@@ -1129,15 +1128,17 @@ export default function EditProfilePage({
                                 Private Sexuality
                               </h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                If enabled, your sexuality will be hidden from the
-                                public
+                                If enabled, your sexuality will be hidden from
+                                the public
                               </p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
                               <input
                                 type="checkbox"
                                 checked={isSexualityPrivate}
-                                onChange={() => setIsSexualityPrivate(!isSexualityPrivate)}
+                                onChange={() =>
+                                  setIsSexualityPrivate(!isSexualityPrivate)
+                                }
                                 className="sr-only peer"
                               />
                               <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
