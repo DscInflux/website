@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/db/prisma";
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
