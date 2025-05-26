@@ -19,6 +19,8 @@ const entityEditSchema = z.object({
   roles: z.array(z.string()).optional(),
   skills: z.array(z.string()).optional(),
   socials: z.array(z.any()).optional(),
+  sexuality: z.string().optional(),
+  timeZone: z.string().optional(),
   privacy: z
     .object({
       isShow: z.boolean().optional(),
@@ -27,6 +29,7 @@ const entityEditSchema = z.object({
       isLocationPrivate: z.boolean().optional(),
       isGenderPrivate: z.boolean().optional(),
       isPronounsPrivate: z.boolean().optional(),
+      isSexualityPrivate: z.boolean().optional(),
     })
     .optional(),
 });
@@ -103,6 +106,8 @@ export async function POST(req: NextRequest) {
       data.privacy.isGenderPrivate ?? entity.isGenderPrivate;
     updateData.isPronounsPrivate =
       data.privacy.isPronounsPrivate ?? entity.isPronounsPrivate;
+    updateData.isSexualityPrivate =
+      data.privacy.isSexualityPrivate ?? entity.isSexualityPrivate;
     delete updateData.privacy;
   }
 
@@ -112,6 +117,8 @@ export async function POST(req: NextRequest) {
   } else {
     updateData.socials = entity.socials;
   }
+
+  updateData.timeZone = data.timeZone ?? entity.timeZone;
 
   // Convert birthday to Date if present
   if (updateData.birthday) {
