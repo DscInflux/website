@@ -1,6 +1,11 @@
 import DiscordProvider from "next-auth/providers/discord";
 import { prisma } from "@/lib/db/prisma";
-import type { Account, Profile, User as NextAuthUser, Session } from "next-auth";
+import type {
+  Account,
+  Profile,
+  User as NextAuthUser,
+  Session,
+} from "next-auth";
 
 const authOptions = {
   providers: [
@@ -12,7 +17,15 @@ const authOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }: { user: NextAuthUser; account: Account | null; profile?: Profile | undefined; }) {
+    async signIn({
+      user,
+      account,
+      profile,
+    }: {
+      user: NextAuthUser;
+      account: Account | null;
+      profile?: Profile | undefined;
+    }) {
       const discordProfile = profile as {
         id: string;
         username: string;
@@ -71,7 +84,17 @@ const authOptions = {
       }
       return true;
     },
-    async jwt({ token, account, user, profile }: { token: any; account?: Account | null; user?: NextAuthUser; profile?: Profile | undefined; }) {
+    async jwt({
+      token,
+      account,
+      user,
+      profile,
+    }: {
+      token: any;
+      account?: Account | null;
+      user?: NextAuthUser;
+      profile?: Profile | undefined;
+    }) {
       const discordProfile = profile as {
         id?: string;
         username?: string;

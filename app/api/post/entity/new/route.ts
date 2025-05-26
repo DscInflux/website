@@ -25,6 +25,8 @@ const entitySchema = z.object({
   roles: z.array(z.string()).optional(),
   skills: z.array(z.string()).optional(),
   socials: z.array(z.any()).optional(),
+  sexuality: z.string().optional(),
+  timeZone: z.string().optional(),
   privacy: z
     .object({
       isShow: z.boolean().optional(),
@@ -33,6 +35,7 @@ const entitySchema = z.object({
       isLocationPrivate: z.boolean().optional(),
       isGenderPrivate: z.boolean().optional(),
       isPronounsPrivate: z.boolean().optional(),
+      isSexualityPrivate: z.boolean().optional(),
     })
     .optional(),
 });
@@ -120,6 +123,7 @@ export async function POST(req: NextRequest) {
     roles: data.roles ?? [],
     skills: data.skills ?? [],
     socials: normalizeSocials(data.socials),
+    timeZone: data.timeZone ?? undefined,
     discordUsername: session.user.username,
     discordDisplayName: session.user.display_name,
     discordId: session.user.id,
@@ -137,6 +141,7 @@ export async function POST(req: NextRequest) {
     isLocationPrivate: data.privacy?.isLocationPrivate ?? true,
     isGenderPrivate: data.privacy?.isGenderPrivate ?? true,
     isPronounsPrivate: data.privacy?.isPronounsPrivate ?? true,
+    isSexualityPrivate: data.privacy?.isSexualityPrivate ?? true,
   };
 
   let entity;

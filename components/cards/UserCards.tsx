@@ -29,7 +29,7 @@ const UserCard: React.FC<UserCardProps> = ({
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const user = session?.user;
-  
+
   // Check if current user has liked this entity based on the likes array
   const [liked, setLiked] = useState(() => {
     if (!user?.id || !entity.likes) return isLiked;
@@ -45,7 +45,7 @@ const UserCard: React.FC<UserCardProps> = ({
   }, [entity.likes, user?.id, isLiked]);
 
   const likeMutation = useMutation({
-    mutationFn: async (action: 'like' | 'unlike') => {
+    mutationFn: async (action: "like" | "unlike") => {
       const endpoint = `/api/post/entity/heart?action=${action}&url=${entity.url}`;
       const res = await fetch(endpoint, { method: "POST" });
       if (!res.ok) throw new Error(`Failed to ${action}`);
@@ -61,7 +61,7 @@ const UserCard: React.FC<UserCardProps> = ({
       console.error("Like/Unlike error:", error);
       // Revert the optimistic update
       setLiked(!liked);
-    }
+    },
   });
 
   const toggleLike = async () => {
@@ -72,9 +72,9 @@ const UserCard: React.FC<UserCardProps> = ({
 
     // Optimistic update
     setLiked(!liked);
-    
+
     // Perform the mutation
-    const action = liked ? 'unlike' : 'like';
+    const action = liked ? "unlike" : "like";
     likeMutation.mutate(action);
   };
 

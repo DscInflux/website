@@ -152,6 +152,7 @@ export default function EditProfilePage({
   const [isBirthdayPrivate, setIsBirthdayPrivate] = useState(true);
   const [isLocationPrivate, setIsLocationPrivate] = useState(true);
   const [isGenderPrivate, setIsGenderPrivate] = useState(true);
+  const [isSexualityPrivate, setIsSexualityPrivate] = useState(true);
 
   // New skill/role input state
   const [newSkill, setNewSkill] = useState("");
@@ -164,51 +165,64 @@ export default function EditProfilePage({
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
 
-  // New state for pronouns and website
+  // New state for pronouns, website, sexuality, and timeZone
   const [pronouns, setPronouns] = useState("");
   const [website, setWebsite] = useState("");
+  const [sexuality, setSexuality] = useState("");
+  const [timeZone, setTimeZone] = useState("");
+
+  // Fetch entity for the current user (if logged in) using React Query
+  const { data: entityData, isLoading: entityLoading } = useQuery({
+    queryKey: ["edit-entity", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const res = await fetch(`/api/get/entity?discordId=${user.id}`);
+      if (!res.ok) throw new Error("Failed to fetch entity");
+      return res.json();
+    },
+    enabled: !!user?.id,
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
-    async function fetchEntity() {
+    if (entityLoading) {
       setLoading(true);
-      try {
-        // Fetch entity for the current user (if logged in)
-        if (user?.username) {
-          const res = await fetch(`/api/get/entity?discordId=${user.id}`);
-          if (res.ok) {
-            const data = await res.json();
-            setEntity(data);
-            setIsEdit(true);
-            setAbout(data.about || "");
-            setEmail(data.email || "");
-            setUrl(data.url || "");
-            setGender(data.gender || "");
-            setBirthday(data.birthday ? data.birthday.slice(0, 10) : "");
-            setLocation(data.location || "");
-            setOccupation(data.occupation?.join(", ") || "");
-            setSocials(data.socials || []);
-            setSkills(data.skills || []);
-            setRoles(data.roles || []);
-            setBanner(data.banner || "");
-            setAvatar(data.avatar || "");
-            setIsShow(data.isShow ?? true);
-            setIsEmailPrivate(data.isEmailPrivate ?? true);
-            setIsBirthdayPrivate(data.isBirthdayPrivate ?? true);
-            setIsLocationPrivate(data.isLocationPrivate ?? true);
-            setIsGenderPrivate(data.isGenderPrivate ?? true);
-            setLanguage(data.language || "");
-            setPronouns(data.pronouns || "");
-            setWebsite(data.website || "");
-          }
-        }
-      } catch (e) {
-        // Ignore errors, treat as new profile
-      } finally {
-        setLoading(false);
-      }
+      return;
     }
-    fetchEntity();
-  }, [user]);
+    if (entityData) {
+      setEntity(entityData);
+      setIsEdit(true);
+      setAbout(entityData.about || "");
+      setEmail(entityData.email || "");
+      setUrl(entityData.url || "");
+      setGender(entityData.gender || "");
+      setBirthday(entityData.birthday ? entityData.birthday.slice(0, 10) : "");
+      setLocation(entityData.location || "");
+      setOccupation(entityData.occupation?.join(", ") || "");
+      setSocials(entityData.socials || []);
+      setSkills(entityData.skills || []);
+      setRoles(entityData.roles || []);
+      setBanner(entityData.banner || "");
+      setAvatar(entityData.avatar || "");
+      setIsShow(entityData.isShow ?? true);
+      setIsEmailPrivate(entityData.isEmailPrivate ?? true);
+      setIsBirthdayPrivate(entityData.isBirthdayPrivate ?? true);
+      setIsLocationPrivate(entityData.isLocationPrivate ?? true);
+      setIsGenderPrivate(entityData.isGenderPrivate ?? true);
+      setIsSexualityPrivate(entityData.isSexualityPrivate ?? true);
+      setLanguage(entityData.language || "");
+      setPronouns(entityData.pronouns || "");
+      setWebsite(entityData.website || "");
+      setSexuality(entityData.sexuality || "");
+      setTimeZone(entityData.timeZone || "");
+    } else {
+      setEntity(null);
+      setIsEdit(false);
+    }
+    setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entityData, entityLoading]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -231,12 +245,15 @@ export default function EditProfilePage({
       language,
       pronouns,
       website,
+      sexuality,
+      timeZone,
       privacy: {
         isShow,
         isEmailPrivate,
         isBirthdayPrivate,
         isLocationPrivate,
         isGenderPrivate,
+        isSexualityPrivate,
       },
       staff: false,
     };
@@ -726,6 +743,47 @@ export default function EditProfilePage({
                           />
                         </div>
 
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Sexuality
+                          </label>
+                          <input
+                            type="text"
+                            value={sexuality}
+                            onChange={(e) => setSexuality(e.target.value)}
+                            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3.5 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
+                            placeholder="e.g. Straight, Gay, Bisexual, etc."
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-1">
+                            {isSexualityPrivate ? (
+                              <>
+                                <EyeOff className="w-3.5 h-3.5" /> This is
+                                currently private
+                              </>
+                            ) : (
+                              <>
+                                <Eye className="w-3.5 h-3.5" /> This is
+                                currently public
+                              </>
+                            )}
+                          </p>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Timezone
+                          </label>
+                          <input
+                            type="text"
+                            value={timeZone}
+                            onChange={(e) => setTimeZone(e.target.value)}
+                            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3.5 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
+                            placeholder="e.g. UTC+2, America/New_York, etc."
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            This will be shown on your profile
+                          </p>
+                        </div>
+
                         <div className="md:col-span-2 space-y-2">
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             About
@@ -1057,6 +1115,29 @@ export default function EditProfilePage({
                                 checked={isGenderPrivate}
                                 onChange={() =>
                                   setIsGenderPrivate(!isGenderPrivate)
+                                }
+                                className="sr-only peer"
+                              />
+                              <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                            </label>
+                          </div>
+
+                          <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+                            <div>
+                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">
+                                Private Sexuality
+                              </h4>
+                              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                If enabled, your sexuality will be hidden from
+                                the public
+                              </p>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={isSexualityPrivate}
+                                onChange={() =>
+                                  setIsSexualityPrivate(!isSexualityPrivate)
                                 }
                                 className="sr-only peer"
                               />
