@@ -178,7 +178,7 @@ const Navbar: React.FC = () => {
             </div>
           ) : (
             <button
-              onClick={() => window.location.href = "/auth/signin"}
+              onClick={() => (window.location.href = "/auth/signin")}
               className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
             >
               <FaDiscord />
@@ -271,7 +271,7 @@ const Navbar: React.FC = () => {
             </>
           ) : (
             <button
-              onClick={() => window.location.href = "/auth/signin"}
+              onClick={() => (window.location.href = "/auth/signin")}
               className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
             >
               <FaDiscord />

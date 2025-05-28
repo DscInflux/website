@@ -60,7 +60,12 @@ const authOptions = {
             SSOProvider: "discord",
           };
         } else if (providerName === "github") {
-          const githubProfile = profile as { id: string | number; login: string; avatar_url?: string; email?: string };
+          const githubProfile = profile as {
+            id: string | number;
+            login: string;
+            avatar_url?: string;
+            email?: string;
+          };
           upsertData = {
             username: githubProfile.login,
             display_name: githubProfile.login,
@@ -70,7 +75,13 @@ const authOptions = {
             SSOProvider: "github",
           };
         } else if (providerName === "twitter") {
-          const twitterProfile = profile as { id: string | number; name: string; username?: string; profile_image_url?: string; email?: string };
+          const twitterProfile = profile as {
+            id: string | number;
+            name: string;
+            username?: string;
+            profile_image_url?: string;
+            email?: string;
+          };
           upsertData = {
             username: twitterProfile.username || twitterProfile.name,
             display_name: twitterProfile.name,
@@ -86,8 +97,14 @@ const authOptions = {
           create: {
             id: user.id,
             ...upsertData,
-            access_token: typeof account?.access_token === "string" ? account.access_token : "",
-            token: typeof account?.refresh_token === "string" ? account.refresh_token : "",
+            access_token:
+              typeof account?.access_token === "string"
+                ? account.access_token
+                : "",
+            token:
+              typeof account?.refresh_token === "string"
+                ? account.refresh_token
+                : "",
             locale: "",
             mfa_enabled: false,
             banner: "",
@@ -148,17 +165,26 @@ const authOptions = {
         session.user.id = token.id;
         session.user.access_token = token.access_token;
         // Use token.avatar if available, else fallback to token.image
-        session.user.avatar = typeof token.avatar === "string" && token.avatar
-          ? token.avatar
-          : (typeof token.image === "string" ? token.image : "");
+        session.user.avatar =
+          typeof token.avatar === "string" && token.avatar
+            ? token.avatar
+            : typeof token.image === "string"
+              ? token.image
+              : "";
         // Use display_name, fallback to name
-        session.user.display_name = typeof token.display_name === "string" && token.display_name
-          ? token.display_name
-          : (typeof token.name === "string" ? token.name : "");
+        session.user.display_name =
+          typeof token.display_name === "string" && token.display_name
+            ? token.display_name
+            : typeof token.name === "string"
+              ? token.name
+              : "";
         // Use username if available, else fallback to login
-        session.user.username = typeof token.username === "string" && token.username
-          ? token.username
-          : (typeof token.login === "string" ? token.login : "");
+        session.user.username =
+          typeof token.username === "string" && token.username
+            ? token.username
+            : typeof token.login === "string"
+              ? token.login
+              : "";
         session.user.is_banned = token.is_banned ?? false;
         session.user.is_admin = token.is_admin ?? false;
       }

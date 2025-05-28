@@ -224,10 +224,7 @@ export default function UserProfile({ username }: { username: string }) {
           name="description"
           content={data.about || "User profile on DscInflux"}
         />
-        <meta
-          property="og:title"
-          content={data.DisplayName || username}
-        />
+        <meta property="og:title" content={data.DisplayName || username} />
         <meta
           property="og:description"
           content={data.about || "User profile on DscInflux"}

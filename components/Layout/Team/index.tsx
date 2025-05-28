@@ -162,7 +162,7 @@ const TeamPage = () => {
                               member.avatar,
                               `${member.display_name}'s avatar`,
                               "avatar",
-                              member.username
+                              member.username,
                             )
                           }
                         />

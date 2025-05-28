@@ -1,16 +1,18 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Sparkles } from "lucide-react"
-import { signIn } from "next-auth/react"
-import { FaDiscord, FaGithub, FaTwitter, FaSignInAlt  } from "react-icons/fa"
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sparkles } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { FaDiscord, FaGithub, FaTwitter, FaSignInAlt } from "react-icons/fa";
 
 export default function SignInPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; delay: number }>>([])
+  const [isLoading, setIsLoading] = useState(false);
+  const [particles, setParticles] = useState<
+    Array<{ id: number; x: number; y: number; delay: number }>
+  >([]);
 
   useEffect(() => {
     // Generate floating particles
@@ -19,17 +21,17 @@ export default function SignInPage() {
       x: Math.random() * 100,
       y: Math.random() * 100,
       delay: Math.random() * 2,
-    }))
-    setParticles(newParticles)
-  }, [])
+    }));
+    setParticles(newParticles);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsLoading(false)
-  }
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setIsLoading(false);
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#030207] via-[#090b24] to-[#1a1a2e]">
@@ -112,7 +114,11 @@ export default function SignInPage() {
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl opacity-75"
                 animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                transition={{
+                  duration: 20,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "linear",
+                }}
               />
             </motion.div>
 
@@ -212,5 +218,5 @@ export default function SignInPage() {
         }}
       />
     </div>
-  )
+  );
 }

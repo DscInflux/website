@@ -1153,14 +1153,17 @@ export default function EditProfilePage({
                                 Private Pronouns
                               </h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                If enabled, your pronouns will be hidden from the public
+                                If enabled, your pronouns will be hidden from
+                                the public
                               </p>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
                               <input
                                 type="checkbox"
                                 checked={isPronounsPrivate}
-                                onChange={() => setIsPronounsPrivate(!isPronounsPrivate)}
+                                onChange={() =>
+                                  setIsPronounsPrivate(!isPronounsPrivate)
+                                }
                                 className="sr-only peer"
                               />
                               <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>

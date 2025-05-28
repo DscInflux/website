@@ -127,9 +127,7 @@ export default function AdminPanel() {
     if (searchTerm.trim() !== "") {
       filtered = filtered.filter(
         (entity: Entity) =>
-          entity.Username
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
+          entity.Username.toLowerCase().includes(searchTerm.toLowerCase()) ||
           entity.url.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
