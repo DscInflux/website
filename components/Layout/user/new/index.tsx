@@ -176,7 +176,7 @@ export default function EditProfilePage({
     queryKey: ["edit-entity", user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const res = await fetch(`/api/get/entity?discordId=${user.id}`);
+      const res = await fetch(`/api/get/entity?userId=${user.id}`);
       if (!res.ok) throw new Error("Failed to fetch entity");
       return res.json();
     },

@@ -63,8 +63,8 @@ export async function GET(req: NextRequest) {
   if (language) filters.language = { equals: language };
   if (search) {
     filters.OR = [
-      { discordUsername: { contains: search, mode: "insensitive" } },
-      { discordDisplayName: { contains: search, mode: "insensitive" } },
+      { Username: { contains: search, mode: "insensitive" } },
+      { displayname: { contains: search, mode: "insensitive" } },
       { about: { contains: search, mode: "insensitive" } },
       { location: { contains: search, mode: "insensitive" } },
       { occupation: { has: search } },

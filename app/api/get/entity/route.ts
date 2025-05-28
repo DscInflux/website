@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const querySchema = z.object({
   name: z.string().optional(),
-  discordId: z.string().optional(),
+  userId: z.string().optional(),
 });
 
 export async function GET(req: NextRequest) {
@@ -20,12 +20,12 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const { name, discordId } = parseResult.data;
+  const { name, userId } = parseResult.data;
 
   try {
     const orConditions = [{ url: name }] as any[];
-    if (discordId) {
-      orConditions.push({ discordId });
+    if (userId) {
+      orConditions.push({ userId });
     }
 
     const entity = await prisma.entity.findFirst({

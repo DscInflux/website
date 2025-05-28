@@ -100,7 +100,7 @@ const UserCard: React.FC<UserCardProps> = ({
               entity.avatar ||
               "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"
             }
-            alt={`${entity.discordUsername} avatar`}
+            alt={`${entity.Username} avatar`}
             fill
             sizes="64px"
             style={{ objectFit: "cover" }}
@@ -112,7 +112,7 @@ const UserCard: React.FC<UserCardProps> = ({
         </div>
         <div>
           <h1 className="text-black dark:text-white text-lg font-bold flex items-center gap-1.5">
-            {entity.discordUsername}
+            {entity.Username}
             {entity.isVerified && (
               <FaCircleCheck size={18} className="text-primary" />
             )}

@@ -30,7 +30,7 @@ const Navbar: React.FC = () => {
     if (!session) return;
     // Prefer to use the user's id (discordId) to fetch their entity, since username/url may not match
     if (session.user?.id) {
-      fetch(`/api/get/entity?discordId=${session.user.id}`)
+      fetch(`/api/get/entity?userId=${session.user.id}`)
         .then(async (res) => {
           if (res.ok) {
             const data = await res.json();
@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogin = () => signIn("discord", { callbackUrl: pathname });
+  const handleLogin = () => signIn("github", { callbackUrl: "/" });
   const handleLogout = () => signOut({ callbackUrl: "/" });
 
   const items = [
@@ -279,6 +279,16 @@ const Navbar: React.FC = () => {
             </button>
           )}
         </div>
+      )}
+
+      {/* Sign In Link for non-authenticated users */}
+      {!session && (
+        <Link
+          href="/auth/signin"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors ml-2"
+        >
+          Sign In
+        </Link>
       )}
     </nav>
   );
