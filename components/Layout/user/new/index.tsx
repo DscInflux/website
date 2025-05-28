@@ -153,6 +153,7 @@ export default function EditProfilePage({
   const [isLocationPrivate, setIsLocationPrivate] = useState(true);
   const [isGenderPrivate, setIsGenderPrivate] = useState(true);
   const [isSexualityPrivate, setIsSexualityPrivate] = useState(true);
+  const [isPronounsPrivate, setIsPronounsPrivate] = useState(true);
 
   // New skill/role input state
   const [newSkill, setNewSkill] = useState("");
@@ -211,6 +212,7 @@ export default function EditProfilePage({
       setIsLocationPrivate(entityData.isLocationPrivate ?? true);
       setIsGenderPrivate(entityData.isGenderPrivate ?? true);
       setIsSexualityPrivate(entityData.isSexualityPrivate ?? true);
+      setIsPronounsPrivate(entityData.isPronounsPrivate ?? true);
       setLanguage(entityData.language || "");
       setPronouns(entityData.pronouns || "");
       setWebsite(entityData.website || "");
@@ -253,6 +255,7 @@ export default function EditProfilePage({
         isBirthdayPrivate,
         isLocationPrivate,
         isGenderPrivate,
+        isPronounsPrivate,
         isSexualityPrivate,
       },
       staff: false,
@@ -678,9 +681,8 @@ export default function EditProfilePage({
                             className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3.5 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
                           >
                             <option value="">Select gender</option>
-                            <option value="He/Him">He/Him</option>
-                            <option value="She/Her">She/Her</option>
-                            <option value="They/Them">They/Them</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
                             <option value="Other">Other</option>
                             <option value="I don't want to say">
                               I don't want to say
@@ -739,7 +741,7 @@ export default function EditProfilePage({
                             value={website}
                             onChange={(e) => setWebsite(e.target.value)}
                             className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3.5 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
-                            placeholder="https://yourwebsite.com"
+                            placeholder="https://dscinflux.xyz"
                           />
                         </div>
 
@@ -1139,6 +1141,26 @@ export default function EditProfilePage({
                                 onChange={() =>
                                   setIsSexualityPrivate(!isSexualityPrivate)
                                 }
+                                className="sr-only peer"
+                              />
+                              <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                            </label>
+                          </div>
+
+                          <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+                            <div>
+                              <h4 className="font-medium text-gray-900 dark:text-white text-lg">
+                                Private Pronouns
+                              </h4>
+                              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                If enabled, your pronouns will be hidden from the public
+                              </p>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={isPronounsPrivate}
+                                onChange={() => setIsPronounsPrivate(!isPronounsPrivate)}
                                 className="sr-only peer"
                               />
                               <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>

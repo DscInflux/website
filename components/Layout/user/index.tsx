@@ -130,25 +130,6 @@ export default function UserProfile({ username }: { username: string }) {
     return ` (${age} years)`;
   };
 
-  const genders = {
-    "He/Him": {
-      name: "Male",
-      pronouns: "He/Him",
-    },
-    "She/Her": {
-      name: "Female",
-      pronouns: "She/Her",
-    },
-    "They/Them": {
-      name: "Non-Binary",
-      pronouns: "They/Them",
-    },
-    Other: {
-      name: "Other",
-      pronouns: "Other",
-    },
-  };
-
   const cards = [
     {
       upper: true,
@@ -194,9 +175,7 @@ export default function UserProfile({ username }: { username: string }) {
       subtitle: "What is my gender?",
       isPrivate: data.isGenderPrivate,
       isEmpty: !data.gender,
-      value: data.gender
-        ? genders[data.gender as keyof typeof genders]?.name || data.gender
-        : "",
+      value: data.gender,
       icon: <Users className="text-primary" strokeWidth={1.5} />,
     },
     {
@@ -205,12 +184,7 @@ export default function UserProfile({ username }: { username: string }) {
       subtitle: "What are my pronouns?",
       isPrivate: data.isPronounsPrivate,
       isEmpty: !data.gender && !data.pronouns,
-      value:
-        data.pronouns ||
-        (data.gender
-          ? genders[data.gender as keyof typeof genders]?.pronouns ||
-            data.gender
-          : ""),
+      value: data.pronouns,
       icon: <Users className="text-primary" strokeWidth={1.5} />,
     },
     {
