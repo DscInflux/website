@@ -178,7 +178,7 @@ const Navbar: React.FC = () => {
             </div>
           ) : (
             <button
-              onClick={handleLogin}
+              onClick={() => window.location.href = "/auth/signin"}
               className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
             >
               <FaDiscord />
@@ -271,7 +271,7 @@ const Navbar: React.FC = () => {
             </>
           ) : (
             <button
-              onClick={handleLogin}
+              onClick={() => window.location.href = "/auth/signin"}
               className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
             >
               <FaDiscord />
@@ -279,16 +279,6 @@ const Navbar: React.FC = () => {
             </button>
           )}
         </div>
-      )}
-
-      {/* Sign In Link for non-authenticated users */}
-      {!session && (
-        <Link
-          href="/auth/signin"
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors ml-2"
-        >
-          Sign In
-        </Link>
       )}
     </nav>
   );

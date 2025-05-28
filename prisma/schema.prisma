@@ -44,6 +44,8 @@ model Entity {
   updatedAt          DateTime  @updatedAt
   sexuality          String?
   timeZone           String?
+
+  @@map("entity")
 }
 
 model User {
@@ -61,4 +63,6 @@ model User {
   mfa_enabled  Boolean
   banner       String
   SSOProvider  String?
+
+  @@map("user")
 }
