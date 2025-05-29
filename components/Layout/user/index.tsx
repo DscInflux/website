@@ -130,25 +130,6 @@ export default function UserProfile({ username }: { username: string }) {
     return ` (${age} years)`;
   };
 
-  const genders = {
-    "He/Him": {
-      name: "Male",
-      pronouns: "He/Him",
-    },
-    "She/Her": {
-      name: "Female",
-      pronouns: "She/Her",
-    },
-    "They/Them": {
-      name: "Non-Binary",
-      pronouns: "They/Them",
-    },
-    Other: {
-      name: "Other",
-      pronouns: "Other",
-    },
-  };
-
   const cards = [
     {
       upper: true,
@@ -194,9 +175,7 @@ export default function UserProfile({ username }: { username: string }) {
       subtitle: "What is my gender?",
       isPrivate: data.isGenderPrivate,
       isEmpty: !data.gender,
-      value: data.gender
-        ? genders[data.gender as keyof typeof genders]?.name || data.gender
-        : "",
+      value: data.gender,
       icon: <Users className="text-primary" strokeWidth={1.5} />,
     },
     {
@@ -205,12 +184,7 @@ export default function UserProfile({ username }: { username: string }) {
       subtitle: "What are my pronouns?",
       isPrivate: data.isPronounsPrivate,
       isEmpty: !data.gender && !data.pronouns,
-      value:
-        data.pronouns ||
-        (data.gender
-          ? genders[data.gender as keyof typeof genders]?.pronouns ||
-            data.gender
-          : ""),
+      value: data.pronouns,
       icon: <Users className="text-primary" strokeWidth={1.5} />,
     },
     {
@@ -245,15 +219,12 @@ export default function UserProfile({ username }: { username: string }) {
   return (
     <>
       <Head>
-        <title>{data.discordDisplayName || username} | DscInflux</title>
+        <title>{data.DisplayName || username} | DscInflux</title>
         <meta
           name="description"
           content={data.about || "User profile on DscInflux"}
         />
-        <meta
-          property="og:title"
-          content={data.discordDisplayName || username}
-        />
+        <meta property="og:title" content={data.DisplayName || username} />
         <meta
           property="og:description"
           content={data.about || "User profile on DscInflux"}
@@ -280,7 +251,7 @@ export default function UserProfile({ username }: { username: string }) {
           src={imageModal.modalState.src}
           alt={imageModal.modalState.alt}
           type={imageModal.modalState.type}
-          username={data.discordUsername || username}
+          username={data.Username || username}
         />
         <div className="max-w-7xl w-full">
           <div id="user-header" className="mb-12 relative">
@@ -296,9 +267,9 @@ export default function UserProfile({ username }: { username: string }) {
               onClick={() =>
                 imageModal.openModal(
                   data.banner || "http://purrquinox.com/banner.png",
-                  `${data.discordUsername || username}'s Banner`,
+                  `${data.Username || username}'s Banner`,
                   "banner",
-                  data.discordUsername || username,
+                  data.Username || username,
                 )
               }
               tabIndex={0}
@@ -344,16 +315,16 @@ export default function UserProfile({ username }: { username: string }) {
                     onClick={() =>
                       imageModal.openModal(
                         data.avatar,
-                        `${data.discordUsername || username}'s Avatar`,
+                        `${data.Username || username}'s Avatar`,
                         "avatar",
-                        data.discordUsername || username,
+                        data.Username || username,
                       )
                     }
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/80 to-secondary flex items-center justify-center">
                     <span className="text-5xl font-bold text-white">
-                      {data.discordUsername?.charAt(0).toUpperCase() || "U"}
+                      {data.Username?.charAt(0).toUpperCase() || "U"}
                     </span>
                   </div>
                 )}
@@ -364,7 +335,7 @@ export default function UserProfile({ username }: { username: string }) {
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                       <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary dark:from-white dark:to-primary/80">
-                        {data.discordUsername}
+                        {data.Username}
                       </h1>
                       <div className="flex items-center gap-2">
                         {data.isVerified && (
@@ -401,9 +372,9 @@ export default function UserProfile({ username }: { username: string }) {
                         )}
                       </div>
                     </div>
-                    {data.discordDisplayName && (
+                    {data.DisplayName && (
                       <span className="text-xl font-medium text-zinc-500 dark:text-zinc-400">
-                        {data.discordDisplayName}
+                        {data.DisplayName}
                       </span>
                     )}
                   </div>

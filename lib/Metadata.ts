@@ -132,6 +132,19 @@ export function generateExploreMetadata(params: MainMetaDataParam): Metadata {
   });
 }
 
+export function generateSigninMetadata(params: MainMetaDataParam): Metadata {
+  return generateMetadata({
+    title: "Sign In",
+    description:
+      "Welcome to DscInflux Sign In Page! Here you can sign in to your account and access all the features of the platform.",
+    image: params.image ?? defaultImage,
+    keywords: params.keywords?.length
+      ? params.keywords
+      : ["Sign In", "DscInflux"],
+    canonicalUrl: params.canonicalUrl,
+  });
+}
+
 export function generateUserSettingsMetadata(
   params: MainMetaDataParam,
 ): Metadata {

@@ -315,8 +315,8 @@ export default function ExplorePage() {
     // Search
     if (search) {
       filtered = filtered.filter((item: any) => {
-        const uname = item.discordUsername?.toLowerCase() || "";
-        const dname = item.discordDisplayName?.toLowerCase() || "";
+        const uname = item.Username?.toLowerCase() || "";
+        const dname = item.displayname?.toLowerCase() || "";
         return (
           uname.includes(search.toLowerCase()) ||
           dname.includes(search.toLowerCase())

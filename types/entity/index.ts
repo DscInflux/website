@@ -1,8 +1,8 @@
 export interface Entity {
   id: string;
-  discordId: string;
-  discordUsername: string;
-  discordDisplayName: string;
+  userId: string;
+  Username: string;
+  DisplayName: string;
   url: string;
   banner: string;
   avatar: string;

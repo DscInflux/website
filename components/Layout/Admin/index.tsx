@@ -127,9 +127,7 @@ export default function AdminPanel() {
     if (searchTerm.trim() !== "") {
       filtered = filtered.filter(
         (entity: Entity) =>
-          entity.discordUsername
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
+          entity.Username.toLowerCase().includes(searchTerm.toLowerCase()) ||
           entity.url.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
@@ -379,7 +377,7 @@ export default function AdminPanel() {
                   <UserCard entity={entity} />
                   <button
                     className="w-full py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-semibold text-white transition-colors flex items-center justify-center gap-2"
-                    onClick={() => confirmBan(entity.discordUsername)}
+                    onClick={() => confirmBan(entity.Username)}
                   >
                     <FaTrash size={14} />
                     Ban User

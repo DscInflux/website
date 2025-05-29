@@ -94,12 +94,12 @@ export async function POST(req: NextRequest) {
     const existingUrl = await prisma.entity.findFirst({
       where: { url: data.url },
     });
-    if (existingUrl && existingUrl.discordId !== session.user.id) {
+    if (existingUrl && existingUrl.userId !== session.user.id) {
       return NextResponse.json({ error: "URL already taken" }, { status: 400 });
     }
 
     const existingEntity = await prisma.entity.findFirst({
-      where: { discordId: session.user.id },
+      where: { userId: session.user.id },
     });
     const now = new Date();
     const requiredString = (val: string | undefined, fallback: string) =>
@@ -125,9 +125,9 @@ export async function POST(req: NextRequest) {
       skills: data.skills ?? [],
       socials: normalizeSocials(data.socials),
       timeZone: data.timeZone ?? undefined,
-      discordUsername: session.user.username,
-      discordDisplayName: session.user.display_name,
-      discordId: session.user.id,
+      Username: session.user.username,
+      displayname: session.user.display_name,
+      userId: session.user.id,
       isDeveloper: false,
       isPartner: false,
       isVerified: false,
@@ -142,6 +142,8 @@ export async function POST(req: NextRequest) {
       isGenderPrivate: data.privacy?.isGenderPrivate ?? true,
       isPronounsPrivate: data.privacy?.isPronounsPrivate ?? true,
       isSexualityPrivate: data.privacy?.isSexualityPrivate ?? true,
+      email: session.user.email ?? undefined,
+      sexuality: data.sexuality ?? undefined,
     };
 
     let entity;
@@ -159,6 +161,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ entity });
   } catch (error: any) {
     console.error("POST /api/post/entity/new error:", error);
-    return NextResponse.json({ error: error?.message || "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: error?.message || "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

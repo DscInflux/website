@@ -9,9 +9,9 @@ datasource db {
 
 model Entity {
   id                 String    @id @default(uuid())
-  discordId          String
-  discordUsername    String
-  discordDisplayName String
+  userId             String
+  Username           String
+  displayname        String
   url                String
   banner             String
   avatar             String
@@ -44,29 +44,25 @@ model Entity {
   updatedAt          DateTime  @updatedAt
   sexuality          String?
   timeZone           String?
+
+  @@map("entity")
 }
 
 model User {
-  id                String  @id @default(cuid())
-  username          String
-  display_name      String
-  avatar            String?
-  email             String? @unique
-  discordId         String  @unique
-  access_token      String
-  token             String
-  is_admin          Boolean @default(false)
-  is_banned         Boolean @default(false)
-  premium_type      Int
-  flags             Int
-  locale            String
-  mfa_enabled       Boolean
-  public_flags      Int
-  accent_color      Int
-  avatar_decoration Json?
-  banner            String
-  banner_color      String?
-  appId             String?
-  entity            String?
-  isRevolt          Boolean @default(false)
+  id           String  @id @default(cuid())
+  username     String
+  display_name String
+  avatar       String?
+  email        String? @unique
+  discordId    String  @unique
+  access_token String
+  token        String
+  is_admin     Boolean @default(false)
+  is_banned    Boolean @default(false)
+  locale       String
+  mfa_enabled  Boolean
+  banner       String
+  SSOProvider  String?
+
+  @@map("user")
 }
