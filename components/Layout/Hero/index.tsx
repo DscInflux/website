@@ -222,7 +222,7 @@ const HeroLayout = () => {
             slides={popularUsers}
           >
             {(slides: Entity[]) =>
-              isLoading
+              popularLoading
                 ? Array(3)
                     .fill(0)
                     .map((_, i) => (
@@ -275,7 +275,7 @@ const HeroLayout = () => {
             slides={newestUsers}
           >
             {(slides: Entity[]) =>
-              isLoading
+              newestLoading
                 ? Array(3)
                     .fill(0)
                     .map((_, i) => (
@@ -328,7 +328,7 @@ const HeroLayout = () => {
             slides={randomUsers}
           >
             {(slides: Entity[]) =>
-              isLoading
+              randomLoading
                 ? Array(3)
                     .fill(0)
                     .map((_, i) => (

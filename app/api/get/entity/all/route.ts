@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
       whereParams.push(filters.skills.hasSome);
     }
     // Compose the query
-    const query = `SELECT "isShow", "userId", "Username", "displayname", "url", "about", "isVerified", "isDeveloper", "isPartner", "staff", "avatar", "createdAt", "id", "likes" FROM "Entity"${whereClause} ORDER BY RANDOM() OFFSET $${whereParams.length + 1} LIMIT $${whereParams.length + 2}`;
+    const query = `SELECT "isShow", "userId", "Username", "displayname", "url", "about", "isVerified", "isDeveloper", "isPartner", "staff", "avatar", "createdAt", "id", "likes" FROM "entity"${whereClause} ORDER BY RANDOM() OFFSET $${whereParams.length + 1} LIMIT $${whereParams.length + 2}`;
     const entities = await prisma.$queryRawUnsafe(
       query,
       ...whereParams,

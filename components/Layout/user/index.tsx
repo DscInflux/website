@@ -214,6 +214,15 @@ export default function UserProfile({ username }: { username: string }) {
       value: data.timeZone,
       icon: <RiTimeZoneFill className="text-primary" strokeWidth={1.5} />,
     },
+    {
+      upper: false,
+      name: "Website",
+      subtitle: "My personal website?",
+      isPrivate: false,
+      isEmpty: !data.website,
+      value: data.website,
+      icon: <ExternalLink className="text-primary" strokeWidth={1.5} />,
+    },
   ];
 
   return (
@@ -483,6 +492,17 @@ export default function UserProfile({ username }: { username: string }) {
                       <p className="text-md text-gray-500 dark:text-gray-400 italic">
                         This information is not set. damn
                       </p>
+                    ) : card.name === "Website" ? (
+                      card.value ? (
+                        <a
+                          href={card.value.startsWith("http") ? card.value : `https://${card.value}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline break-all hover:text-secondary transition-colors duration-200"
+                        >
+                          {card.value}
+                        </a>
+                      ) : null
                     ) : (
                       <p className="text-md text-gray-500 dark:text-gray-400">
                         {card.value}
