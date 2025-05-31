@@ -36,76 +36,10 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SOCIAL_PROVIDERS } from "../SocialProvider";
 
 // Social options for selection
-export const SOCIAL_OPTIONS = [
-  {
-    name: "Github",
-    url: "https://github.com/{username}",
-    color: "#000000",
-    enabled: true,
-  },
-  {
-    name: "Twitter/X",
-    url: "https://x.com/{username}",
-    color: "#1DA1F2",
-    enabled: true,
-  },
-  {
-    name: "Facebook",
-    url: "https://facebook.com/{username}",
-    color: "#3b5998",
-    enabled: true,
-  },
-  {
-    name: "Instagram",
-    url: "https://instagram.com/{username}",
-    color: "#E1306C",
-    enabled: true,
-  },
-  {
-    name: "LinkedIn",
-    url: "https://linkedin.com/in/{username}",
-    color: "#0077B5",
-    enabled: true,
-  },
-  {
-    name: "StackOverflow",
-    url: "https://stackoverflow.com/users/{username}",
-    color: "#f48024",
-    enabled: true,
-  },
-  {
-    name: "Reddit",
-    url: "https://reddit.com/user/{username}",
-    color: "#FF4500",
-    enabled: true,
-  },
-  {
-    name: "YouTube",
-    url: "https://youtube.com/channel/{username}",
-    color: "#FF0000",
-    enabled: true,
-  },
-  {
-    name: "Steam",
-    url: "https://steamcommunity.com/{username}",
-    color: "#171A21",
-    enabled: true,
-  },
-  {
-    name: "Twitch",
-    url: "https://www.twitch.tv/{username}",
-    color: "#9147FF",
-    enabled: true,
-  },
-  {
-    name: "MyAnimeList",
-    url: "https://myanimelist.net/profile/{username}",
-    color: "#2E51A2",
-    enabled: true,
-  },
-];
+export { SOCIAL_PROVIDERS as SOCIAL_OPTIONS };
 
 export default function EditProfilePage({
   roles: initialRoles = [],
@@ -171,6 +105,7 @@ export default function EditProfilePage({
   const [website, setWebsite] = useState("");
   const [sexuality, setSexuality] = useState("");
   const [timeZone, setTimeZone] = useState("");
+  const [height, setHeight] = useState<number | ''>("");
 
   // Fetch entity for the current user (if logged in) using React Query
   const { data: entityData, isLoading: entityLoading } = useQuery({
@@ -218,6 +153,7 @@ export default function EditProfilePage({
       setWebsite(entityData.website || "");
       setSexuality(entityData.sexuality || "");
       setTimeZone(entityData.timeZone || "");
+      setHeight(entityData.height || "");
     } else {
       setEntity(null);
       setIsEdit(false);
@@ -249,6 +185,7 @@ export default function EditProfilePage({
       website,
       sexuality,
       timeZone,
+      height: height === '' ? undefined : Number(height),
       privacy: {
         isShow,
         isEmailPrivate,
@@ -784,6 +721,20 @@ export default function EditProfilePage({
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             This will be shown on your profile
                           </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Height (cm)
+                          </label>
+                          <input
+                            type="number"
+                            min={0}
+                            value={height}
+                            onChange={e => setHeight(e.target.value === '' ? '' : Number(e.target.value))}
+                            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3.5 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
+                            placeholder="e.g. 180"
+                          />
                         </div>
 
                         <div className="md:col-span-2 space-y-2">
@@ -1393,7 +1344,7 @@ export default function EditProfilePage({
                             <select
                               value={newSocialName}
                               onChange={(e) => {
-                                const selectedOption = SOCIAL_OPTIONS.find(
+                                const selectedOption = SOCIAL_PROVIDERS.find(
                                   (option) => option.name === e.target.value,
                                 );
                                 setNewSocialName(e.target.value);
@@ -1404,7 +1355,7 @@ export default function EditProfilePage({
                               className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                             >
                               <option value="">Select a platform</option>
-                              {SOCIAL_OPTIONS.map((option) => (
+                              {SOCIAL_PROVIDERS.map((option) => (
                                 <option key={option.name} value={option.name}>
                                   {option.name}
                                 </option>

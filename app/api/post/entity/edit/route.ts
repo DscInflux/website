@@ -4,6 +4,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { authOptions } from "@/app/api/auth/authOptions";
 import * as z from "zod";
+import { SOCIAL_PROVIDERS } from "@/components/Layout/user/SocialProvider";
 
 const entityEditSchema = z.object({
   about: z.string().min(1).optional(),
@@ -21,6 +22,7 @@ const entityEditSchema = z.object({
   socials: z.array(z.any()).optional(),
   sexuality: z.string().optional(),
   timeZone: z.string().optional(),
+  height: z.number().min(0).max(300).optional(),
   privacy: z
     .object({
       isShow: z.boolean().optional(),
@@ -34,24 +36,9 @@ const entityEditSchema = z.object({
     .optional(),
 });
 
-// Social options for normalization (must match frontend)
-const SOCIAL_OPTIONS = [
-  { name: "Github", url: "https://github.com/{username}" },
-  { name: "Twitter/X", url: "https://x.com/{username}" },
-  { name: "Facebook", url: "https://facebook.com/{username}" },
-  { name: "Instagram", url: "https://instagram.com/{username}" },
-  { name: "LinkedIn", url: "https://linkedin.com/in/{username}" },
-  { name: "StackOverflow", url: "https://stackoverflow.com/users/{username}" },
-  { name: "Reddit", url: "https://reddit.com/user/{username}" },
-  { name: "YouTube", url: "https://youtube.com/channel/{username}" },
-  { name: "Steam", url: "https://steamcommunity.com/{username}" },
-  { name: "Twitch", url: "https://www.twitch.tv/{username}" },
-  { name: "MyAnimeList", url: "https://myanimelist.net/profile/{username}" },
-];
-
 function normalizeSocials(socials: any[] = []) {
   return socials.map((social) => {
-    const config = SOCIAL_OPTIONS.find((s) => s.name === social.name);
+    const config = SOCIAL_PROVIDERS.find((s) => s.name === social.name);
     if (config && social.username) {
       return {
         ...social,
@@ -119,6 +106,7 @@ export async function POST(req: NextRequest) {
   }
 
   updateData.timeZone = data.timeZone ?? entity.timeZone;
+  updateData.height = data.height ?? entity.height;
 
   // Convert birthday to Date if present
   if (updateData.birthday) {

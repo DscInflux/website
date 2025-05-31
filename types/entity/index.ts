@@ -23,6 +23,7 @@ export interface Entity {
   isVerified: boolean;
   timeZone?: string;
   sexuality?: string;
+  height?: number;
 
   // Flattened Privacy fields
   isShow: boolean;
@@ -32,6 +33,7 @@ export interface Entity {
   isGenderPrivate: boolean;
   isPronounsPrivate: boolean;
   isSexualityPrivate?: boolean;
+  isHeightPrivate?: boolean;
   roles: string[];
   likes: string[];
   skills: string[];

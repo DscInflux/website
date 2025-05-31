@@ -36,10 +36,12 @@ model Entity {
   isGenderPrivate    Boolean
   isPronounsPrivate  Boolean
   isSexualityPrivate Boolean?
+  isHeightPrivate    Boolean?
   roles              String[]
   likes              String[]
   skills             String[]
   socials            Json
+  height             Int?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   sexuality          String?
