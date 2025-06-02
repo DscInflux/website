@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { authOptions } from "@/app/api/auth/authOptions";
+import { z } from "zod";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -20,20 +21,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  let body;
+  // Zod schema for request body
+  const schema = z.object({ username: z.string().min(1) });
+  let parsed;
   try {
-    body = await req.json();
+    const body = await req.json();
+    parsed = schema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Missing or invalid username" },
+        { status: 400 },
+      );
+    }
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { username } = body;
-  if (!username || typeof username !== "string") {
-    return NextResponse.json(
-      { error: "Missing or invalid username" },
-      { status: 400 },
-    );
-  }
+  const { username } = parsed.data;
 
   const user = await prisma.user.findFirst({ where: { username } });
   if (!user) {

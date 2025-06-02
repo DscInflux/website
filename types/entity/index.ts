@@ -1,4 +1,5 @@
 export interface Entity {
+  isBanned: any;
   id: string;
   userId: string;
   Username: string;

@@ -12,20 +12,21 @@ import type {
 const authOptions = {
   providers: [
     DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID!,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+      clientId: process.env.DISCORD_CLIENT_ID || "",
+      clientSecret: process.env.DISCORD_CLIENT_SECRET || "",
       authorization:
         "https://discord.com/oauth2/authorize?scope=identify email",
     }),
     GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      clientId: process.env.GITHUB_CLIENT_ID || "",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
     }),
-    TwitterProvider({
-      clientId: process.env.TWITTER_CLIENT_ID!,
-      clientSecret: process.env.TWITTER_CLIENT_SECRET!,
-      version: "2.0",
-    }),
+TwitterProvider({
+  clientId: process.env.TWITTER_CLIENT_ID || "",
+  clientSecret: process.env.TWITTER_CLIENT_SECRET || "",
+  version: "2.0",
+}),
+
   ],
   callbacks: {
     async signIn({
@@ -57,7 +58,8 @@ const authOptions = {
               : undefined,
             email: discordProfile.email ?? undefined,
             discordId: discordProfile.id,
-            SSOProvider: "discord",
+            SSOProvider: ["discord"],
+            banner: discordProfile.banner
           };
         } else if (providerName === "github") {
           const githubProfile = profile as {
@@ -72,7 +74,7 @@ const authOptions = {
             avatar: githubProfile.avatar_url,
             email: githubProfile.email ?? undefined,
             discordId: String(githubProfile.id), // Ensure string type
-            SSOProvider: "github",
+            SSOProvider: ["github"],
           };
         } else if (providerName === "twitter") {
           const twitterProfile = profile as {
@@ -88,30 +90,59 @@ const authOptions = {
             avatar: twitterProfile.profile_image_url,
             email: twitterProfile.email ?? undefined,
             discordId: String(twitterProfile.id), // Ensure string type
-            SSOProvider: "twitter",
+            SSOProvider: ["twitter"],
           };
         }
-        await prisma.user.upsert({
-          where: { id: user.id },
-          update: upsertData,
-          create: {
-            id: user.id,
-            ...upsertData,
-            access_token:
-              typeof account?.access_token === "string"
-                ? account.access_token
-                : "",
-            token:
-              typeof account?.refresh_token === "string"
-                ? account.refresh_token
-                : "",
-            locale: "",
-            mfa_enabled: false,
-            banner: "",
-            is_banned: false,
-            is_admin: false,
-          },
-        });
+        // --- Fix: Check for existing user by email ---
+        let existingUser = null;
+        if (upsertData.email) {
+          existingUser = await prisma.user.findUnique({ where: { email: upsertData.email } });
+        }
+        if (existingUser) {
+          // If the provider is not already in SSOProvider, add it, but do not update other fields
+          const currentProviders: string[] = Array.isArray(existingUser.SSOProvider)
+            ? existingUser.SSOProvider
+            : typeof existingUser.SSOProvider === "string" && existingUser.SSOProvider
+              ? [existingUser.SSOProvider]
+              : [];
+          const newProvider = upsertData.SSOProvider[0];
+          if (!currentProviders.includes(newProvider)) {
+            await prisma.user.update({
+              where: { email: upsertData.email },
+              data: {
+                SSOProvider: { set: [...currentProviders, newProvider] },
+              },
+            });
+          }
+          // Allow login, but do not update other user fields
+        } else {
+          // Only create if no user with this email exists
+          let newUserId = user.id;
+          if (providerName === "discord") {
+            newUserId = (profile as any).id;
+          } else if (providerName === "github") {
+            newUserId = String((profile as any).id);
+          } // Twitter keeps NextAuth id
+          await prisma.user.create({
+            data: {
+              id: newUserId,
+              ...upsertData,
+              access_token:
+                typeof account?.access_token === "string"
+                  ? account.access_token
+                  : "",
+              token:
+                typeof account?.refresh_token === "string"
+                  ? account.refresh_token
+                  : "",
+              locale: "",
+              mfa_enabled: false,
+              banner: "",
+              is_banned: false,
+              is_admin: false,
+            },
+          });
+        }
       }
       return true;
     },
@@ -141,6 +172,10 @@ const authOptions = {
       if (dbUser) {
         token.is_banned = dbUser.is_banned ?? false;
         token.is_admin = dbUser.is_admin ?? false;
+        // Ensure avatar, username, and display_name are always set from dbUser if available
+        token.avatar = dbUser.avatar ?? token.avatar ?? "";
+        token.username = dbUser.username ?? token.username ?? "";
+        token.display_name = dbUser.display_name ?? token.display_name ?? "";
       } else {
         token.is_banned = user?.is_banned ?? false;
         token.is_admin = user?.is_admin ?? false;
@@ -156,6 +191,23 @@ const authOptions = {
           token.username = discordProfile.username;
           token.display_name =
             discordProfile.global_name || discordProfile.username;
+        } else if (account.provider === "github" && profile) {
+          const githubProfile = profile as {
+            avatar_url?: string;
+            login?: string;
+          };
+          token.avatar = githubProfile.avatar_url;
+          token.username = githubProfile.login;
+          token.display_name = githubProfile.login;
+        } else if (account.provider === "twitter" && profile) {
+          const twitterProfile = profile as {
+            profile_image_url?: string;
+            username?: string;
+            name?: string;
+          };
+          token.avatar = twitterProfile.profile_image_url;
+          token.username = twitterProfile.username || twitterProfile.name;
+          token.display_name = twitterProfile.name;
         }
       }
       return token;

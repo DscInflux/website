@@ -11,8 +11,8 @@ import {
   FaFire,
   FaDice,
   FaArrowRight,
-  FaSearch,
   FaDiscord,
+  FaSearch,
 } from "react-icons/fa";
 import type { Entity } from "@/types/entity";
 import { useSession } from "next-auth/react";
@@ -147,7 +147,7 @@ const HeroLayout = () => {
                     type="submit"
                     className="h-[56px] w-full sm:w-auto px-8 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
                   >
-                    <FaDiscord className="text-lg" />
+                    <FaSearch  className="text-lg" />
                     Find
                   </button>
                 </div>

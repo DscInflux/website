@@ -38,7 +38,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Entity not found" }, { status: 404 });
     }
 
-    return NextResponse.json(entity);
+    // Get the user to check if banned
+    let isBanned = false;
+    if (entity.userId) {
+      const user = await prisma.user.findUnique({ where: { id: entity.userId } });
+      isBanned = user?.is_banned ?? false;
+    }
+
+    return NextResponse.json({ ...entity, isBanned });
   } catch (error) {
     console.error("[GET_ENTITY_ERROR]", error);
     return NextResponse.json(
