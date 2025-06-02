@@ -11,8 +11,8 @@ import {
   FaFire,
   FaDice,
   FaArrowRight,
-  FaSearch,
   FaDiscord,
+  FaSearch,
 } from "react-icons/fa";
 import type { Entity } from "@/types/entity";
 import { useSession } from "next-auth/react";
@@ -107,7 +107,7 @@ const HeroLayout = () => {
               people who share your interests.
             </p>
 
-            {user?.appId ? (
+            {user?.id ? (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -147,7 +147,7 @@ const HeroLayout = () => {
                     type="submit"
                     className="h-[56px] w-full sm:w-auto px-8 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
                   >
-                    <FaDiscord className="text-lg" />
+                    <FaSearch  className="text-lg" />
                     Find
                   </button>
                 </div>

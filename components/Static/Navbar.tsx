@@ -8,15 +8,16 @@ import {
   FaHome,
   FaCompass,
   FaUsers,
-  FaCogs,
-  FaDiscord,
   FaUserPlus,
   FaSignOutAlt,
   FaBars,
   FaTimes,
   FaEdit,
+  FaDiscord,
+  FaCogs,
   FaEye,
 } from "react-icons/fa";
+import { FaSignInAlt } from "react-icons/fa";
 
 const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -68,7 +69,7 @@ const Navbar: React.FC = () => {
     { label: "Team", icon: <FaUsers />, link: "/team" },
     {
       label: "Discord",
-      icon: <FaCogs />,
+      icon: <FaDiscord />,
       link: "https://discord.gg/RPCtG7Em8g",
       external: true,
     },
@@ -133,18 +134,18 @@ const Navbar: React.FC = () => {
                   {entityUrl ? (
                     <>
                       <Link
-                        href="/user/new"
-                        className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
-                      >
-                        <FaEdit className="mr-2" />
-                        Edit Profile
-                      </Link>
-                      <Link
                         href={`/user/${entityUrl}`}
                         className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
                       >
                         <FaEye className="mr-2" />
                         View Profile
+                      </Link>
+                      <Link
+                        href="/user/new"
+                        className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
+                      >
+                        <FaEdit className="mr-2" />
+                        Edit Profile
                       </Link>
                     </>
                   ) : (
@@ -181,7 +182,7 @@ const Navbar: React.FC = () => {
               onClick={() => (window.location.href = "/auth/signin")}
               className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
             >
-              <FaDiscord />
+              <FaSignInAlt />
               <span>Login</span>
             </button>
           )}
@@ -274,7 +275,7 @@ const Navbar: React.FC = () => {
               onClick={() => (window.location.href = "/auth/signin")}
               className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
             >
-              <FaDiscord />
+              <FaSignInAlt />
               <span>Login</span>
             </button>
           )}

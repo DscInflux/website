@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,6 +26,7 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ImageModal, { useImageModal } from "@/components/ui/ImageModal";
+import { SOCIAL_ICON_MAP } from "./SocialProvider";
 
 export default function UserProfile({ username }: { username: string }) {
   const { data: session } = useSession();
@@ -222,6 +222,15 @@ export default function UserProfile({ username }: { username: string }) {
       isEmpty: !data.website,
       value: data.website,
       icon: <ExternalLink className="text-primary" strokeWidth={1.5} />,
+    },
+    {
+      upper: false,
+      name: "Height",
+      subtitle: "How tall am I?",
+      isPrivate: data.isHeightPrivate,
+      isEmpty: !data.height,
+      value: data.height ? `${data.height} cm` : undefined,
+      icon: <Users className="text-primary" strokeWidth={1.5} />,
     },
   ];
 
@@ -617,9 +626,13 @@ export default function UserProfile({ username }: { username: string }) {
                       target="_blank"
                       rel="noopener noreferrer"
                       key={i}
-                      className="flex items-center flex items-center gap-2 bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200 text-white justify-between relative border border-gray-100 dark:border-gray-800 hover:border-primary/20 active:border-primary/50 rounded-xl px-6 py-4 transition-all duration-200 cursor-pointer hover:shadow-lg group"
+                      className="flex items-center gap-2 bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200 text-white justify-between relative border border-gray-100 dark:border-gray-800 hover:border-primary/20 active:border-primary/50 rounded-xl px-6 py-4 transition-all duration-200 cursor-pointer hover:shadow-lg group"
                       style={{ color: social.color || "currentColor" }}
                     >
+                      {/* Social Icon */}
+                      {SOCIAL_ICON_MAP[social.name] && (
+                        <span className="mr-2 flex-shrink-0">{SOCIAL_ICON_MAP[social.name]}</span>
+                      )}
                       <h1 className="capitalize text-md text-white font-medium select-none">
                         {social.name}
                       </h1>

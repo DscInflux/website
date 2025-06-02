@@ -93,7 +93,7 @@ export default function Footer() {
             ))}
           </ul>
 
-          <div className="text-sm text-zinc-500 border-t border-zinc-800 pt-6 text-center">
+          <div className="text-sm text-zinc-500 border-t border-zinc-800 pt-6 text-center mb-2">
             &copy; {new Date().getFullYear()} Purrquinox. All rights reserved.
           </div>
         </div>
