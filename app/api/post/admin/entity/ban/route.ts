@@ -1,12 +1,11 @@
 // @ts-ignore
-import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { authOptions } from "@/app/api/auth/authOptions";
+import { auth } from "@/auth";
 import { z } from "zod";
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (!session || !session.user?.id || !session.user.is_admin) {
     // If the user is not authenticated or not an admin, return 401 Unauthorized
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

@@ -1,8 +1,7 @@
 // @ts-ignore
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/authOptions";
+import { auth } from "@/auth";
 import { z } from "zod";
 import { SOCIAL_PROVIDERS } from "@/components/Layout/user/SocialProvider";
 
@@ -56,102 +55,94 @@ function normalizeSocials(socials: any[] = []) {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await auth();
+  if (!session || !session.user?.id) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  let body;
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user?.id) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
-    let body;
-    try {
-      body = await req.json();
-    } catch {
-      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-    }
-
-    const parseResult = entitySchema.safeParse(body);
-    if (!parseResult.success) {
-      return NextResponse.json(
-        { error: parseResult.error.flatten() },
-        { status: 400 },
-      );
-    }
-    const data = parseResult.data;
-
-    const existingUrl = await prisma.entity.findFirst({
-      where: { url: data.url },
-    });
-    if (existingUrl && existingUrl.userId !== session.user.id) {
-      return NextResponse.json({ error: "URL already taken" }, { status: 400 });
-    }
-
-    const existingEntity = await prisma.entity.findFirst({
-      where: { userId: session.user.id },
-    });
-    const now = new Date();
-    const requiredString = (val: string | undefined, fallback: string) =>
-      val ?? fallback;
-
-    const entityData = {
-      url: requiredString(data.url, ""),
-      about: requiredString(data.about, ""),
-      avatar: requiredString(data.avatar, session.user.avatar || ""),
-      banner: requiredString(
-        data.banner,
-        "https://cdn.dscinflux.xyz/assets/jpg/influxbanner.jpg",
-      ),
-      occupation: data.occupation ?? [],
-      staff: data.staff ?? false,
-      birthday: data.birthday ? new Date(data.birthday) : undefined,
-      location: requiredString(data.location, ""),
-      gender: requiredString(data.gender, ""),
-      pronouns: requiredString(data.pronouns, ""),
-      language: requiredString(data.language, ""),
-      website: data.website ?? undefined,
-      roles: data.roles ?? [],
-      skills: data.skills ?? [],
-      socials: normalizeSocials(data.socials),
-      timeZone: data.timeZone ?? undefined,
-      height: data.height ?? undefined,
-      Username: session.user.username,
-      displayname: session.user.display_name,
-      userId: session.user.id,
-      isDeveloper: false,
-      isPartner: false,
-      isVerified: false,
-      views: [],
-      likes: [],
-      createdAt: existingEntity ? existingEntity.createdAt : now,
-      updatedAt: now,
-      isShow: data.privacy?.isShow ?? true,
-      isEmailPrivate: data.privacy?.isEmailPrivate ?? true,
-      isBirthdayPrivate: data.privacy?.isBirthdayPrivate ?? true,
-      isLocationPrivate: data.privacy?.isLocationPrivate ?? true,
-      isGenderPrivate: data.privacy?.isGenderPrivate ?? true,
-      isPronounsPrivate: data.privacy?.isPronounsPrivate ?? true,
-      isSexualityPrivate: data.privacy?.isSexualityPrivate ?? true,
-      email: session.user.email ?? undefined,
-      sexuality: data.sexuality ?? undefined,
-    };
-
-    let entity;
-    if (existingEntity) {
-      entity = await prisma.entity.update({
-        where: { id: existingEntity.id },
-        data: entityData,
-      });
-    } else {
-      entity = await prisma.entity.create({
-        data: entityData,
-      });
-    }
-
-    return NextResponse.json({ entity });
-  } catch (error: any) {
-    console.error("POST /api/post/entity/new error:", error);
+  const parseResult = entitySchema.safeParse(body);
+  if (!parseResult.success) {
     return NextResponse.json(
-      { error: error?.message || "Internal Server Error" },
-      { status: 500 },
+      { error: parseResult.error.flatten() },
+      { status: 400 },
     );
   }
+  const data = parseResult.data;
+
+  const existingUrl = await prisma.entity.findFirst({
+    where: { url: data.url },
+  });
+  if (existingUrl && existingUrl.userId !== session.user.id) {
+    return NextResponse.json({ error: "URL already taken" }, { status: 400 });
+  }
+
+  const existingEntity = await prisma.entity.findFirst({
+    where: { userId: session.user.id },
+  });
+  const now = new Date();
+  const requiredString = (val: string | undefined, fallback: string) =>
+    val ?? fallback;
+
+  const entityData = {
+    url: requiredString(data.url, ""),
+    about: requiredString(data.about, ""),
+    avatar: requiredString(data.avatar, session.user.avatar || ""),
+    banner: requiredString(
+      data.banner,
+      "https://cdn.dscinflux.xyz/assets/jpg/influxbanner.jpg",
+    ),
+    occupation: data.occupation ?? [],
+    staff: data.staff ?? false,
+    birthday: data.birthday ? new Date(data.birthday) : undefined,
+    location: requiredString(data.location, ""),
+    gender: requiredString(data.gender, ""),
+    pronouns: requiredString(data.pronouns, ""),
+    language: requiredString(data.language, ""),
+    website: data.website ?? undefined,
+    roles: data.roles ?? [],
+    skills: data.skills ?? [],
+    socials: normalizeSocials(data.socials),
+    timeZone: data.timeZone ?? undefined,
+    height: data.height ?? undefined,
+    Username: session.user.username,
+    displayname: session.user.display_name,
+    userId: session.user.id,
+    isDeveloper: false,
+    isPartner: false,
+    isVerified: false,
+    views: [],
+    likes: [],
+    createdAt: existingEntity ? existingEntity.createdAt : now,
+    updatedAt: now,
+    isShow: data.privacy?.isShow ?? true,
+    isEmailPrivate: data.privacy?.isEmailPrivate ?? true,
+    isBirthdayPrivate: data.privacy?.isBirthdayPrivate ?? true,
+    isLocationPrivate: data.privacy?.isLocationPrivate ?? true,
+    isGenderPrivate: data.privacy?.isGenderPrivate ?? true,
+    isPronounsPrivate: data.privacy?.isPronounsPrivate ?? true,
+    isSexualityPrivate: data.privacy?.isSexualityPrivate ?? true,
+    email: session.user.email ?? undefined,
+    sexuality: data.sexuality ?? undefined,
+  };
+
+  let entity;
+  if (existingEntity) {
+    entity = await prisma.entity.update({
+      where: { id: existingEntity.id },
+      data: entityData,
+    });
+  } else {
+    entity = await prisma.entity.create({
+      data: entityData,
+    });
+  }
+
+  return NextResponse.json({ entity });
 }

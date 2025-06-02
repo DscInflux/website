@@ -51,20 +51,60 @@ model Entity {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  username     String
-  display_name String
-  avatar       String?
-  email        String?  @unique
-  discordId    String   @unique
-  access_token String
-  token        String
-  is_admin     Boolean  @default(false)
-  is_banned    Boolean  @default(false)
-  locale       String
-  mfa_enabled  Boolean
-  banner       String
-  SSOProvider  String[]
+  id            String    @id @default(cuid())
+  username      String
+  display_name  String
+  avatar        String?
+  email         String?   @unique
+  discordId     String?   @unique
+  access_token  String
+  token         String
+  is_admin      Boolean   @default(false)
+  is_banned     Boolean   @default(false)
+  mfa_enabled   Boolean
+  banner        String
+  SSOProvider   String[]
+  accounts      Account[]
+  sessions      Session[]
+  emailVerified DateTime?
 
   @@map("user")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("account")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_token")
 }

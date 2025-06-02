@@ -1,8 +1,7 @@
 // @ts-ignore
-import { getServerSession } from "next-auth/next";
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { authOptions } from "@/app/api/auth/authOptions";
+import { auth } from "@/auth";
 import * as z from "zod";
 import { SOCIAL_PROVIDERS } from "@/components/Layout/user/SocialProvider";
 
@@ -50,7 +49,7 @@ function normalizeSocials(socials: any[] = []) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (!session || !session.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
