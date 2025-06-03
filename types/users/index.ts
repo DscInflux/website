@@ -11,4 +11,6 @@ export interface User {
   username: string;
   display_name: string;
   SSOProvider: string;
+  emailVerified: Date | null;
+  email: string;
 }

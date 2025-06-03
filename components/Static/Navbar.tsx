@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import {
   FaHome,
@@ -30,8 +30,8 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (!session) return;
     // Prefer to use the user's id (discordId) to fetch their entity, since username/url may not match
-    if (session.user?.id) {
-      fetch(`/api/get/entity?userId=${session.user.id}`)
+    if (session.user?.discordId) {
+      fetch(`/api/get/entity?userId=${session.user.discordId}`)
         .then(async (res) => {
           if (res.ok) {
             const data = await res.json();
@@ -60,7 +60,6 @@ const Navbar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogin = () => signIn("github", { callbackUrl: "/" });
   const handleLogout = () => signOut({ callbackUrl: "/" });
 
   const items = [
@@ -167,6 +166,12 @@ const Navbar: React.FC = () => {
                       Admin
                     </Link>
                   )}
+                  <button
+                    onClick={() => (window.location.href = "/user/settings")}
+                    className="w-full flex items-center px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900"
+                  >
+                    User Settings
+                  </button>
                   <button
                     onClick={handleLogout}
                     className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900"
