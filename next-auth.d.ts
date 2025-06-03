@@ -17,6 +17,8 @@ declare module "next-auth" {
     display_name: string;
     email?: string;
     SSOProvider: string | string[];
+    discordId?: string;
+    emailVerified?: Date | null;
   }
 }
 

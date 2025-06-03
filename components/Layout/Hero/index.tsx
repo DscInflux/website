@@ -107,22 +107,6 @@ const HeroLayout = () => {
               people who share your interests.
             </p>
 
-            {user?.id ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.4 }}
-                className="mt-8"
-              >
-                <Link
-                  href="/explore"
-                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl transition-all font-semibold shadow-lg hover:shadow-xl hover:shadow-primary/20"
-                >
-                  Explore
-                  <FaArrowRight className="ml-1" />
-                </Link>
-              </motion.div>
-            ) : (
               <motion.form
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -152,7 +136,6 @@ const HeroLayout = () => {
                   </button>
                 </div>
               </motion.form>
-            )}
           </motion.div>
 
           <motion.div
