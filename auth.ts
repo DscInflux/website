@@ -110,28 +110,41 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             banner: "",
           };
         } else if (provider === "twitter") {
+          // Handle Twitter's profile structure correctly
           const twitterProfile = profile as {
-            id: string | number;
-            name?: string;
-            username?: string;
-            profile_image_url?: string;
-            email?: string;
-            profile_banner_url?: string;
+            data: {
+              id: string;
+              name?: string;
+              username?: string;
+              profile_image_url?: string;
+              email?: string;
+              profile_banner_url?: string;
+            };
           };
+          
+          // Extract data from the nested structure
+          const twitterData = twitterProfile.data;
           
           userData = {
             ...userData,
-            username: twitterProfile.username || 
-              (typeof twitterProfile.name === "string" 
-                ? twitterProfile.name.replace(/\s+/g, "_").toLowerCase() 
-                : "twitter_user"),
-            display_name: twitterProfile.name || twitterProfile.username || "Twitter User",
-            avatar: twitterProfile.profile_image_url || "",
-            email: twitterProfile.email,
-            discordId: `twitter_${twitterProfile.id}`,
+            username: twitterData.username || `twitter_user_${twitterData.id}`,
+            display_name: twitterData.name || twitterData.username || `Twitter User ${twitterData.id}`,
+            avatar: twitterData.profile_image_url || "",
+            email: twitterData.email || null,
+            discordId: `twitter_${twitterData.id}`,
             SSOProvider: ["twitter"],
-            banner: twitterProfile.profile_banner_url || "",
+            banner: twitterData.profile_banner_url || "",
           };
+        }
+
+        // Ensure username is never undefined
+        if (!userData.username) {
+          userData.username = `${provider}_user_${providerAccountId}`;
+        }
+
+        // Ensure display_name is never undefined
+        if (!userData.display_name) {
+          userData.display_name = userData.username;
         }
 
         if (targetUser) {
@@ -202,6 +215,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         return true;
       } catch (error) {
+        console.error("SignIn callback error:", error);
         return false;
       }
     },
