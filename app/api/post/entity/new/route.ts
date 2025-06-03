@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
     avatar: requiredString(data.avatar, session.user.avatar || ""),
     banner: requiredString(
       data.banner,
-      "https://cdn.dscinflux.xyz/assets/jpg/influxbanner.jpg",
+      session.user.banner || "https://purrquinox.com/banner.png"
     ),
     occupation: data.occupation ?? [],
     staff: data.staff ?? false,
