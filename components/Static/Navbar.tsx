@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { redirect, usePathname } from "next/navigation";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 import {
   FaHome,
   FaCompass,
@@ -13,11 +13,10 @@ import {
   FaBars,
   FaTimes,
   FaEdit,
-  FaDiscord,
   FaCogs,
   FaEye,
+  FaSignInAlt,
 } from "react-icons/fa";
-import { FaSignInAlt } from "react-icons/fa";
 
 const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -29,7 +28,6 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     if (!session) return;
-    // Prefer to use the user's id (discordId) to fetch their entity, since username/url may not match
     if (session.user?.discordId) {
       fetch(`/api/get/entity?userId=${session.user.discordId}`)
         .then(async (res) => {
@@ -69,7 +67,7 @@ const Navbar: React.FC = () => {
   ];
 
   return (
-    <nav className="w-full z-50 relative">
+    <nav className="w-full z-50 relative bg-white dark:bg-black">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <Link
           href="/"
@@ -80,7 +78,23 @@ const Navbar: React.FC = () => {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
+          {/* Navigation Items */}
+          {items.map(({ label, icon, link }) => (
+            <Link
+              key={label}
+              href={link}
+              className={`flex items-center space-x-1 font-medium hover:text-indigo-600 dark:hover:text-indigo-400 ${
+                pathname === link
+                  ? "text-indigo-600 dark:text-indigo-400"
+                  : "text-gray-800 dark:text-gray-300"
+              }`}
+            >
+              {icon}
+              <span>{label}</span>
+            </Link>
+          ))}
 
+          {/* User session */}
           {session ? (
             <div className="relative" ref={dropdownRef}>
               <button
@@ -168,6 +182,7 @@ const Navbar: React.FC = () => {
         <button
           className="md:hidden text-2xl text-gray-800 dark:text-white"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
+          aria-label="Toggle Menu"
         >
           {isMobileOpen ? <FaTimes /> : <FaBars />}
         </button>
@@ -175,7 +190,22 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Dropdown */}
       {isMobileOpen && (
-        <div className="md:hidden px-4 pb-4 space-y-4">
+        <div className="md:hidden px-4 pb-4 space-y-4 bg-white dark:bg-black">
+          {/* Navigation Items */}
+          {items.map(({ label, icon, link }) => (
+            <Link
+              key={label}
+              href={link}
+              className={`flex items-center space-x-2 font-medium text-gray-700 dark:text-zinc-200 hover:text-indigo-600 dark:hover:text-indigo-400 ${
+                pathname === link ? "text-indigo-600 dark:text-indigo-400" : ""
+              }`}
+              onClick={() => setIsMobileOpen(false)}
+            >
+              {icon}
+              <span>{label}</span>
+            </Link>
+          ))}
+
           {session ? (
             <>
               {entityUrl ? (
@@ -183,6 +213,7 @@ const Navbar: React.FC = () => {
                   <Link
                     href="/user/new"
                     className="flex items-center space-x-2 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
+                    onClick={() => setIsMobileOpen(false)}
                   >
                     <FaEdit />
                     <span>Edit Profile</span>
@@ -190,6 +221,7 @@ const Navbar: React.FC = () => {
                   <Link
                     href={`/user/${entityUrl}`}
                     className="flex items-center space-x-2 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
+                    onClick={() => setIsMobileOpen(false)}
                   >
                     <FaEye />
                     <span>View Profile</span>
@@ -197,7 +229,10 @@ const Navbar: React.FC = () => {
                 </>
               ) : (
                 <button
-                  onClick={() => (window.location.href = "/user/new")}
+                  onClick={() => {
+                    setIsMobileOpen(false);
+                    window.location.href = "/user/new";
+                  }}
                   className="flex items-center space-x-2 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
                 >
                   <FaUserPlus />
@@ -209,13 +244,17 @@ const Navbar: React.FC = () => {
                 <Link
                   href="/admin"
                   className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 text-indigo-600 dark:text-indigo-400 font-semibold"
+                  onClick={() => setIsMobileOpen(false)}
                 >
                   <FaCogs className="mr-2" />
                   Admin
                 </Link>
               )}
               <button
-                onClick={handleLogout}
+                onClick={() => {
+                  setIsMobileOpen(false);
+                  handleLogout();
+                }}
                 className="flex items-center space-x-2 text-red-600 hover:text-red-800"
               >
                 <FaSignOutAlt />
@@ -224,7 +263,10 @@ const Navbar: React.FC = () => {
             </>
           ) : (
             <button
-              onClick={() => (window.location.href = "/auth/signin")}
+              onClick={() => {
+                setIsMobileOpen(false);
+                window.location.href = "/auth/signin";
+              }}
               className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
             >
               <FaSignInAlt />
