@@ -66,12 +66,6 @@ const Navbar: React.FC = () => {
     { label: "Home", icon: <FaHome />, link: "/" },
     { label: "Explore", icon: <FaCompass />, link: "/explore" },
     { label: "Team", icon: <FaUsers />, link: "/team" },
-    {
-      label: "Discord",
-      icon: <FaDiscord />,
-      link: "https://discord.gg/RPCtG7Em8g",
-      external: true,
-    },
   ];
 
   return (
@@ -86,29 +80,6 @@ const Navbar: React.FC = () => {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
-          {items.map((item) =>
-            item.external ? (
-              <a
-                key={item.label}
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-1 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </a>
-            ) : (
-              <Link
-                key={item.label}
-                href={item.link}
-                className="flex items-center space-x-1 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ),
-          )}
 
           {session ? (
             <div className="relative" ref={dropdownRef}>
@@ -205,30 +176,6 @@ const Navbar: React.FC = () => {
       {/* Mobile Dropdown */}
       {isMobileOpen && (
         <div className="md:hidden px-4 pb-4 space-y-4">
-          {items.map((item) =>
-            item.external ? (
-              <a
-                key={item.label}
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-2 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </a>
-            ) : (
-              <Link
-                key={item.label}
-                href={item.link}
-                className="flex items-center space-x-2 text-gray-700 dark:text-zinc-200 hover:text-indigo-600"
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ),
-          )}
-
           {session ? (
             <>
               {entityUrl ? (

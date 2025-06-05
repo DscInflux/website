@@ -14,9 +14,10 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { Entity } from "@/types/entity";
 
 type UserCardProps = {
-  entity: any;
+  entity: Entity;
   isSkeleton?: boolean;
   isLiked?: boolean;
 };
@@ -30,7 +31,6 @@ const UserCard: React.FC<UserCardProps> = ({
   const queryClient = useQueryClient();
   const user = session?.user;
 
-  // Check if current user has liked this entity based on the likes array
   const [liked, setLiked] = useState(() => {
     if (!user?.id || !entity.likes) return isLiked;
     return entity.likes.includes(user.id);
@@ -52,28 +52,19 @@ const UserCard: React.FC<UserCardProps> = ({
       return res.json();
     },
     onSuccess: () => {
-      // Invalidate and refetch relevant queries
       queryClient.invalidateQueries({ queryKey: ["hero-popular-users"] });
       queryClient.invalidateQueries({ queryKey: ["hero-newest-users"] });
       queryClient.invalidateQueries({ queryKey: ["hero-random-users"] });
     },
     onError: (error) => {
       console.error("Like/Unlike error:", error);
-      // Revert the optimistic update
       setLiked(!liked);
     },
   });
 
   const toggleLike = async () => {
-    if (!user?.id) {
-      // Redirect to login or show auth modal
-      return;
-    }
-
-    // Optimistic update
+    if (!user?.id) return;
     setLiked(!liked);
-
-    // Perform the mutation
     const action = liked ? "unlike" : "like";
     likeMutation.mutate(action);
   };
