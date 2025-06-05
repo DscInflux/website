@@ -70,7 +70,6 @@ export function generateMetadata(params: MainMetaDataParam): Metadata {
       site: twitter || undefined,
     },
     manifest: "/manifest.json",
-    themeColor: "#111827",
     appleWebApp: {
       capable: true,
       title: siteTitle,

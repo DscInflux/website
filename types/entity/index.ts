@@ -3,7 +3,7 @@ export interface Entity {
   id: string;
   userId: string;
   Username: string;
-  DisplayName: string;
+  displayname: string;
   url: string;
   banner: string;
   avatar: string;
