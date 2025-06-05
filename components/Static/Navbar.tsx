@@ -81,7 +81,7 @@ const Navbar: React.FC = () => {
           href="/"
           className="text-2xl font-bold text-black dark:text-white"
         >
-          DscInflux
+          Sociava
         </Link>
 
         {/* Desktop Menu */}

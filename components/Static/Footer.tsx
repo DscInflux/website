@@ -30,14 +30,14 @@ export default function Footer() {
     {
       label: "GitHub",
       icon: <FaGithub />,
-      link: "https://github.com/DscInflux/",
+      link: "https://github.com/Sociava/",
     },
     {
       label: "Discord",
       icon: <FaDiscord />,
       link: "https://discord.gg/RPCtG7Em8g",
     },
-    { label: "X", icon: <SiX />, link: "https://x.com/HeyDscInflux" },
+    { label: "X", icon: <SiX />, link: "https://x.com/HeySociava" },
   ];
 
   return (
@@ -47,7 +47,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
             <Link href="/" legacyBehavior>
               <a className="text-2xl font-bold tracking-tight text-white hover:text-primary transition">
-                DscInflux
+                Sociava
                 <span className="block text-sm font-normal text-zinc-400">
                   by Purrquinox
                 </span>

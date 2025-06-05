@@ -98,9 +98,6 @@ const HeroLayout = () => {
                 <span className="absolute -bottom-2 left-0 w-full h-2 bg-primary/20 rounded-full"></span>
               </span>{" "}
               Friends
-              <span className="absolute text-[8rem] font-extrabold opacity-5 -top-10 -left-4 hidden lg:block pointer-events-none select-none text-primary">
-                introducing
-              </span>
             </h1>
             <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 font-medium max-w-xl">
               Find & add new friends on Discord the easy way. Connect with
@@ -195,7 +192,7 @@ const HeroLayout = () => {
                 title="Popular Users"
                 icon={<FaFire />}
                 seeAll="/explore?sort=likes"
-                description="The most popular profiles on DscInflux"
+                description="The most popular profiles on Sociava"
                 next={next}
                 prev={prev}
                 isPrev={isPrev}
@@ -248,7 +245,7 @@ const HeroLayout = () => {
                 title="Newest Users"
                 icon={<FaDice />}
                 seeAll="/explore?sort=newest"
-                description="Some newest profiles on DscInflux"
+                description="Some newest profiles on Sociava"
                 next={next}
                 prev={prev}
                 isPrev={isPrev}
@@ -301,7 +298,7 @@ const HeroLayout = () => {
                 title="Random Users"
                 icon={<FaDice />}
                 seeAll="/explore?sort=random"
-                description="Some random profiles on DscInflux"
+                description="Some random profiles on Sociava"
                 next={next}
                 prev={prev}
                 isPrev={isPrev}

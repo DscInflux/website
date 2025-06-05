@@ -25,14 +25,14 @@ const GDPRDataRequestEmail = (props: {
     <Html lang="en" dir="ltr">
       <Tailwind>
         <Head />
-        <Preview>Your GDPR Data Request - DscInflux Platform</Preview>
+        <Preview>Your GDPR Data Request - Sociava Platform</Preview>
         <Body className="bg-gray-100 font-sans py-[40px]">
           <Container className="bg-white rounded-[12px] shadow-lg max-w-[600px] mx-auto">
             {/* Header with Logo */}
             <Section className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-[12px] px-[40px] py-[32px] text-center">
               <Img
-                src="https://dscinflux.xyz/logo.webp"
-                alt="DscInflux Logo"
+                src="https://sociava.xyz/logo.webp"
+                alt="Sociava Logo"
                 className="w-full h-auto object-cover max-w-[120px] mx-auto mb-[16px]"
               />
               <Heading className="text-white text-[28px] font-bold m-0 leading-tight text-black">
@@ -68,7 +68,7 @@ const GDPRDataRequestEmail = (props: {
                   <strong>Request Date:</strong> {props.requestDate || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </Text>
                 <Text className="text-gray-700 text-[14px] m-0">
-                  <strong>Platform:</strong> DscInflux (dscinflux.xyz)
+                  <strong>Platform:</strong> Sociava (sociava.xyz)
                 </Text>
               </Section>
 
@@ -108,14 +108,14 @@ const GDPRDataRequestEmail = (props: {
               </Text>
 
               <Text className="text-gray-700 text-[16px] leading-relaxed m-0">
-                Thank you for trusting DscInflux with your data. We're committed to protecting your privacy and ensuring full compliance with GDPR regulations.
+                Thank you for trusting Sociava with your data. We're committed to protecting your privacy and ensuring full compliance with GDPR regulations.
               </Text>
             </Section>
 
             {/* Footer */}
             <Section className="bg-gray-50 px-[40px] py-[24px] rounded-b-[12px] border-t border-gray-200">
               <Text className="text-center text-gray-600 text-[14px] mb-[12px] m-0">
-                <strong>DscInflux Platform</strong>
+                <strong>Sociava Platform</strong>
               </Text>
               <Text className="text-center text-gray-600 text-[14px] mb-[12px] m-0">
                 Powered by{' '}
@@ -132,7 +132,7 @@ const GDPRDataRequestEmail = (props: {
                   Privacy Policy
                 </Link>{' '}
                 |{' '}
-                <Link href="https://dscinflux.xyz/unsubscribe" className="text-blue-600 underline">
+                <Link href="https://sociava.xyz/unsubscribe" className="text-blue-600 underline">
                   Unsubscribe
                 </Link>
               </Text>
