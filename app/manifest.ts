@@ -9,7 +9,7 @@ import {
   twitter,
 } from "../lib/siteConfig";
 
-const manifest: MetadataRoute.Manifest = {
+export default manifest: MetadataRoute.Manifest = {
   name: siteTitle,
   short_name: siteTitle,
   description: description_short,
