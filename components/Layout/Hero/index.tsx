@@ -21,7 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const HeroLayout = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [search, setSearch] = useState("");
 
   const user = session?.user || null;
@@ -30,7 +30,6 @@ const HeroLayout = () => {
   const {
     data: popularUsers = [],
     isLoading: popularLoading,
-    error: popularError,
   } = useQuery({
     queryKey: ["hero-popular-users"],
     queryFn: async () => {
@@ -39,10 +38,10 @@ const HeroLayout = () => {
       return data?.data || [];
     },
   });
+
   const {
     data: newestUsers = [],
     isLoading: newestLoading,
-    error: newestError,
   } = useQuery({
     queryKey: ["hero-newest-users"],
     queryFn: async () => {
@@ -51,10 +50,10 @@ const HeroLayout = () => {
       return data?.data || [];
     },
   });
+
   const {
     data: randomUsers = [],
     isLoading: randomLoading,
-    error: randomError,
   } = useQuery({
     queryKey: ["hero-random-users"],
     queryFn: async () => {
@@ -63,7 +62,6 @@ const HeroLayout = () => {
       return data?.data || [];
     },
   });
-  const isLoading = popularLoading || newestLoading || randomLoading;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -74,6 +72,12 @@ const HeroLayout = () => {
       router.push(`/explore?name=${encodeURIComponent(username)}`);
     }
   };
+
+  const Spinner = () => (
+    <div className="flex justify-center py-10">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+    </div>
+  );
 
   return (
     <div className="relative z-10 px-6 3xl:px-0 font-jakarta">
@@ -202,32 +206,21 @@ const HeroLayout = () => {
             slides={popularUsers}
           >
             {(slides: Entity[]) =>
-              popularLoading
-                ? Array(3)
-                    .fill(0)
-                    .map((_, i) => (
-                      <UserCard
-                        key={`skeleton-${i}`}
-                        entity={{}}
-                        isSkeleton={true}
-                      />
-                    ))
-                : slides.length > 0
-                  ? slides.map((entity) => (
-                      <UserCard
-                        key={entity.id}
-                        entity={entity}
-                        isLiked={user ? entity.likes?.includes(user.id) : false}
-                      />
-                    ))
-                  : [
-                      <div
-                        key="no-users"
-                        className="col-span-3 text-center py-10 text-gray-500"
-                      >
-                        No users found.
-                      </div>,
-                    ]
+              popularLoading ? (
+                <Spinner />
+              ) : slides.length > 0 ? (
+                slides.map((entity) => (
+                  <UserCard
+                    key={entity.id}
+                    entity={entity}
+                    isLiked={user ? entity.likes?.includes(user.id) : false}
+                  />
+                ))
+              ) : (
+                <div className="col-span-3 text-center py-10 text-gray-500">
+                  No users found.
+                </div>
+              )
             }
           </Carousel>
         </motion.section>
@@ -255,32 +248,21 @@ const HeroLayout = () => {
             slides={newestUsers}
           >
             {(slides: Entity[]) =>
-              newestLoading
-                ? Array(3)
-                    .fill(0)
-                    .map((_, i) => (
-                      <UserCard
-                        key={`skeleton-${i}`}
-                        entity={{}}
-                        isSkeleton={true}
-                      />
-                    ))
-                : slides.length > 0
-                  ? slides.map((entity) => (
-                      <UserCard
-                        key={entity.id}
-                        entity={entity}
-                        isLiked={user ? entity.likes?.includes(user.id) : false}
-                      />
-                    ))
-                  : [
-                      <div
-                        key="no-users"
-                        className="col-span-3 text-center py-10 text-gray-500"
-                      >
-                        No users found.
-                      </div>,
-                    ]
+              newestLoading ? (
+                <Spinner />
+              ) : slides.length > 0 ? (
+                slides.map((entity) => (
+                  <UserCard
+                    key={entity.id}
+                    entity={entity}
+                    isLiked={user ? entity.likes?.includes(user.id) : false}
+                  />
+                ))
+              ) : (
+                <div className="col-span-3 text-center py-10 text-gray-500">
+                  No users found.
+                </div>
+              )
             }
           </Carousel>
         </motion.section>
@@ -308,32 +290,21 @@ const HeroLayout = () => {
             slides={randomUsers}
           >
             {(slides: Entity[]) =>
-              randomLoading
-                ? Array(3)
-                    .fill(0)
-                    .map((_, i) => (
-                      <UserCard
-                        key={`skeleton-${i}`}
-                        entity={{}}
-                        isSkeleton={true}
-                      />
-                    ))
-                : slides.length > 0
-                  ? slides.map((entity) => (
-                      <UserCard
-                        key={entity.id}
-                        entity={entity}
-                        isLiked={user ? entity.likes?.includes(user.id) : false}
-                      />
-                    ))
-                  : [
-                      <div
-                        key="no-users"
-                        className="col-span-3 text-center py-10 text-gray-500"
-                      >
-                        No users found.
-                      </div>,
-                    ]
+              randomLoading ? (
+                <Spinner />
+              ) : slides.length > 0 ? (
+                slides.map((entity) => (
+                  <UserCard
+                    key={entity.id}
+                    entity={entity}
+                    isLiked={user ? entity.likes?.includes(user.id) : false}
+                  />
+                ))
+              ) : (
+                <div className="col-span-3 text-center py-10 text-gray-500">
+                  No users found.
+                </div>
+              )
             }
           </Carousel>
         </motion.section>

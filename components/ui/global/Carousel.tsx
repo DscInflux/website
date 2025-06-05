@@ -11,7 +11,7 @@ type CarouselProps<T> = {
     isNext: boolean,
   ) => React.ReactNode;
   slides: T[];
-  children: (slides: T[]) => React.ReactNode[];
+  children: (slides: T[]) => React.ReactNode;
   perPage?: number;
 };
 
