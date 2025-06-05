@@ -9,26 +9,26 @@ import {
   twitter,
 } from "../lib/siteConfig";
 
-export default manifest: MetadataRoute.Manifest = {
-  name: siteTitle,
-  short_name: siteTitle,
-  description: description_short,
-  start_url: "/",
-  display: "standalone",
-  background_color: "#ffffff",
-  orientation: "portrait",
-  icons: [
-    {
-      src: logo ?? "/logo.webp",
-      sizes: "192x192",
-      type: "image/webp",
-    },
-    {
-      src: logo ?? "/logo.webp",
-      sizes: "512x512",
-      type: "image/webp",
-    },
-  ],
-};
-
-export default manifest;
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: siteTitle,
+    short_name: siteTitle,
+    description: description_short,
+    start_url: "/",
+    display: "standalone",
+    background_color: "#ffffff",
+    orientation: "portrait",
+    icons: [
+      {
+        src: logo ?? "/logo.webp",
+        sizes: "192x192",
+        type: "image/webp",
+      },
+      {
+        src: logo ?? "/logo.webp",
+        sizes: "512x512",
+        type: "image/webp",
+      },
+    ],
+  };
+}
