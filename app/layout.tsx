@@ -6,6 +6,7 @@ import Footer from "@/components/Static/Footer";
 import { ThemeProvider, SessionProviders } from "../components/Provider";
 import { generateMetadata } from "@/lib/Metadata";
 import { ReactQueryProviders } from "@/components/Provider";
+import ConnectingDots from "@/components/ui/global/ConnectingDots";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,15 +30,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ConnectingDots 
+          dotColor="rgba(255, 255, 255, 0.7)"
+          lineColor="rgba(255, 255, 255, 0.3)"
+          dotCount={200}
+          lineThreshold={150}
+        />
         <ThemeProvider>
           <SessionProviders>
             <ReactQueryProviders>
               <Navbar />
-              <img
-                src="https://dscinfluxcnd.vercel.app/assets/png/backwave.png"
-                width="55%"
-                className="absolute top-0 right-0 hidden lg:block z-[-1] opacity-50"
-              />
               {children}
               <Footer />
             </ReactQueryProviders>
@@ -47,3 +49,4 @@ export default function RootLayout({
     </html>
   );
 }
+

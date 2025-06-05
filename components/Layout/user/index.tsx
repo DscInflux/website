@@ -237,15 +237,15 @@ export default function UserProfile({ username }: { username: string }) {
   return (
     <>
       <Head>
-        <title>{data.DisplayName || username} | DscInflux</title>
+        <title>{data.DisplayName || username} | Sociava</title>
         <meta
           name="description"
-          content={data.about || "User profile on DscInflux"}
+          content={data.about || "User profile on Sociava"}
         />
         <meta property="og:title" content={data.DisplayName || username} />
         <meta
           property="og:description"
-          content={data.about || "User profile on DscInflux"}
+          content={data.about || "User profile on Sociava"}
         />
         <meta
           property="og:image"
@@ -622,7 +622,7 @@ export default function UserProfile({ username }: { username: string }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 text-white ">
                   {data.socials.map((social, i) => (
                     <a
-                      href={social.url + "?utm_source=dscinflux.xyz"}
+                      href={social.url + "?utm_source=sociava.xyz"}
                       target="_blank"
                       rel="noopener noreferrer"
                       key={i}

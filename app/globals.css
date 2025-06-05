@@ -116,26 +116,6 @@ button .ripple {
   font-weight: 100;
 }
 
-.background-shapes {
-  position: absolute;
-  top: -100px;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background: url("/assets/background-shapes.png") no-repeat;
-  background-size: cover;
-  background-position: 50% 100%;
-}
-
-.background-shapes {
-  opacity: 0.1;
-}
-
-.dark .background-shapes {
-  opacity: 0.4;
-}
-
 .color-layout {
   --color: #;
   left: 0;
@@ -180,36 +160,18 @@ button .ripple {
 
 @-webkit-keyframes perspective-right {
   0% {
-    -webkit-transform: translateY(-5px) scale(1) perspective(var(--perspective))
-      rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY))
-      rotate(var(--perspective-rotate))
-      translateX(var(--perspective-translateX));
-    transform: translateY(-5px) scale(1) perspective(var(--perspective))
-      rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY))
-      rotate(var(--perspective-rotate))
-      translateX(var(--perspective-translateX));
+    -webkit-transform: translateY(-5px) scale(1) perspective(var(--perspective)) rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY)) rotate(var(--perspective-rotate)) translateX(var(--perspective-translateX));
+    transform: translateY(-5px) scale(1) perspective(var(--perspective)) rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY)) rotate(var(--perspective-rotate)) translateX(var(--perspective-translateX));
   }
 
   50% {
-    -webkit-transform: translateY(5px) scale(1.1)
-      perspective(var(--perspective)) rotateX(var(--perspective-rotateX))
-      rotateY(var(--perspective-rotateY)) rotate(var(--perspective-rotate))
-      translateX(var(--perspective-translateX));
-    transform: translateY(5px) scale(1) perspective(var(--perspective))
-      rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY))
-      rotate(var(--perspective-rotate))
-      translateX(var(--perspective-translateX));
+    -webkit-transform: translateY(5px) scale(1.1) perspective(var(--perspective)) rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY)) rotate(var(--perspective-rotate)) translateX(var(--perspective-translateX));
+    transform: translateY(5px) scale(1) perspective(var(--perspective)) rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY)) rotate(var(--perspective-rotate)) translateX(var(--perspective-translateX));
   }
 
   100% {
-    -webkit-transform: translateY(-5px) scale(1) perspective(var(--perspective))
-      rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY))
-      rotate(var(--perspective-rotate))
-      translateX(var(--perspective-translateX));
-    transform: translateY(-5px) scale(1) perspective(var(--perspective))
-      rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY))
-      rotate(var(--perspective-rotate))
-      translateX(var(--perspective-translateX));
+    -webkit-transform: translateY(-5px) scale(1) perspective(var(--perspective)) rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY)) rotate(var(--perspective-rotate)) translateX(var(--perspective-translateX));
+    transform: translateY(-5px) scale(1) perspective(var(--perspective)) rotateX(var(--perspective-rotateX)) rotateY(var(--perspective-rotateY)) rotate(var(--perspective-rotate)) translateX(var(--perspective-translateX));
   }
 }
 
@@ -366,36 +328,59 @@ html.dark {
     0 4px 4px -2px rgba(0, 0, 0, 0.15);
 }
 
-.tippy-box[data-theme~="dscinflux"] {
+.tippy-box[data-theme~="sociava"] {
   color: var(--text-tippy);
   box-shadow: var(--shadow-tippy);
   background-color: var(--background-tippy);
 }
 
-.tippy-box[data-theme~="dscinflux"][data-placement^="top"]
-  > .tippy-arrow:before {
+.tippy-box[data-theme~="sociava"][data-placement^="top"]>.tippy-arrow:before {
   border-top-color: var(--background-tippy);
 }
 
-.tippy-box[data-theme~="dscinflux"][data-placement^="bottom"]
-  > .tippy-arrow:before {
+.tippy-box[data-theme~="sociava"][data-placement^="bottom"]>.tippy-arrow:before {
   border-bottom-color: var(--background-tippy);
 }
 
-.tippy-box[data-theme~="dscinflux"][data-placement^="left"]
-  > .tippy-arrow:before {
+.tippy-box[data-theme~="sociava"][data-placement^="left"]>.tippy-arrow:before {
   border-left-color: var(--background-tippy);
 }
 
-.tippy-box[data-theme~="dscinflux"][data-placement^="right"]
-  > .tippy-arrow:before {
+.tippy-box[data-theme~="sociava"][data-placement^="right"]>.tippy-arrow:before {
   border-right-color: var(--background-tippy);
 }
 
-.tippy-box[data-theme~="dscinflux"] > .tippy-backdrop {
+.tippy-box[data-theme~="sociava"]>.tippy-backdrop {
   background-color: var(--background-tippy);
 }
 
-.tippy-box[data-theme~="dscinflux"] > .tippy-svg-arrow {
+.tippy-box[data-theme~="sociava"]>.tippy-svg-arrow {
   fill: var(--background-tippy);
+}
+
+@keyframes sparkle {
+
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.sparkle-layer::after {
+  content: "";
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: sparkle 2s infinite ease-in-out;
+  pointer-events: none;
 }
