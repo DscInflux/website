@@ -237,12 +237,12 @@ export default function UserProfile({ username }: { username: string }) {
   return (
     <>
       <Head>
-        <title>{data.DisplayName || username} | Sociava</title>
+        <title>{data.displayname || username} | Sociava</title>
         <meta
           name="description"
           content={data.about || "User profile on Sociava"}
         />
-        <meta property="og:title" content={data.DisplayName || username} />
+        <meta property="og:title" content={data.displayname || username} />
         <meta
           property="og:description"
           content={data.about || "User profile on Sociava"}
@@ -390,9 +390,9 @@ export default function UserProfile({ username }: { username: string }) {
                         )}
                       </div>
                     </div>
-                    {data.DisplayName && (
+                    {data.displayname && (
                       <span className="text-xl font-medium text-zinc-500 dark:text-zinc-400">
-                        {data.DisplayName}
+                        {data.displayname}
                       </span>
                     )}
                   </div>
