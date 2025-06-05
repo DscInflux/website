@@ -104,35 +104,35 @@ const HeroLayout = () => {
               people who share your interests.
             </p>
 
-              <motion.form
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.4 }}
-                onSubmit={handleSubmit}
-                className="mt-8 w-full max-w-xl"
-              >
-                <div className="flex flex-col sm:flex-row items-center gap-4">
-                  <div className="flex-grow w-full relative">
-                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                      <FaSearch />
-                    </div>
-                    <input
-                      type="text"
-                      name="username"
-                      placeholder="Enter Discord username"
-                      required
-                      className="w-full h-[56px] pl-10 pr-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-primary transition-all shadow-sm"
-                    />
+            <motion.form
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+              onSubmit={handleSubmit}
+              className="mt-8 w-full max-w-xl"
+            >
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <div className="flex-grow w-full relative">
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <FaSearch />
                   </div>
-                  <button
-                    type="submit"
-                    className="h-[56px] w-full sm:w-auto px-8 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
-                  >
-                    <FaSearch  className="text-lg" />
-                    Find
-                  </button>
+                  <input
+                    type="text"
+                    name="username"
+                    placeholder="Enter Discord username"
+                    required
+                    className="w-full h-[56px] pl-10 pr-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-primary transition-all shadow-sm"
+                  />
                 </div>
-              </motion.form>
+                <button
+                  type="submit"
+                  className="h-[56px] w-full sm:w-auto px-8 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
+                >
+                  <FaSearch className="text-lg" />
+                  Find
+                </button>
+              </div>
+            </motion.form>
           </motion.div>
 
           <motion.div

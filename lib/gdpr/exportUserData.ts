@@ -1,5 +1,5 @@
-import { prisma } from '@/lib/db/prisma';
-import JSZip from 'jszip';
+import { prisma } from "@/lib/db/prisma";
+import JSZip from "jszip";
 
 export async function exportUserData(userId: string) {
   // Collect all user-related data from all tables
@@ -19,7 +19,7 @@ export async function exportUserData(userId: string) {
 
   // Create a zip file with the JSON
   const zip = new JSZip();
-  zip.file('gdpr-data.json', JSON.stringify(data, null, 2));
-  const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
+  zip.file("gdpr-data.json", JSON.stringify(data, null, 2));
+  const zipBuffer = await zip.generateAsync({ type: "nodebuffer" });
   return zipBuffer;
 }

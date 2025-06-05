@@ -504,7 +504,11 @@ export default function UserProfile({ username }: { username: string }) {
                     ) : card.name === "Website" ? (
                       card.value ? (
                         <a
-                          href={card.value.startsWith("http") ? card.value : `https://${card.value}`}
+                          href={
+                            card.value.startsWith("http")
+                              ? card.value
+                              : `https://${card.value}`
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary underline break-all hover:text-secondary transition-colors duration-200"
@@ -631,7 +635,9 @@ export default function UserProfile({ username }: { username: string }) {
                     >
                       {/* Social Icon */}
                       {SOCIAL_ICON_MAP[social.name] && (
-                        <span className="mr-2 flex-shrink-0">{SOCIAL_ICON_MAP[social.name]}</span>
+                        <span className="mr-2 flex-shrink-0">
+                          {SOCIAL_ICON_MAP[social.name]}
+                        </span>
                       )}
                       <h1 className="capitalize text-md text-white font-medium select-none">
                         {social.name}

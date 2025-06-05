@@ -4,7 +4,12 @@ import GitHubProvider from "next-auth/providers/github";
 import TwitterProvider from "next-auth/providers/twitter";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/db/prisma";
-import type { Account, Profile, User as NextAuthUser, Session } from "next-auth";
+import type {
+  Account,
+  Profile,
+  User as NextAuthUser,
+  Session,
+} from "next-auth";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -12,7 +17,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID || "",
       clientSecret: process.env.DISCORD_CLIENT_SECRET || "",
-      authorization: "https://discord.com/oauth2/authorize?scope=identify+email",
+      authorization:
+        "https://discord.com/oauth2/authorize?scope=identify+email",
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID || "",
@@ -28,7 +34,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (!account || !profile) return true;
 
       try {
-        const providerAccountId = String(profile.id || account.providerAccountId);
+        const providerAccountId = String(
+          profile.id || account.providerAccountId,
+        );
         const provider = account.provider;
 
         // Check if this provider account already exists
@@ -46,7 +54,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         if (existingAccount) {
           // Account exists - allow sign in
-          console.log(`Existing account found for ${provider}:${providerAccountId}`);
+          console.log(
+            `Existing account found for ${provider}:${providerAccountId}`,
+          );
           return true;
         }
 
@@ -76,7 +86,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             email?: string;
             banner?: string;
           };
-          
+
           userData = {
             ...userData,
             username: discordProfile.username,
@@ -98,7 +108,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             avatar_url?: string;
             email?: string;
           };
-          
+
           userData = {
             ...userData,
             username: githubProfile.login,
@@ -121,14 +131,17 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
               profile_banner_url?: string;
             };
           };
-          
+
           // Extract data from the nested structure
           const twitterData = twitterProfile.data;
-          
+
           userData = {
             ...userData,
             username: twitterData.username || `twitter_user_${twitterData.id}`,
-            display_name: twitterData.name || twitterData.username || `Twitter User ${twitterData.id}`,
+            display_name:
+              twitterData.name ||
+              twitterData.username ||
+              `Twitter User ${twitterData.id}`,
             avatar: twitterData.profile_image_url || "",
             email: twitterData.email || null,
             discordId: `twitter_${twitterData.id}`,
@@ -149,9 +162,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         if (targetUser) {
           // User exists - update their info and link the new provider
-          const currentProviders: string[] = Array.isArray(targetUser.SSOProvider)
+          const currentProviders: string[] = Array.isArray(
+            targetUser.SSOProvider,
+          )
             ? targetUser.SSOProvider
-            : typeof targetUser.SSOProvider === "string" && targetUser.SSOProvider
+            : typeof targetUser.SSOProvider === "string" &&
+                targetUser.SSOProvider
               ? [targetUser.SSOProvider]
               : [];
 
@@ -181,10 +197,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
               token_type: account.token_type,
               scope: account.scope,
               id_token: account.id_token,
-              session_state: account.session_state != null ? String(account.session_state) : null,
+              session_state:
+                account.session_state != null
+                  ? String(account.session_state)
+                  : null,
             },
           });
-
         } else {
           // Create new user
           const newUser = await prisma.user.create({
@@ -207,10 +225,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
               token_type: account.token_type,
               scope: account.scope,
               id_token: account.id_token,
-              session_state: account.session_state != null ? String(account.session_state) : null,
+              session_state:
+                account.session_state != null
+                  ? String(account.session_state)
+                  : null,
             },
           });
-
         }
 
         return true;
@@ -267,7 +287,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     signIn: "/auth/signin",
     error: "/auth/error",
   },
-  session: { 
+  session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },

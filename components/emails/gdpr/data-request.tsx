@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Body,
   Button,
@@ -13,7 +13,7 @@ import {
   Text,
   Tailwind,
   Hr,
-} from '@react-email/components';
+} from "@react-email/components";
 
 const GDPRDataRequestEmail = (props: {
   userName?: string;
@@ -46,11 +46,14 @@ const GDPRDataRequestEmail = (props: {
             {/* Main Content */}
             <Section className="px-[40px] py-[32px]">
               <Text className="text-gray-800 text-[18px] font-semibold mb-[24px] m-0">
-                Hello {props.userName || 'Valued User'},
+                Hello {props.userName || "Valued User"},
               </Text>
 
               <Text className="text-gray-700 text-[16px] leading-relaxed mb-[20px] m-0">
-                We have received your request for access to your personal data under the General Data Protection Regulation (GDPR). We take your privacy seriously and are committed to providing you with complete transparency about the data we hold.
+                We have received your request for access to your personal data
+                under the General Data Protection Regulation (GDPR). We take
+                your privacy seriously and are committed to providing you with
+                complete transparency about the data we hold.
               </Text>
 
               {/* Request Details */}
@@ -65,7 +68,13 @@ const GDPRDataRequestEmail = (props: {
                   <strong>Email:</strong> {props.userEmail}
                 </Text>
                 <Text className="text-gray-700 text-[14px] mb-[8px] m-0">
-                  <strong>Request Date:</strong> {props.requestDate || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  <strong>Request Date:</strong>{" "}
+                  {props.requestDate ||
+                    new Date().toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
                 </Text>
                 <Text className="text-gray-700 text-[14px] m-0">
                   <strong>Platform:</strong> Sociava (sociava.xyz)
@@ -73,7 +82,10 @@ const GDPRDataRequestEmail = (props: {
               </Section>
 
               <Text className="text-gray-700 text-[16px] leading-relaxed mb-[20px] m-0">
-                Under Article 15 of the GDPR, you have the right to obtain confirmation as to whether or not personal data concerning you is being processed, and access to such data. We will process your request within 30 days as required by law.
+                Under Article 15 of the GDPR, you have the right to obtain
+                confirmation as to whether or not personal data concerning you
+                is being processed, and access to such data. We will process
+                your request within 30 days as required by law.
               </Text>
 
               {/* What We'll Provide */}
@@ -101,14 +113,21 @@ const GDPRDataRequestEmail = (props: {
               <Hr className="border-gray-200 my-[24px]" />
 
               <Text className="text-gray-700 text-[16px] leading-relaxed mb-[24px] m-0">
-                If you have any questions about this request or need to make any changes, please don't hesitate to contact our Data Protection Officer at{' '}
-                <Link href="mailto:privacy@purrquinox.com" className="text-blue-600 underline">
+                If you have any questions about this request or need to make any
+                changes, please don't hesitate to contact our Data Protection
+                Officer at{" "}
+                <Link
+                  href="mailto:privacy@purrquinox.com"
+                  className="text-blue-600 underline"
+                >
                   privacy@purrquinox.com
                 </Link>
               </Text>
 
               <Text className="text-gray-700 text-[16px] leading-relaxed m-0">
-                Thank you for trusting Sociava with your data. We're committed to protecting your privacy and ensuring full compliance with GDPR regulations.
+                Thank you for trusting Sociava with your data. We're committed
+                to protecting your privacy and ensuring full compliance with
+                GDPR regulations.
               </Text>
             </Section>
 
@@ -118,21 +137,30 @@ const GDPRDataRequestEmail = (props: {
                 <strong>Sociava Platform</strong>
               </Text>
               <Text className="text-center text-gray-600 text-[14px] mb-[12px] m-0">
-                Powered by{' '}
-                <Link href="https://purrquinox.com" className="text-blue-600 underline">
+                Powered by{" "}
+                <Link
+                  href="https://purrquinox.com"
+                  className="text-blue-600 underline"
+                >
                   Purrquinox Technologies
                 </Link>
               </Text>
               <Text className="text-center text-gray-500 text-[12px] mb-[8px] m-0">
-                Busan, South Korea 
+                Busan, South Korea
               </Text>
               <Text className="text-center text-gray-500 text-[12px] m-0">
-                © 2025 Purrquinox Technologies. All rights reserved. |{' '}
-                <Link href="https://purrquinox.com/privacy" className="text-blue-600 underline">
+                © 2025 Purrquinox Technologies. All rights reserved. |{" "}
+                <Link
+                  href="https://purrquinox.com/privacy"
+                  className="text-blue-600 underline"
+                >
                   Privacy Policy
-                </Link>{' '}
-                |{' '}
-                <Link href="https://sociava.xyz/unsubscribe" className="text-blue-600 underline">
+                </Link>{" "}
+                |{" "}
+                <Link
+                  href="https://sociava.xyz/unsubscribe"
+                  className="text-blue-600 underline"
+                >
                   Unsubscribe
                 </Link>
               </Text>

@@ -1,6 +1,35 @@
 import type { ReactElement } from "react";
-import { FaDiscord, FaReddit, FaGithub, FaTwitter, FaFacebook, FaInstagram, FaLinkedin, FaStackOverflow, FaYoutube, FaSteam, FaTwitch, FaSnapchatGhost, FaTiktok, FaTelegramPlane, FaSoundcloud, FaPaypal, FaPinterest, FaPatreon, FaGitlab, FaRegMoneyBillAlt } from "react-icons/fa";
-import { SiMyanimelist, SiOnlyfans, SiRoblox, SiCashapp, SiBuymeacoffee, SiNamemc, SiKofi } from "react-icons/si";
+import {
+  FaDiscord,
+  FaReddit,
+  FaGithub,
+  FaTwitter,
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaStackOverflow,
+  FaYoutube,
+  FaSteam,
+  FaTwitch,
+  FaSnapchatGhost,
+  FaTiktok,
+  FaTelegramPlane,
+  FaSoundcloud,
+  FaPaypal,
+  FaPinterest,
+  FaPatreon,
+  FaGitlab,
+  FaRegMoneyBillAlt,
+} from "react-icons/fa";
+import {
+  SiMyanimelist,
+  SiOnlyfans,
+  SiRoblox,
+  SiCashapp,
+  SiBuymeacoffee,
+  SiNamemc,
+  SiKofi,
+} from "react-icons/si";
 import { TbBrandMinecraft } from "react-icons/tb";
 
 export const SOCIAL_PROVIDERS = [
@@ -122,7 +151,9 @@ export const SOCIAL_ICON_MAP: Record<string, ReactElement> = {
   Facebook: <FaFacebook className="w-5 h-5" aria-label="Facebook" />,
   Instagram: <FaInstagram className="w-5 h-5" aria-label="Instagram" />,
   LinkedIn: <FaLinkedin className="w-5 h-5" aria-label="LinkedIn" />,
-  StackOverflow: <FaStackOverflow className="w-5 h-5" aria-label="StackOverflow" />,
+  StackOverflow: (
+    <FaStackOverflow className="w-5 h-5" aria-label="StackOverflow" />
+  ),
   YouTube: <FaYoutube className="w-5 h-5" aria-label="YouTube" />,
   Steam: <FaSteam className="w-5 h-5" aria-label="Steam" />,
   Twitch: <FaTwitch className="w-5 h-5" aria-label="Twitch" />,
@@ -139,7 +170,9 @@ export const SOCIAL_ICON_MAP: Record<string, ReactElement> = {
   Minecraft: <TbBrandMinecraft className="w-5 h-5" aria-label="Minecraft" />,
   NameMC: <SiNamemc className="w-5 h-5" aria-label="NameMC" />,
   Pinterest: <FaPinterest className="w-5 h-5" aria-label="Pinterest" />,
-  BuyMeACoffee: <SiBuymeacoffee className="w-5 h-5" aria-label="BuyMeACoffee" />,
+  BuyMeACoffee: (
+    <SiBuymeacoffee className="w-5 h-5" aria-label="BuyMeACoffee" />
+  ),
   Patreon: <FaPatreon className="w-5 h-5" aria-label="Patreon" />,
   "Ko-fi": <SiKofi className="w-5 h-5" aria-label="Ko-fi" />,
 };

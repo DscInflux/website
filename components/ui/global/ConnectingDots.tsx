@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 interface Particle {
   x: number;
@@ -17,8 +17,8 @@ interface ConnectingDotsProps {
 }
 
 const ConnectingDots: React.FC<ConnectingDotsProps> = ({
-  dotColor = 'rgba(255, 255, 255, 0.7)',
-  lineColor = 'rgba(255, 255, 255, 0.2)',
+  dotColor = "rgba(255, 255, 255, 0.7)",
+  lineColor = "rgba(255, 255, 255, 0.2)",
   dotCount = 200,
   lineThreshold = 150,
 }) => {
@@ -45,9 +45,9 @@ const ConnectingDots: React.FC<ConnectingDotsProps> = ({
   // Animation logic
   const animate = () => {
     if (!canvasRef.current) return;
-    
+
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Clear canvas
@@ -78,7 +78,7 @@ const ConnectingDots: React.FC<ConnectingDotsProps> = ({
 
         if (distance < lineThreshold) {
           // Fade lines based on distance
-          const opacity = 1 - (distance / lineThreshold);
+          const opacity = 1 - distance / lineThreshold;
           ctx.beginPath();
           ctx.moveTo(particle.x, particle.y);
           ctx.lineTo(particle2.x, particle2.y);
@@ -95,15 +95,16 @@ const ConnectingDots: React.FC<ConnectingDotsProps> = ({
   // Handle resize
   const handleResize = () => {
     if (canvasRef.current) {
-      const { clientWidth, clientHeight } = canvasRef.current.parentElement || document.body;
+      const { clientWidth, clientHeight } =
+        canvasRef.current.parentElement || document.body;
       setDimensions({
         width: clientWidth,
         height: clientHeight,
       });
-      
+
       canvasRef.current.width = clientWidth;
       canvasRef.current.height = clientHeight;
-      
+
       // Reinitialize particles when resizing
       initParticles(clientWidth, clientHeight);
     }
@@ -112,29 +113,27 @@ const ConnectingDots: React.FC<ConnectingDotsProps> = ({
   // Setup canvas and start animation
   useEffect(() => {
     handleResize();
-    window.addEventListener('resize', handleResize);
-    
+    window.addEventListener("resize", handleResize);
+
     // Start animation
     animationRef.current = requestAnimationFrame(animate);
-    
+
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationRef.current);
     };
   }, []);
 
- return (
-  <div 
-    className="fixed inset-0 z-[-1] pointer-events-none"
-  >
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full"
-      width={dimensions.width}
-      height={dimensions.height}
-    />
-  </div>
-);
+  return (
+    <div className="fixed inset-0 z-[-1] pointer-events-none">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        width={dimensions.width}
+        height={dimensions.height}
+      />
+    </div>
+  );
 };
 
 export default ConnectingDots;
