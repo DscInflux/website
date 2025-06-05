@@ -20,7 +20,10 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     parsed = schema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Missing entityId or verified" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing entityId or verified" },
+        { status: 400 },
+      );
     }
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
@@ -35,6 +38,9 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ entity });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to update entity verification" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update entity verification" },
+      { status: 500 },
+    );
   }
 }

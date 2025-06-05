@@ -1,26 +1,36 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { FaSearch, FaBan, FaCheck, FaUser, FaShieldAlt, FaExclamationTriangle, FaCheckCircle } from "react-icons/fa"
-import UserCard from "@/components/cards/UserCards"
-import type { Entity } from "@/types/entity"
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  FaSearch,
+  FaBan,
+  FaCheck,
+  FaUser,
+  FaShieldAlt,
+  FaExclamationTriangle,
+  FaCheckCircle,
+} from "react-icons/fa";
+import UserCard from "@/components/cards/UserCards";
+import type { Entity } from "@/types/entity";
 
 export default function EntityManagement() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [searchType, setSearchType] = useState<"name" | "discordId">("name")
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchType, setSearchType] = useState<"name" | "discordId">("name");
   const [notification, setNotification] = useState<{
-    message: string
-    type: "success" | "error"
-  } | null>(null)
-  const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const [entityToManage, setEntityToManage] = useState<Entity | null>(null)
-  const [actionType, setActionType] = useState<"ban" | "unban" | "verify" | "unverify" | null>(null)
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [entityToManage, setEntityToManage] = useState<Entity | null>(null);
+  const [actionType, setActionType] = useState<
+    "ban" | "unban" | "verify" | "unverify" | null
+  >(null);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const {
     data: entity,
@@ -30,14 +40,14 @@ export default function EntityManagement() {
   } = useQuery({
     queryKey: ["entity", searchQuery, searchType],
     queryFn: async () => {
-      if (!searchQuery.trim()) return null
-      const param = searchType === "name" ? "name" : "userId"
-      const response = await fetch(`/api/get/entity?${param}=${searchQuery}`)
-      if (!response.ok) throw new Error("Entity not found")
-      return response.json()
+      if (!searchQuery.trim()) return null;
+      const param = searchType === "name" ? "name" : "userId";
+      const response = await fetch(`/api/get/entity?${param}=${searchQuery}`);
+      if (!response.ok) throw new Error("Entity not found");
+      return response.json();
     },
     enabled: false,
-  })
+  });
 
   // Ban mutation
   const banMutation = useMutation({
@@ -46,29 +56,29 @@ export default function EntityManagement() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ entityId }),
-      })
+      });
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Failed to ban entity")
+        const data = await response.json();
+        throw new Error(data.error || "Failed to ban entity");
       }
-      return { entityId }
+      return { entityId };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entity"] })
+      queryClient.invalidateQueries({ queryKey: ["entity"] });
       setNotification({
         message: `Successfully banned ${entity?.Username}`,
         type: "success",
-      })
-      setTimeout(() => setNotification(null), 3000)
+      });
+      setTimeout(() => setNotification(null), 3000);
     },
     onError: (error: any) => {
       setNotification({
         message: error.message || "Failed to ban entity",
         type: "error",
-      })
-      setTimeout(() => setNotification(null), 3000)
+      });
+      setTimeout(() => setNotification(null), 3000);
     },
-  })
+  });
 
   // Unban mutation
   const unbanMutation = useMutation({
@@ -77,29 +87,29 @@ export default function EntityManagement() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ entityId }),
-      })
+      });
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Failed to unban entity")
+        const data = await response.json();
+        throw new Error(data.error || "Failed to unban entity");
       }
-      return { entityId }
+      return { entityId };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entity"] })
+      queryClient.invalidateQueries({ queryKey: ["entity"] });
       setNotification({
         message: `Successfully unbanned ${entity?.Username}`,
         type: "success",
-      })
-      setTimeout(() => setNotification(null), 3000)
+      });
+      setTimeout(() => setNotification(null), 3000);
     },
     onError: (error: any) => {
       setNotification({
         message: error.message || "Failed to unban entity",
         type: "error",
-      })
-      setTimeout(() => setNotification(null), 3000)
+      });
+      setTimeout(() => setNotification(null), 3000);
     },
-  })
+  });
 
   // Verify mutation
   const verifyMutation = useMutation({
@@ -108,57 +118,60 @@ export default function EntityManagement() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ entityId }),
-      })
+      });
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Failed to verify entity")
+        const data = await response.json();
+        throw new Error(data.error || "Failed to verify entity");
       }
-      return { entityId }
+      return { entityId };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entity"] })
+      queryClient.invalidateQueries({ queryKey: ["entity"] });
       setNotification({
         message: `Successfully verified ${entity?.Username}`,
         type: "success",
-      })
-      setTimeout(() => setNotification(null), 3000)
+      });
+      setTimeout(() => setNotification(null), 3000);
     },
     onError: (error: any) => {
       setNotification({
         message: error.message || "Failed to verify entity",
         type: "error",
-      })
-      setTimeout(() => setNotification(null), 3000)
+      });
+      setTimeout(() => setNotification(null), 3000);
     },
-  })
+  });
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      refetch()
+      refetch();
     }
-  }
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      handleSearch()
+      handleSearch();
     }
-  }
+  };
 
-  const confirmAction = (entity: Entity, action: "ban" | "unban" | "verify" | "unverify") => {
-    setEntityToManage(entity)
-    setActionType(action)
-    setShowConfirmModal(true)
-  }
+  const confirmAction = (
+    entity: Entity,
+    action: "ban" | "unban" | "verify" | "unverify",
+  ) => {
+    setEntityToManage(entity);
+    setActionType(action);
+    setShowConfirmModal(true);
+  };
 
   const executeAction = () => {
-    if (!entityToManage || !actionType) return
+    if (!entityToManage || !actionType) return;
 
     if (actionType === "ban") {
-      banMutation.mutate(entityToManage.id)
+      banMutation.mutate(entityToManage.id);
     } else if (actionType === "unban") {
-      unbanMutation.mutate(entityToManage.id)
+      unbanMutation.mutate(entityToManage.id);
     } else if (actionType === "verify") {
-      verifyMutation.mutate(entityToManage.id)
+      verifyMutation.mutate(entityToManage.id);
     } else if (actionType === "unverify") {
       // Call unverify endpoint
       fetch(`/api/post/admin/entity/unverify`, {
@@ -167,19 +180,28 @@ export default function EntityManagement() {
         body: JSON.stringify({ entityId: entityToManage.id }),
       })
         .then(async (res) => {
-          if (!res.ok) throw new Error((await res.json()).error || "Failed to unverify entity")
-          queryClient.invalidateQueries({ queryKey: ["entity"] })
-          setNotification({ message: `Successfully unverified ${entityToManage.Username}`, type: "success" })
-          setTimeout(() => setNotification(null), 3000)
+          if (!res.ok)
+            throw new Error(
+              (await res.json()).error || "Failed to unverify entity",
+            );
+          queryClient.invalidateQueries({ queryKey: ["entity"] });
+          setNotification({
+            message: `Successfully unverified ${entityToManage.Username}`,
+            type: "success",
+          });
+          setTimeout(() => setNotification(null), 3000);
         })
         .catch((error) => {
-          setNotification({ message: error.message || "Failed to unverify entity", type: "error" })
-          setTimeout(() => setNotification(null), 3000)
-        })
+          setNotification({
+            message: error.message || "Failed to unverify entity",
+            type: "error",
+          });
+          setTimeout(() => setNotification(null), 3000);
+        });
     }
 
-    setShowConfirmModal(false)
-  }
+    setShowConfirmModal(false);
+  };
 
   return (
     <div className="min-h-screen text-white">
@@ -197,7 +219,9 @@ export default function EntityManagement() {
             </div>
             <div>
               <h1 className="text-3xl font-bold">Entity Management</h1>
-              <p className="text-gray-400">Check and manage entity ban status</p>
+              <p className="text-gray-400">
+                Check and manage entity ban status
+              </p>
             </div>
           </div>
 
@@ -206,7 +230,9 @@ export default function EntityManagement() {
               <button
                 onClick={() => setSearchType("name")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  searchType === "name" ? "bg-primary text-white" : "bg-gray-700/50 text-gray-400 hover:text-white"
+                  searchType === "name"
+                    ? "bg-primary text-white"
+                    : "bg-gray-700/50 text-gray-400 hover:text-white"
                 }`}
               >
                 Search by Name
@@ -214,7 +240,9 @@ export default function EntityManagement() {
               <button
                 onClick={() => setSearchType("discordId")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  searchType === "discordId" ? "bg-primary text-white" : "bg-gray-700/50 text-gray-400 hover:text-white"
+                  searchType === "discordId"
+                    ? "bg-primary text-white"
+                    : "bg-gray-700/50 text-gray-400 hover:text-white"
                 }`}
               >
                 Search by Discord ID
@@ -229,10 +257,17 @@ export default function EntityManagement() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={searchType === "name" ? "Enter username or URL..." : "Enter Discord ID..."}
+                placeholder={
+                  searchType === "name"
+                    ? "Enter username or URL..."
+                    : "Enter Discord ID..."
+                }
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-700 bg-gray-800/80 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent"
               />
-              <FaSearch className="absolute left-3 top-3.5 text-gray-500" size={16} />
+              <FaSearch
+                className="absolute left-3 top-3.5 text-gray-500"
+                size={16}
+              />
             </div>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -240,7 +275,9 @@ export default function EntityManagement() {
               onClick={handleSearch}
               disabled={!searchQuery.trim()}
               className={`px-6 py-3 rounded-xl text-white font-medium flex items-center gap-2 ${
-                searchQuery.trim() ? "bg-primary hover:bg-primary/90" : "bg-gray-700/50 cursor-not-allowed"
+                searchQuery.trim()
+                  ? "bg-primary hover:bg-primary/90"
+                  : "bg-gray-700/50 cursor-not-allowed"
               }`}
             >
               <FaSearch />
@@ -276,7 +313,11 @@ export default function EntityManagement() {
             >
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                transition={{
+                  duration: 1,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "linear",
+                }}
                 className="mb-4"
               >
                 <FaSearch className="text-primary text-4xl" />
@@ -293,9 +334,12 @@ export default function EntityManagement() {
               className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 border border-red-500/30 shadow-xl flex flex-col items-center justify-center"
             >
               <FaExclamationTriangle className="text-red-500 text-4xl mb-4" />
-              <h3 className="text-xl font-bold text-red-400 mb-2">Entity Not Found</h3>
+              <h3 className="text-xl font-bold text-red-400 mb-2">
+                Entity Not Found
+              </h3>
               <p className="text-gray-300 text-center">
-                We couldn't find an entity with the provided {searchType === "name" ? "name" : "Discord ID"}.
+                We couldn't find an entity with the provided{" "}
+                {searchType === "name" ? "name" : "Discord ID"}.
                 <br />
                 Please check your input and try again.
               </p>
@@ -353,7 +397,9 @@ export default function EntityManagement() {
                       <span className="text-gray-400">Ban Status:</span>
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 ${
-                          entity.isBanned ? "bg-red-500/20 text-red-400" : "bg-green-500/20 text-green-400"
+                          entity.isBanned
+                            ? "bg-red-500/20 text-red-400"
+                            : "bg-green-500/20 text-green-400"
                         }`}
                       >
                         {entity.isBanned ? (
@@ -371,7 +417,9 @@ export default function EntityManagement() {
                       <span className="text-gray-400">Verification:</span>
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 ${
-                          entity.isVerified ? "bg-blue-500/20 text-blue-400" : "bg-yellow-500/20 text-yellow-400"
+                          entity.isVerified
+                            ? "bg-blue-500/20 text-blue-400"
+                            : "bg-yellow-500/20 text-yellow-400"
                         }`}
                       >
                         {entity.isVerified ? (
@@ -389,7 +437,9 @@ export default function EntityManagement() {
                       <span className="text-gray-400">Staff Status:</span>
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 ${
-                          entity.staff ? "bg-purple-500/20 text-purple-400" : "bg-gray-500/20 text-gray-400"
+                          entity.staff
+                            ? "bg-purple-500/20 text-purple-400"
+                            : "bg-gray-500/20 text-gray-400"
                         }`}
                       >
                         {entity.staff ? (
@@ -405,11 +455,15 @@ export default function EntityManagement() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-400">Created At:</span>
-                      <span className="text-gray-300">{new Date(entity.createdAt).toLocaleDateString()}</span>
+                      <span className="text-gray-300">
+                        {new Date(entity.createdAt).toLocaleDateString()}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-400">Last Updated:</span>
-                      <span className="text-gray-300">{new Date(entity.updatedAt).toLocaleDateString()}</span>
+                      <span className="text-gray-300">
+                        {new Date(entity.updatedAt).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -492,17 +546,31 @@ export default function EntityManagement() {
                   {actionType === "ban" && <FaBan size={20} />}
                   {actionType === "unban" && <FaCheck size={20} />}
                   {actionType === "verify" && <FaCheckCircle size={20} />}
-                  {actionType === "unverify" && <FaExclamationTriangle size={20} />}
+                  {actionType === "unverify" && (
+                    <FaExclamationTriangle size={20} />
+                  )}
                 </div>
                 <h3 className="text-xl font-bold">
-                  Confirm {actionType === "ban" ? "Ban" : actionType === "unban" ? "Unban" : actionType === "verify" ? "Verification" : actionType === "unverify" ? "Unverify" : ""}
+                  Confirm{" "}
+                  {actionType === "ban"
+                    ? "Ban"
+                    : actionType === "unban"
+                      ? "Unban"
+                      : actionType === "verify"
+                        ? "Verification"
+                        : actionType === "unverify"
+                          ? "Unverify"
+                          : ""}
                 </h3>
               </div>
 
               <p className="text-gray-300 mb-6">
-                Are you sure you want to {actionType} {entityToManage?.Username}?
-                {actionType === "ban" && " This will restrict their access to the platform."}
-                {actionType === "unverify" && " This will remove their verified status."}
+                Are you sure you want to {actionType} {entityToManage?.Username}
+                ?
+                {actionType === "ban" &&
+                  " This will restrict their access to the platform."}
+                {actionType === "unverify" &&
+                  " This will remove their verified status."}
               </p>
 
               <div className="flex justify-end gap-3">
@@ -541,7 +609,8 @@ export default function EntityManagement() {
                   )}
                   {actionType === "unverify" && (
                     <>
-                      <FaExclamationTriangle size={14} className="mr-2" /> Unverify User
+                      <FaExclamationTriangle size={14} className="mr-2" />{" "}
+                      Unverify User
                     </>
                   )}
                 </button>
@@ -551,5 +620,5 @@ export default function EntityManagement() {
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }

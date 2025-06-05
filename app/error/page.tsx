@@ -1,20 +1,32 @@
-"use client"
+"use client";
 
-import { useSearchParams } from "next/navigation"
-import { motion } from "framer-motion"
-import { AlertTriangle, Home, RefreshCw, Bug, Shield, Database, Wifi, Clock } from "lucide-react"
-import { Suspense } from "react"
+import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import {
+  AlertTriangle,
+  Home,
+  RefreshCw,
+  Bug,
+  Shield,
+  Database,
+  Wifi,
+  Clock,
+} from "lucide-react";
+import { Suspense } from "react";
 
 function ErrorContent() {
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
 
   // Get error details from query params
-  const error = searchParams.get("error")
-  const errorDescription = searchParams.get("error_description")
-  const errorCode = searchParams.get("code") || "500"
+  const error = searchParams.get("error");
+  const errorDescription = searchParams.get("error_description");
+  const errorCode = searchParams.get("code") || "500";
 
   // Common NextAuth errors
-  const nextAuthErrors: Record<string, { title: string; description: string; icon: any }> = {
+  const nextAuthErrors: Record<
+    string,
+    { title: string; description: string; icon: any }
+  > = {
     Configuration: {
       title: "Configuration Error",
       description: "There is a problem with the server configuration.",
@@ -27,7 +39,8 @@ function ErrorContent() {
     },
     Verification: {
       title: "Verification Error",
-      description: "The verification token has expired or has already been used.",
+      description:
+        "The verification token has expired or has already been used.",
       icon: Clock,
     },
     Default: {
@@ -35,12 +48,12 @@ function ErrorContent() {
       description: "An error occurred during authentication.",
       icon: Shield,
     },
-  }
+  };
 
   // Determine error type and details
   const getErrorDetails = () => {
     if (error && nextAuthErrors[error]) {
-      return nextAuthErrors[error]
+      return nextAuthErrors[error];
     }
 
     switch (errorCode) {
@@ -49,39 +62,39 @@ function ErrorContent() {
           title: "Page Not Found",
           description: "The page you are looking for does not exist.",
           icon: AlertTriangle,
-        }
+        };
       case "403":
         return {
           title: "Forbidden",
           description: "You do not have permission to access this resource.",
           icon: Shield,
-        }
+        };
       case "500":
         return {
           title: "Internal Server Error",
           description: "Something went wrong on our end.",
           icon: Database,
-        }
+        };
       case "503":
         return {
           title: "Service Unavailable",
           description: "The service is temporarily unavailable.",
           icon: Wifi,
-        }
+        };
       default:
         return {
           title: "Something Went Wrong",
           description: "An unexpected error occurred.",
           icon: AlertTriangle,
-        }
+        };
     }
-  }
+  };
 
-  const errorDetails = getErrorDetails()
-  const IconComponent = errorDetails.icon
+  const errorDetails = getErrorDetails();
+  const IconComponent = errorDetails.icon;
 
   // Get all query parameters for debugging
-  const allParams = Object.fromEntries(searchParams.entries())
+  const allParams = Object.fromEntries(searchParams.entries());
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -104,7 +117,12 @@ function ErrorContent() {
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.5, type: "spring", stiffness: 200 }}
+              transition={{
+                delay: 0.2,
+                duration: 0.5,
+                type: "spring",
+                stiffness: 200,
+              }}
               className="flex justify-center mb-8"
             >
               <div className="relative">
@@ -233,14 +251,21 @@ function ErrorContent() {
                     animate={{ opacity: 1 }}
                     className="mt-4 p-4 bg-black/30 rounded-xl border border-white/10"
                   >
-                    <h4 className="text-sm font-medium text-gray-300 mb-3">Query Parameters:</h4>
+                    <h4 className="text-sm font-medium text-gray-300 mb-3">
+                      Query Parameters:
+                    </h4>
                     <div className="space-y-2">
                       {Object.entries(allParams).map(([key, value]) => (
-                        <div key={key} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                        <div
+                          key={key}
+                          className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3"
+                        >
                           <span className="text-xs font-mono text-blue-400 bg-blue-400/10 px-2 py-1 rounded">
                             {key}
                           </span>
-                          <span className="text-xs font-mono text-gray-300 break-all">{value}</span>
+                          <span className="text-xs font-mono text-gray-300 break-all">
+                            {value}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -280,7 +305,7 @@ function ErrorContent() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function ErrorPage() {
@@ -294,5 +319,5 @@ export default function ErrorPage() {
     >
       <ErrorContent />
     </Suspense>
-  )
+  );
 }

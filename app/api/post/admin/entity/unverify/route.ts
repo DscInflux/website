@@ -16,11 +16,17 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const parsed = schema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid request body" },
+        { status: 400 },
+      );
     }
     entityId = parsed.data.entityId;
   } catch (e) {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid request body" },
+      { status: 400 },
+    );
   }
 
   if (!entityId) {
@@ -34,6 +40,9 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ success: true, entity: updated });
   } catch (e: any) {
-    return NextResponse.json({ error: e.message || "Failed to unverify entity" }, { status: 500 });
+    return NextResponse.json(
+      { error: e.message || "Failed to unverify entity" },
+      { status: 500 },
+    );
   }
 }

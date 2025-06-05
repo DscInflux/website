@@ -30,7 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ConnectingDots 
+        <ConnectingDots
           dotColor="rgba(255, 255, 255, 0.7)"
           lineColor="rgba(255, 255, 255, 0.3)"
           dotCount={200}
@@ -49,4 +49,3 @@ export default function RootLayout({
     </html>
   );
 }
-

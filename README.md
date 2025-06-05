@@ -27,8 +27,8 @@ Sociava is a modern web platform for discovering and connecting with people who 
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/sociava/sociava.git
-   cd sociava
+   git clone https://github.com/sociava/website.git
+   cd website
    ```
 2. **Install dependencies:**
    ```sh

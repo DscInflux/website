@@ -41,7 +41,9 @@ export async function GET(req: NextRequest) {
     // Get the user to check if banned
     let isBanned = false;
     if (entity.userId) {
-      const user = await prisma.user.findUnique({ where: { id: entity.userId } });
+      const user = await prisma.user.findUnique({
+        where: { id: entity.userId },
+      });
       isBanned = user?.is_banned ?? false;
     }
 

@@ -105,7 +105,7 @@ export default function EditProfilePage({
   const [website, setWebsite] = useState("");
   const [sexuality, setSexuality] = useState("");
   const [timeZone, setTimeZone] = useState("");
-  const [height, setHeight] = useState<number | ''>("");
+  const [height, setHeight] = useState<number | "">("");
 
   // Fetch entity for the current user (if logged in) using React Query
   const { data: entityData, isLoading: entityLoading } = useQuery({
@@ -185,7 +185,7 @@ export default function EditProfilePage({
       website,
       sexuality,
       timeZone,
-      height: height === '' ? undefined : Number(height),
+      height: height === "" ? undefined : Number(height),
       privacy: {
         isShow,
         isEmailPrivate,
@@ -731,7 +731,13 @@ export default function EditProfilePage({
                             type="number"
                             min={0}
                             value={height}
-                            onChange={e => setHeight(e.target.value === '' ? '' : Number(e.target.value))}
+                            onChange={(e) =>
+                              setHeight(
+                                e.target.value === ""
+                                  ? ""
+                                  : Number(e.target.value),
+                              )
+                            }
                             className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700/50 py-3.5 px-4 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm"
                             placeholder="e.g. 180"
                           />

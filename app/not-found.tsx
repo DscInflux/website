@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Home, Search, ArrowLeft } from "lucide-react"
+import { motion } from "framer-motion";
+import { Home, Search, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
@@ -43,7 +43,12 @@ export default function NotFound() {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="bg-white/10 dark:bg-black/20 backdrop-blur-xl rounded-3xl p-8 md:p-12 border border-white/20 dark:border-white/10 shadow-2xl"
           >
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mb-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mb-6"
+            >
               <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center">
                 <Search className="w-8 h-8 text-white" />
               </div>
@@ -64,8 +69,9 @@ export default function NotFound() {
               transition={{ delay: 0.7 }}
               className="text-lg text-gray-300 mb-8 leading-relaxed"
             >
-              Oops! The page you're looking for seems to have vanished into the digital void. Don't worry, even the best
-              explorers sometimes take a wrong turn.
+              Oops! The page you're looking for seems to have vanished into the
+              digital void. Don't worry, even the best explorers sometimes take
+              a wrong turn.
             </motion.p>
 
             <motion.div
@@ -122,5 +128,5 @@ export default function NotFound() {
         </div>
       </div>
     </div>
-  )
+  );
 }

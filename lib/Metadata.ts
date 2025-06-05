@@ -36,15 +36,15 @@ export function generateMetadata(params: MainMetaDataParam): Metadata {
     icons: {
       icon: logo ?? "/logo.webp",
       apple: [
-      {
-        url: logo ?? "/logo.webp",
-        sizes: "192x192",
-      },
-      {
-        url: logo ?? "/logo.webp",
-        sizes: "512x512",
-      },
-    ],
+        {
+          url: logo ?? "/logo.webp",
+          sizes: "192x192",
+        },
+        {
+          url: logo ?? "/logo.webp",
+          sizes: "512x512",
+        },
+      ],
     },
     openGraph: {
       title: fullTitle,
@@ -70,12 +70,12 @@ export function generateMetadata(params: MainMetaDataParam): Metadata {
       site: twitter || undefined,
     },
     manifest: "/manifest.json",
-  themeColor: "#111827",
-  appleWebApp: {
-    capable: true,
-    title: siteTitle,
-    statusBarStyle: "default",
-  },
+    themeColor: "#111827",
+    appleWebApp: {
+      capable: true,
+      title: siteTitle,
+      statusBarStyle: "default",
+    },
   };
 
   if (canonicalUrl) {
@@ -103,9 +103,7 @@ export function generateAdminMetadata(params: MainMetaDataParam): Metadata {
     description:
       "Welcome to Sociava Admin Page! Here you can perform a variety of admin actions such as banning users, verifying users and more.",
     image: params.image ?? defaultImage,
-    keywords: params.keywords?.length
-      ? params.keywords
-      : ["Admin", "Sociava"],
+    keywords: params.keywords?.length ? params.keywords : ["Admin", "Sociava"],
     canonicalUrl: params.canonicalUrl,
   });
 }
@@ -116,9 +114,7 @@ export function generateTeamsMetadata(params: MainMetaDataParam): Metadata {
     description:
       "Welcome to Sociava Teams Page! Here you can find all the teams and their members.",
     image: params.image ?? defaultImage,
-    keywords: params.keywords?.length
-      ? params.keywords
-      : ["Teams", "Sociava"],
+    keywords: params.keywords?.length ? params.keywords : ["Teams", "Sociava"],
     canonicalUrl: params.canonicalUrl,
   });
 }
@@ -129,9 +125,7 @@ export function generateStatsMetadata(params: MainMetaDataParam): Metadata {
     description:
       "Welcome to Sociava Stats Page! Here you can find all the stats and analytics of the platform.",
     image: params.image ?? defaultImage,
-    keywords: params.keywords?.length
-      ? params.keywords
-      : ["Stats", "Sociava"],
+    keywords: params.keywords?.length ? params.keywords : ["Stats", "Sociava"],
     canonicalUrl: params.canonicalUrl,
   });
 }
