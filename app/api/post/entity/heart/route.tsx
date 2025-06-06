@@ -1,48 +1,46 @@
 // @ts-ignore
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db/prisma";
-import { auth } from "@/auth";
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/db/prisma';
+import { auth } from '@/auth';
 
 export async function POST(req: Request) {
-  const session = await auth();
-  if (!session || !session.user?.id) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
+	const session = await auth();
+	if (!session || !session.user?.id) {
+		return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+	}
 
-  const { searchParams } = new URL(req.url);
-  const action = searchParams.get("action");
-  const url = searchParams.get("url");
+	const { searchParams } = new URL(req.url);
+	const action = searchParams.get('action');
+	const url = searchParams.get('url');
 
-  if (!action || !["like", "unlike"].includes(action) || !url) {
-    return NextResponse.json({ error: "Invalid parameters" }, { status: 400 });
-  }
+	if (!action || !['like', 'unlike'].includes(action) || !url) {
+		return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 });
+	}
 
-  const entity = await prisma.entity.findFirst({ where: { url } });
-  if (!entity) {
-    return NextResponse.json({ error: "Entity not found" }, { status: 404 });
-  }
+	const entity = await prisma.entity.findFirst({ where: { url } });
+	if (!entity) {
+		return NextResponse.json({ error: 'Entity not found' }, { status: 404 });
+	}
 
-  let updatedLikes: string[] = Array.isArray(entity.likes)
-    ? [...entity.likes]
-    : [];
-  const userId = session.user.id;
+	let updatedLikes: string[] = Array.isArray(entity.likes) ? [...entity.likes] : [];
+	const userId = session.user.id;
 
-  if (action === "like") {
-    if (!updatedLikes.includes(userId)) {
-      updatedLikes.push(userId);
-    }
-  } else if (action === "unlike") {
-    updatedLikes = updatedLikes.filter((id) => id !== userId);
-  }
+	if (action === 'like') {
+		if (!updatedLikes.includes(userId)) {
+			updatedLikes.push(userId);
+		}
+	} else if (action === 'unlike') {
+		updatedLikes = updatedLikes.filter((id) => id !== userId);
+	}
 
-  await prisma.entity.update({
-    where: { id: entity.id },
-    data: { likes: updatedLikes },
-  });
+	await prisma.entity.update({
+		where: { id: entity.id },
+		data: { likes: updatedLikes }
+	});
 
-  return NextResponse.json({
-    success: true,
-    action,
-    likes: updatedLikes.length,
-  });
+	return NextResponse.json({
+		success: true,
+		action,
+		likes: updatedLikes.length
+	});
 }

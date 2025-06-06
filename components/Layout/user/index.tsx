@@ -1,656 +1,430 @@
-"use client";
+'use client';
 
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
+import { motion } from 'framer-motion';
 import {
-  Heart,
-  HeartCrack,
-  Edit,
-  Briefcase,
-  MapPin,
-  Cake,
-  Users,
-  Languages,
-  Info,
-  Share2,
-  Zap,
-  Sparkles,
-  ExternalLink,
-} from "lucide-react";
-import { MdVerified } from "react-icons/md";
-import { RiTimeZoneFill } from "react-icons/ri";
-import type { Entity } from "@/types/entity";
-import { Code, Handshake, Shield } from "lucide-react";
-import { useSession } from "next-auth/react";
-import Head from "next/head";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import ImageModal, { useImageModal } from "@/components/ui/ImageModal";
-import { SOCIAL_ICON_MAP } from "./SocialProvider";
+	Heart,
+	Briefcase,
+	Users,
+	Languages,
+	Zap,
+	ExternalLink,
+	Eye,
+	Crown,
+	Calendar,
+	Globe
+} from 'lucide-react';
+import * as Tooltip from '@radix-ui/react-tooltip';
+import type { Entity } from '@/types/entity';
+import { Code, Shield } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import Head from 'next/head';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 export default function UserProfile({ username }: { username: string }) {
-  const { data: session } = useSession();
-  const user = session?.user || null;
-  const queryClient = useQueryClient();
-  const imageModal = useImageModal();
+	const { data: session } = useSession();
+	const user = session?.user || null;
+	const queryClient = useQueryClient();
 
-  // Fetch user profile data
-  const {
-    data,
-    isLoading: loading,
-    error,
-  } = useQuery<Entity, Error>({
-    queryKey: ["user-profile", username],
-    queryFn: async () => {
-      const response = await fetch(`/api/get/entity?name=${username}`);
-      if (!response.ok) throw new Error("Failed to fetch user data");
-      return response.json();
-    },
-    staleTime: 60 * 1000, // 1 minute
-    refetchOnWindowFocus: false,
-  });
+	// Fetch user profile data
+	const {
+		data,
+		isLoading: loading,
+		error
+	} = useQuery<Entity, Error>({
+		queryKey: ['user-profile', username],
+		queryFn: async () => {
+			const response = await fetch(`/api/get/entity?name=${username}`);
+			if (!response.ok) throw new Error('Failed to fetch user data');
+			return response.json();
+		},
+		staleTime: 60 * 1000, // 1 minute
+		refetchOnWindowFocus: false
+	});
 
-  // Like/unlike mutation
-  const likeMutation = useMutation({
-    mutationFn: async (action: "like" | "unlike") => {
-      if (!data) throw new Error("No user data");
-      const res = await fetch(
-        `/api/post/entity/heart?action=${action}&url=${data.url}`,
-        {
-          method: "POST",
-        },
-      );
-      return res.json();
-    },
-    onSuccess: (_, action) => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile", username] });
-    },
-  });
+	// Like/unlike mutation
+	const likeMutation = useMutation({
+		mutationFn: async (action: 'like' | 'unlike') => {
+			if (!data) throw new Error('No user data');
+			const res = await fetch(`/api/post/entity/heart?action=${action}&url=${data.url}`, {
+				method: 'POST'
+			});
+			return res.json();
+		},
+		onSuccess: (_, action) => {
+			queryClient.invalidateQueries({ queryKey: ['user-profile', username] });
+		}
+	});
 
-  // Set liked and likes count
-  const liked = data && user ? data.likes?.includes(user.id) : false;
-  const likes = data?.likes?.length || 0;
+	// Set liked and likes count
+	const liked = data && user ? data.likes?.includes(user.id) : false;
+	const likes = data?.likes?.length || 0;
 
-  const toggleLike = () => {
-    if (!data || likeMutation.isPending) return;
-    likeMutation.mutate(liked ? "unlike" : "like");
-  };
+	const toggleLike = () => {
+		if (!data || likeMutation.isPending) return;
+		likeMutation.mutate(liked ? 'unlike' : 'like');
+	};
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{
-            duration: 1,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "linear",
-          }}
-          className="w-16 h-16 border-4 border-primary rounded-full border-t-transparent"
-        />
-      </div>
-    );
-  }
+	if (loading) {
+		return (
+			<div className="flex min-h-screen items-center justify-center bg-light dark:bg-dark">
+				<motion.div
+					animate={{ rotate: 360 }}
+					transition={{
+						duration: 1,
+						repeat: Number.POSITIVE_INFINITY,
+						ease: 'linear'
+					}}
+					className="h-16 w-16 rounded-full border-4 border-primary border-t-transparent"
+				/>
+			</div>
+		);
+	}
 
-  if (error || !data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
-        <div className="text-center p-8 max-w-md mx-auto bg-white dark:bg-dark rounded-xl shadow-lg backdrop-blur-sm bg-opacity-50 dark:bg-opacity-50">
-          <h1 className="text-2xl font-bold text-primary mb-4">
-            User Not Found
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            {error?.message ||
-              "The user you're looking for doesn't exist or has been removed."}
-          </p>
-        </div>
-      </div>
-    );
-  }
+	if (error || !data) {
+		return (
+			<div className="flex min-h-screen items-center justify-center bg-light dark:bg-dark">
+				<div className="mx-auto max-w-md rounded-xl bg-white bg-opacity-50 p-8 text-center shadow-lg backdrop-blur-sm dark:bg-dark dark:bg-opacity-50">
+					<h1 className="mb-4 text-2xl font-bold text-primary">User Not Found</h1>
+					<p className="text-gray-600 dark:text-gray-300">
+						{error?.message || "The user you're looking for doesn't exist or has been removed."}
+					</p>
+				</div>
+			</div>
+		);
+	}
 
-  const formatDate = (dateString: Date | undefined) => {
-    if (!dateString) return "Not specified";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+	const formatDate = (dateString: Date | undefined) => {
+		if (!dateString) return 'Not specified';
+		const date = new Date(dateString);
+		return date.toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
+	};
 
-  const getAge = (dateString: Date | undefined) => {
-    if (!dateString) return "";
-    const birthDate = new Date(dateString);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return ` (${age} years)`;
-  };
+	const getAge = (dateString: Date | undefined) => {
+		if (!dateString) return '';
+		const birthDate = new Date(dateString);
+		const today = new Date();
+		let age = today.getFullYear() - birthDate.getFullYear();
+		const m = today.getMonth() - birthDate.getMonth();
+		if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+			age--;
+		}
+		return age;
+	};
 
-  const cards = [
-    {
-      upper: true,
-      name: "About Me",
-      subtitle: "Who am I?",
-      isPrivate: false,
-      isEmpty: !data.about,
-      value: data.about,
-      icon: <Info className="text-primary" strokeWidth={1.5} />,
-    },
-    {
-      upper: false,
-      name: "Occupation",
-      subtitle: "What do I do?",
-      isPrivate: false,
-      isEmpty: !data.occupation || data.occupation.length === 0,
-      value: data.occupation?.join(", "),
-      icon: <Briefcase className="text-primary" strokeWidth={1.5} />,
-    },
-    {
-      upper: false,
-      name: "Location",
-      subtitle: "Where do I live?",
-      isPrivate: data.isLocationPrivate,
-      isEmpty: !data.location,
-      value: data.location,
-      icon: <MapPin className="text-primary" strokeWidth={1.5} />,
-    },
-    {
-      upper: false,
-      name: "Birthday",
-      subtitle: "When was I born?",
-      isPrivate: data.isBirthdayPrivate,
-      isEmpty: !data.birthday,
-      value: data.birthday
-        ? `${formatDate(data.birthday)}${getAge(data.birthday)}`
-        : "",
-      icon: <Cake className="text-primary" strokeWidth={1.5} />,
-    },
-    {
-      upper: false,
-      name: "Gender",
-      subtitle: "What is my gender?",
-      isPrivate: data.isGenderPrivate,
-      isEmpty: !data.gender,
-      value: data.gender,
-      icon: <Users className="text-primary" strokeWidth={1.5} />,
-    },
-    {
-      upper: false,
-      name: "Pronouns",
-      subtitle: "What are my pronouns?",
-      isPrivate: data.isPronounsPrivate,
-      isEmpty: !data.gender && !data.pronouns,
-      value: data.pronouns,
-      icon: <Users className="text-primary" strokeWidth={1.5} />,
-    },
-    {
-      upper: false,
-      name: "Native Language",
-      subtitle: "What is my native language?",
-      isPrivate: false,
-      isEmpty: !data.language,
-      value: data.language,
-      icon: <Languages className="text-primary" strokeWidth={1.5} />,
-    },
-    {
-      upper: false,
-      name: "Sexuality",
-      subtitle: "What is my sexuality?",
-      isPrivate: data.isSexualityPrivate,
-      isEmpty: !data.sexuality,
-      value: data.sexuality,
-      icon: <Heart className="text-primary" strokeWidth={1.5} />,
-    },
-    {
-      upper: false,
-      name: "Timezone",
-      subtitle: "What is my timezone?",
-      isPrivate: false,
-      isEmpty: !data.timeZone,
-      value: data.timeZone,
-      icon: <RiTimeZoneFill className="text-primary" strokeWidth={1.5} />,
-    },
-    {
-      upper: false,
-      name: "Website",
-      subtitle: "My personal website?",
-      isPrivate: false,
-      isEmpty: !data.website,
-      value: data.website,
-      icon: <ExternalLink className="text-primary" strokeWidth={1.5} />,
-    },
-    {
-      upper: false,
-      name: "Height",
-      subtitle: "How tall am I?",
-      isPrivate: data.isHeightPrivate,
-      isEmpty: !data.height,
-      value: data.height ? `${data.height} cm` : undefined,
-      icon: <Users className="text-primary" strokeWidth={1.5} />,
-    },
-  ];
+	return (
+		<>
+			<Head>
+				<title>{data.displayname || username} | Sociava</title>
+				<meta name="description" content={data.about || 'User profile on Sociava'} />
+				<meta property="og:title" content={data.displayname || username} />
+				<meta property="og:description" content={data.about || 'User profile on Sociava'} />
+				<meta
+					property="og:image"
+					content={data.banner || data.avatar || 'http://purrquinox.com/banner.png'}
+				/>
+				<meta
+					property="og:url"
+					content={typeof window !== 'undefined' ? window.location.href : undefined}
+				/>
+				<meta name="twitter:card" content="summary_large_image" />
+			</Head>
 
-  return (
-    <>
-      <Head>
-        <title>{data.displayname || username} | Sociava</title>
-        <meta
-          name="description"
-          content={data.about || "User profile on Sociava"}
-        />
-        <meta property="og:title" content={data.displayname || username} />
-        <meta
-          property="og:description"
-          content={data.about || "User profile on Sociava"}
-        />
-        <meta
-          property="og:image"
-          content={
-            data.banner || data.avatar || "http://purrquinox.com/banner.png"
-          }
-        />
-        <meta
-          property="og:url"
-          content={
-            typeof window !== "undefined" ? window.location.href : undefined
-          }
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Head>
-      <div className="flex flex-col items-center justify-center px-4 md:px-10 3xl:px-0 min-h-screen">
-        {/* Image Modal for avatar/banner */}
-        <ImageModal
-          isOpen={imageModal.modalState.isOpen}
-          onClose={imageModal.closeModal}
-          src={imageModal.modalState.src}
-          alt={imageModal.modalState.alt}
-          type={imageModal.modalState.type}
-          username={data.Username || username}
-        />
-        <div className="max-w-7xl w-full">
-          <div id="user-header" className="mb-12 relative">
-            {/* Decorative elements */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 dark:from-primary/10 dark:to-secondary/10 rounded-3xl overflow-hidden z-0">
-              <div className="absolute inset-0 opacity-30 dark:opacity-50 bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.15),transparent_50%)]"></div>
-              <div className="absolute inset-0 opacity-30 dark:opacity-50 bg-[radial-gradient(circle_at_bottom_left,rgba(67,56,202,0.15),transparent_50%)]"></div>
-            </div>
+			{/* Profile */}
+			<Tooltip.Provider>
+				<div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
+					{/* Hero Banner Section */}
+					<div className="relative h-96 overflow-hidden">
+						<img
+							src={data.banner || '/placeholder.svg'}
+							alt="Profile banner"
+							className="h-full w-full object-cover"
+						/>
+						<div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"></div>
 
-            {/* Banner */}
-            <div
-              className="w-full h-[400px] rounded-3xl relative overflow-hidden z-10 shadow-xl group cursor-pointer"
-              onClick={() =>
-                imageModal.openModal(
-                  data.banner || "http://purrquinox.com/banner.png",
-                  `${data.Username || username}'s Banner`,
-                  "banner",
-                  data.Username || username,
-                )
-              }
-              tabIndex={0}
-              role="button"
-              aria-label="View banner image"
-            >
-              {data.banner ? (
-                <Image
-                  id="user-banner"
-                  src={data.banner || "http://purrquinox.com/banner.png"}
-                  alt="Banner"
-                  className="absolute object-cover w-full h-full"
-                  fill
-                  priority
-                  draggable={false}
-                  // Remove onClick from Image, handled by parent
-                />
-              ) : (
-                <div className="absolute w-full h-full bg-gradient-to-r from-primary to-secondary opacity-50" />
-              )}
-              {/* Overlay gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
-            </div>
+						{/* Animated background overlay */}
+						<div className="absolute inset-0 opacity-20">
+							<svg className="h-full w-full" viewBox="0 0 1000 400">
+								<defs>
+									<pattern id="heroGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+										<path
+											d="M 60 0 L 0 0 0 60"
+											fill="none"
+											stroke="rgba(255,255,255,0.1)"
+											strokeWidth="1"
+										/>
+										<circle cx="30" cy="30" r="1" fill="rgba(255,255,255,0.2)" />
+									</pattern>
+								</defs>
+								<rect width="100%" height="100%" fill="url(#heroGrid)" />
+							</svg>
+						</div>
 
-            {/* User info section */}
-            <div
-              id="user-info"
-              className="lg:pl-16 pr-0 flex flex-col lg:flex-row items-center gap-6 relative z-20"
-            >
-              {/* Avatar */}
-              <div className="w-40 h-40 -mt-20 rounded-full relative ring-8 ring-light dark:ring-dark overflow-hidden flex-shrink-0 shadow-2xl">
-                {data.avatar ? (
-                  <Image
-                    src={
-                      data.avatar ||
-                      "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"
-                    }
-                    alt="Avatar"
-                    id="user-avatar"
-                    className="w-full h-full object-cover cursor-pointer"
-                    width={160}
-                    height={160}
-                    onClick={() =>
-                      imageModal.openModal(
-                        data.avatar,
-                        `${data.Username || username}'s Avatar`,
-                        "avatar",
-                        data.Username || username,
-                      )
-                    }
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-primary/80 to-secondary flex items-center justify-center">
-                    <span className="text-5xl font-bold text-white">
-                      {data.Username?.charAt(0).toUpperCase() || "U"}
-                    </span>
-                  </div>
-                )}
-              </div>
+						{/* Profile Stats Overlay */}
+						<div className="absolute right-8 top-8 flex gap-4">
+							<div className="rounded-2xl border border-white/20 bg-black/30 px-4 py-3 backdrop-blur-md">
+								<div className="flex items-center gap-2 text-white">
+									<Heart className="h-5 w-5 fill-red-400 text-red-400" />
+									<div>
+										<div className="text-lg font-bold">{likes}</div>
+										<div className="text-xs text-gray-300">Likes</div>
+									</div>
+								</div>
+							</div>
+							<div className="rounded-2xl border border-white/20 bg-black/30 px-4 py-3 backdrop-blur-md">
+								<div className="flex items-center gap-2 text-white">
+									<Eye className="h-5 w-5 text-blue-400" />
+									<div>
+										<div className="text-lg font-bold">{data.views.length}</div>
+										<div className="text-xs text-gray-300">Views</div>
+									</div>
+								</div>
+							</div>
+							{/*
+							<div className="rounded-2xl border border-white/20 bg-black/30 px-4 py-3 backdrop-blur-md">
+								<div className="flex items-center gap-2 text-white">
+									<Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+									<div>
+										<div className="text-lg font-bold">4.9</div>
+										<div className="text-xs text-gray-300">Rating</div>
+									</div>
+								</div>
+							</div>*/}
+						</div>
+					</div>
 
-              <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-between w-full mt-4 lg:mt-0">
-                <div className="flex items-center justify-center lg:justify-start text-center lg:text-left gap-4 w-full mb-6 lg:mb-0">
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-2">
-                      <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary dark:from-white dark:to-primary/80">
-                        {data.Username}
-                      </h1>
-                      <div className="flex items-center gap-2">
-                        {data.isVerified && (
-                          <div className="group relative">
-                            <MdVerified className="text-2xl text-primary" />
-                            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white dark:bg-dark text-black dark:text-white px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
-                              Verified Profile
-                            </div>
-                          </div>
-                        )}
-                        {data.staff && (
-                          <div className="group relative">
-                            <Shield className="text-2xl text-red-500" />
-                            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white dark:bg-dark text-black dark:text-white px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
-                              Staff
-                            </div>
-                          </div>
-                        )}
-                        {data.isDeveloper && (
-                          <div className="group relative">
-                            <Code className="text-2xl text-green-500" />
-                            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white dark:bg-dark text-black dark:text-white px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
-                              Developer
-                            </div>
-                          </div>
-                        )}
-                        {data.isPartner && (
-                          <div className="group relative">
-                            <Handshake className="text-2xl text-yellow-500" />
-                            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white dark:bg-dark text-black dark:text-white px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
-                              Partner
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    {data.displayname && (
-                      <span className="text-xl font-medium text-zinc-500 dark:text-zinc-400">
-                        {data.displayname}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center justify-center lg:justify-end gap-4 w-full lg:w-2/4">
-                  <div className="relative group">
-                    <button
-                      className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all duration-300 ${
-                        liked
-                          ? "bg-gradient-to-r from-red-500 to-red-600 text-white hover:shadow-lg hover:shadow-red-500/20"
-                          : "bg-white dark:bg-dark/80 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-500 hover:shadow-lg hover:shadow-red-500/10"
-                      }`}
-                      onClick={toggleLike}
-                      disabled={likeMutation.isPending}
-                    >
-                      {liked ? (
-                        <Heart className="w-5 h-5" />
-                      ) : (
-                        <HeartCrack className="w-5 h-5" />
-                      )}
-                      <span className="font-medium">{likes}</span>
-                    </button>
-                  </div>
-                  {data.isSelf && (
-                    <Link href={`/${data.url}/edit`}>
-                      <button className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-primary to-secondary text-white rounded-full hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
-                        <Edit className="w-5 h-5" />
-                        <span className="font-medium">Edit Profile</span>
-                      </button>
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+					{/* Main Profile Section */}
+					<div className="relative z-10 -mt-32">
+						<div className="mx-auto max-w-7xl px-8">
+							{/* Profile Header */}
+							<div className="mb-12 flex flex-col gap-8 lg:flex-row">
+								{/* Avatar and Basic Info */}
+								<div className="flex flex-col items-center lg:items-start">
+									<div className="relative mb-6">
+										<Avatar className="h-32 w-32 border-4 border-white shadow-lg">
+											<AvatarImage
+												src={data.avatar}
+												alt="Profile picture"
+												className="object-cover"
+											/>
+										</Avatar>
 
-          {/* About section */}
-          <AnimatePresence>
-            {cards
-              .filter((el) => el.upper)
-              .map((card, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="p-6 px-8 rounded-2xl shadow-xl dark:shadow-2xl backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 border border-gray-100 dark:border-gray-800 w-full mb-8"
-                >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="flex-shrink-0 p-3 bg-primary/10 dark:bg-primary/20 rounded-xl">
-                      {card.icon}
-                    </div>
-                    <div className="flex flex-col justify-center">
-                      <h1 className="text-xl font-semibold">{card.name}</h1>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {card.subtitle}
-                      </p>
-                    </div>
-                  </div>
-                  {card.isPrivate ? (
-                    <p className="text-md text-gray-500 dark:text-gray-400 italic">
-                      This information is private.
-                    </p>
-                  ) : card.isEmpty ? (
-                    <p className="text-md text-gray-500 dark:text-gray-400 italic">
-                      This information is not set. wow
-                    </p>
-                  ) : (
-                    <p className="text-md whitespace-pre-line leading-relaxed">
-                      {card.value}
-                    </p>
-                  )}
-                </motion.div>
-              ))}
-          </AnimatePresence>
+										{/* Status Badges */}
+										<div className="absolute -bottom-4 -right-4 flex gap-2">
+											{data.isVerified && (
+												<Tooltip.Root>
+													<Tooltip.Trigger asChild>
+														<div className="flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-blue-500 shadow-lg">
+															<Shield className="h-6 w-6 fill-white text-white" />
+														</div>
+													</Tooltip.Trigger>
+													<Tooltip.Portal>
+														<Tooltip.Content className="rounded-lg bg-black px-3 py-2 text-sm text-white">
+															Verified Account
+														</Tooltip.Content>
+													</Tooltip.Portal>
+												</Tooltip.Root>
+											)}
 
-          {/* Info cards grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-4">
-            <AnimatePresence>
-              {cards
-                .filter((el) => !el.upper)
-                .map((card, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: i * 0.1 }}
-                    className="p-6 px-8 rounded-2xl shadow-lg dark:shadow-xl backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-primary/10 transition-all duration-300"
-                  >
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="flex-shrink-0 p-3 bg-primary/10 dark:bg-primary/20 rounded-xl">
-                        {card.icon}
-                      </div>
-                      <div className="flex flex-col justify-center">
-                        <h1 className="text-xl font-semibold">{card.name}</h1>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {card.subtitle}
-                        </p>
-                      </div>
-                    </div>
-                    {card.isPrivate ? (
-                      <p className="text-md text-gray-500 dark:text-gray-400 italic">
-                        This information is private.
-                      </p>
-                    ) : card.isEmpty ? (
-                      <p className="text-md text-gray-500 dark:text-gray-400 italic">
-                        This information is not set. damn
-                      </p>
-                    ) : card.name === "Website" ? (
-                      card.value ? (
-                        <a
-                          href={
-                            card.value.startsWith("http")
-                              ? card.value
-                              : `https://${card.value}`
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary underline break-all hover:text-secondary transition-colors duration-200"
-                        >
-                          {card.value}
-                        </a>
-                      ) : null
-                    ) : (
-                      <p className="text-md text-gray-500 dark:text-gray-400">
-                        {card.value}
-                      </p>
-                    )}
-                  </motion.div>
-                ))}
-            </AnimatePresence>
-          </div>
+											{data.staff && (
+												<Tooltip.Root>
+													<Tooltip.Trigger asChild>
+														<div className="flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-gradient-to-r from-yellow-400 to-orange-500 shadow-lg">
+															<Crown className="h-6 w-6 text-white" />
+														</div>
+													</Tooltip.Trigger>
+													<Tooltip.Portal>
+														<Tooltip.Content className="rounded-lg bg-black px-3 py-2 text-sm text-white">
+															Staff Member
+														</Tooltip.Content>
+													</Tooltip.Portal>
+												</Tooltip.Root>
+											)}
 
-          {/* Roles and Skills section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mt-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.6 }}
-              className="p-6 px-8 rounded-2xl shadow-lg dark:shadow-xl backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-primary/10 transition-all duration-300"
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex-shrink-0 p-3 bg-primary/10 dark:bg-primary/20 rounded-xl">
-                  <Sparkles className="text-primary" strokeWidth={1.5} />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <h1 className="text-xl font-semibold">My Roles</h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Roles that I have.
-                  </p>
-                </div>
-              </div>
-              {!data.roles || data.roles.length === 0 ? (
-                <p className="text-md text-gray-500 dark:text-gray-400 italic">
-                  idk i didnt set this just take a guess.
-                </p>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {data.roles.map((role, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2 bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200"
-                    >
-                      {role}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </motion.div>
+											{data.isDeveloper && (
+												<Tooltip.Root>
+													<Tooltip.Trigger asChild>
+														<div className="flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-green-500 shadow-lg">
+															<Code className="h-6 w-6 text-white" />
+														</div>
+													</Tooltip.Trigger>
+													<Tooltip.Portal>
+														<Tooltip.Content className="rounded-lg bg-black px-3 py-2 text-sm text-white">
+															Developer
+														</Tooltip.Content>
+													</Tooltip.Portal>
+												</Tooltip.Root>
+											)}
+										</div>
+									</div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.7 }}
-              className="p-6 px-8 rounded-2xl shadow-lg dark:shadow-xl backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-primary/10 transition-all duration-300"
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex-shrink-0 p-3 bg-primary/10 dark:bg-primary/20 rounded-xl">
-                  <Zap className="text-primary" strokeWidth={1.5} />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <h1 className="text-xl font-semibold">My Skills</h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    What I know?
-                  </p>
-                </div>
-              </div>
-              {!data.skills || data.skills.length === 0 ? (
-                <p className="text-md text-gray-500 dark:text-gray-400 italic">
-                  This information is not set. idk too man
-                </p>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {data.skills.map((skill, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2 bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200"
-                    >
-                      {skill}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          </div>
+									{/* Quick Actions */}
+									<div className="flex gap-3">
+										<button
+											onClick={() => likeMutation.mutate(liked ? 'unlike' : 'like')}
+											className="flex items-center rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:from-purple-600 hover:to-blue-600"
+										>
+											<Heart className={`mr-2 h-4 w-4 ${liked ? 'fill-current' : ''}`} />
+											{liked ? 'Liked' : 'Like'}
+										</button>
+										<button className="rounded-xl border border-white/20 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20">
+											Message
+										</button>
+									</div>
+								</div>
 
-          {/* Socials section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.8 }}
-            className="grid grid-cols-1 gap-6 w-full mt-6 mb-12"
-          >
-            <div className="p-6 px-8 rounded-2xl shadow-lg dark:shadow-xl backdrop-blur-sm bg-opacity-80 dark:bg-opacity-80 border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-primary/10 transition-all duration-300">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex-shrink-0 p-3 rounded-xl">
-                  <Share2 className="text-primary" strokeWidth={1.5} />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <h1 className="text-xl font-semibold">My Socials</h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Links to my socials.
-                  </p>
-                </div>
-              </div>
-              {!data.socials || data.socials.length === 0 ? (
-                <p className="text-md text-gray-500 dark:text-gray-400 italic">
-                  This information is not set. Why you may ask? idk
-                </p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 text-white ">
-                  {data.socials.map((social, i) => (
-                    <a
-                      href={social.url + "?utm_source=sociava.xyz"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      key={i}
-                      className="flex items-center gap-2 bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-full px-4 py-2 text-sm font-medium hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200 text-white justify-between relative border border-gray-100 dark:border-gray-800 hover:border-primary/20 active:border-primary/50 rounded-xl px-6 py-4 transition-all duration-200 cursor-pointer hover:shadow-lg group"
-                      style={{ color: social.color || "currentColor" }}
-                    >
-                      {/* Social Icon */}
-                      {SOCIAL_ICON_MAP[social.name] && (
-                        <span className="mr-2 flex-shrink-0">
-                          {SOCIAL_ICON_MAP[social.name]}
-                        </span>
-                      )}
-                      <h1 className="capitalize text-md text-white font-medium select-none">
-                        {social.name}
-                      </h1>
-                      <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors duration-200" />
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </>
-  );
+								{/* Profile Details */}
+								<div className="flex-1 space-y-6">
+									<div>
+										<div className="mb-3 flex items-center gap-4">
+											<h1 className="text-5xl font-bold text-white">
+												{data.displayname || data.Username}
+											</h1>
+											<span className="text-2xl text-purple-300">@{data.Username}</span>
+										</div>
+										<p className="mb-6 text-xl leading-relaxed text-gray-300">{data.about}</p>
+
+										{/* Meta Information */}
+										<div className="grid grid-cols-2 gap-4 text-gray-400 lg:grid-cols-4">
+											<div className="flex items-center gap-2">
+												<Calendar className="h-5 w-5 text-blue-400" />
+												<span>{getAge(data.birthday)} years old</span>
+											</div>
+											<div className="flex items-center gap-2">
+												<Users className="h-5 w-5 text-green-400" />
+												<span>{data.pronouns}</span>
+											</div>
+											<div className="flex items-center gap-2">
+												<Globe className="h-5 w-5 text-cyan-400" />
+												<a href={data.website} className="transition-colors hover:text-cyan-300">
+													Website
+												</a>
+											</div>
+											<div className="flex items-center gap-2">
+												<span className="h-3 w-3 animate-pulse rounded-full bg-green-400"></span>
+												<span>Online</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							{/* Content Grid */}
+							<div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+								{/* Left Column - Roles & Expertise */}
+								<div className="space-y-8 lg:col-span-2">
+									{/* Roles Section */}
+									<section className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
+										<h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-white">
+											<Briefcase className="h-6 w-6 text-purple-400" />
+											Professional Roles
+										</h2>
+										<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+											{data.roles.map((role, index) => (
+												<div
+													key={index}
+													className="rounded-2xl border border-purple-500/30 bg-gradient-to-r from-purple-500/20 to-blue-500/20 p-4"
+												>
+													<div className="text-lg font-semibold text-purple-200">{role}</div>
+												</div>
+											))}
+										</div>
+									</section>
+
+									{/* Expertise Section */}
+									<section className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
+										<h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-white">
+											<Zap className="h-6 w-6 text-yellow-400" />
+											Technical Expertise
+										</h2>
+										<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+											{data.occupation.map((job, index) => (
+												<div
+													key={index}
+													className="rounded-2xl border border-yellow-500/30 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 p-4"
+												>
+													<div className="text-lg font-semibold text-yellow-200">{job}</div>
+													<div className="text-sm text-gray-400">Professional Experience</div>
+												</div>
+											))}
+										</div>
+									</section>
+								</div>
+
+								{/* Right Column - Additional Info */}
+								<div className="space-y-8">
+									{/* Languages */}
+									<section className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+										<h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-white">
+											<Languages className="h-5 w-5 text-blue-400" />
+											Languages
+										</h3>
+										<div className="space-y-2">
+											{data.language.split(', ').map((lang, index) => (
+												<div key={index} className="flex items-center justify-between">
+													<span className="text-gray-300">{lang}</span>
+													<div className="h-2 w-16 overflow-hidden rounded-full bg-gray-700">
+														<div
+															className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400"
+															style={{ width: '90%' }}
+														></div>
+													</div>
+												</div>
+											))}
+										</div>
+									</section>
+
+									{/* Skills */}
+									<section className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+										<h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-white">
+											<Code className="h-5 w-5 text-green-400" />
+											Skills & Technologies
+										</h3>
+										<div className="space-y-3">
+											{data.skills.map((skill, index) => (
+												<div
+													key={index}
+													className="rounded-xl border border-green-500/30 bg-green-500/20 p-3"
+												>
+													<div className="font-medium text-green-200">{skill}</div>
+													<div className="mt-1 text-xs text-gray-400">Expert Level</div>
+												</div>
+											))}
+										</div>
+									</section>
+
+									{/* Contact */}
+									<section className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+										<h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-white">
+											<Globe className="h-5 w-5 text-cyan-400" />
+											Connect
+										</h3>
+										<div className="space-y-3">
+											<a
+												href={data.website}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="flex items-center gap-3 rounded-xl border border-cyan-500/30 bg-cyan-500/20 p-3 transition-colors hover:bg-cyan-500/30"
+											>
+												<Globe className="h-4 w-4 text-cyan-300" />
+												<span className="text-cyan-200">Personal Website</span>
+												<ExternalLink className="ml-auto h-4 w-4 text-cyan-300" />
+											</a>
+										</div>
+									</section>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{/* Footer Space */}
+					<div className="h-20"></div>
+				</div>
+			</Tooltip.Provider>
+		</>
+	);
 }

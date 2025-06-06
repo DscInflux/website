@@ -1,163 +1,210 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import {
-  FaHeart,
-  FaRegHeart,
-  FaUserShield,
-  FaCode,
-  FaHandshake,
-} from "react-icons/fa";
-import { FaCircleCheck } from "react-icons/fa6";
-import { motion } from "framer-motion";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
-import { Entity } from "@/types/entity";
+import React, { useState, useEffect } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
+import { Entity } from '@/types/entity';
+import * as Tooltip from '@radix-ui/react-tooltip';
+import { Code, Crown, ExternalLink, Eye, Heart, Shield } from 'lucide-react';
+import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 type UserCardProps = {
-  entity: Entity;
-  isSkeleton?: boolean;
-  isLiked?: boolean;
+	entity: Entity;
+	isSkeleton?: boolean;
+	isLiked?: boolean;
 };
 
-const UserCard: React.FC<UserCardProps> = ({
-  entity,
-  isSkeleton = false,
-  isLiked = false,
-}) => {
-  const { data: session } = useSession();
-  const queryClient = useQueryClient();
-  const user = session?.user;
+const UserCard: React.FC<UserCardProps> = ({ entity, isSkeleton = false, isLiked = false }) => {
+	const { data: session } = useSession();
+	const queryClient = useQueryClient();
+	const user = session?.user;
 
-  const [liked, setLiked] = useState(() => {
-    if (!user?.id || !entity.likes) return isLiked;
-    return entity.likes.includes(user.id);
-  });
+	const [liked, setLiked] = useState(() => {
+		if (!user?.id || !entity.likes) return isLiked;
+		return entity.likes.includes(user.id);
+	});
 
-  useEffect(() => {
-    if (user?.id && entity.likes) {
-      setLiked(entity.likes.includes(user.id));
-    } else {
-      setLiked(isLiked);
-    }
-  }, [entity.likes, user?.id, isLiked]);
+	useEffect(() => {
+		if (user?.id && entity.likes) {
+			setLiked(entity.likes.includes(user.id));
+		} else {
+			setLiked(isLiked);
+		}
+	}, [entity.likes, user?.id, isLiked]);
 
-  const likeMutation = useMutation({
-    mutationFn: async (action: "like" | "unlike") => {
-      const endpoint = `/api/post/entity/heart?action=${action}&url=${entity.url}`;
-      const res = await fetch(endpoint, { method: "POST" });
-      if (!res.ok) throw new Error(`Failed to ${action}`);
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hero-popular-users"] });
-      queryClient.invalidateQueries({ queryKey: ["hero-newest-users"] });
-      queryClient.invalidateQueries({ queryKey: ["hero-random-users"] });
-    },
-    onError: (error) => {
-      console.error("Like/Unlike error:", error);
-      setLiked(!liked);
-    },
-  });
+	const likeMutation = useMutation({
+		mutationFn: async (action: 'like' | 'unlike') => {
+			const endpoint = `/api/post/entity/heart?action=${action}&url=${entity.url}`;
+			const res = await fetch(endpoint, { method: 'POST' });
+			if (!res.ok) throw new Error(`Failed to ${action}`);
+			return res.json();
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['hero-popular-users'] });
+			queryClient.invalidateQueries({ queryKey: ['hero-newest-users'] });
+			queryClient.invalidateQueries({ queryKey: ['hero-random-users'] });
+		},
+		onError: (error) => {
+			console.error('Like/Unlike error:', error);
+			setLiked(!liked);
+		}
+	});
 
-  const toggleLike = async () => {
-    if (!user?.id) return;
-    setLiked(!liked);
-    const action = liked ? "unlike" : "like";
-    likeMutation.mutate(action);
-  };
+	const toggleLike = async () => {
+		if (!user?.id) return;
+		setLiked(!liked);
+		const action = liked ? 'unlike' : 'like';
+		likeMutation.mutate(action);
+	};
 
-  if (isSkeleton) {
-    return (
-      <div className="w-full h-[250px] bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden animate-pulse p-4" />
-    );
-  }
+	if (isSkeleton) {
+		return (
+			<div className="h-[250px] w-full animate-pulse overflow-hidden rounded-xl bg-gray-100 p-4 dark:bg-gray-800" />
+		);
+	}
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
-      className="w-full h-[250px] bg-white dark:bg-dark rounded-xl overflow-hidden select-none p-5 flex flex-col justify-between shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800"
-    >
-      {/* Top: avatar + name */}
-      <div className="flex items-center gap-4">
-        <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-primary/20">
-          <Image
-            src={
-              entity.avatar ||
-              "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75"
-            }
-            alt={`${entity.Username} avatar`}
-            fill
-            sizes="64px"
-            style={{ objectFit: "cover" }}
-            onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                "https://purrquinox.com/_next/image?url=%2Flogo.png&w=32&q=75";
-            }}
-          />
-        </div>
-        <div>
-          <h1 className="text-black dark:text-white text-lg font-bold flex items-center gap-1.5">
-            {entity.Username}
-            {entity.isVerified && (
-              <FaCircleCheck size={18} className="text-primary" />
-            )}
-            {entity.staff && (
-              <FaUserShield className="text-red-500" title="Staff" />
-            )}
-            {entity.isDeveloper && (
-              <FaCode className="text-green-500" title="Developer" />
-            )}
-            {entity.isPartner && (
-              <FaHandshake className="text-yellow-500" title="Partner" />
-            )}
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-            @{entity.url}
-          </p>
-        </div>
-      </div>
+	return (
+		<Tooltip.Provider>
+			<div className="w-80 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-xl">
+				{/* Mini Banner */}
+				<div className="relative h-20 overflow-hidden">
+					<img
+						src={entity.banner || '/placeholder.svg'}
+						alt="Profile banner"
+						className="h-full w-full object-cover opacity-60"
+					/>
+					<div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
 
-      {/* Middle: about text */}
-      <p className="text-sm text-gray-600 dark:text-gray-300 font-medium overflow-hidden flex-grow mt-4 line-clamp-3">
-        {typeof entity.about === "string"
-          ? entity.about
-          : JSON.stringify(entity.about)}
-      </p>
+					{/* Floating stats */}
+					<div className="absolute right-2 top-2 flex gap-1">
+						<div className="rounded-full border border-white/20 bg-black/40 px-2 py-1 backdrop-blur-sm">
+							<div className="flex items-center gap-1 text-xs text-white">
+								<Heart className="h-3 w-3 fill-red-400 text-red-400" />
+								<span>{entity.likes.length}</span>
+							</div>
+						</div>
+					</div>
+				</div>
 
-      {/* Bottom: actions */}
-      <div className="flex justify-between items-center gap-4 mt-4">
-        <Link
-          href={`/user/${entity.url}`}
-          className="flex-grow py-2.5 px-4 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-medium transition-all duration-200 text-center"
-        >
-          View Profile
-        </Link>
+				{/* Profile Content */}
+				<div className="relative px-4 pb-4">
+					{/* Avatar */}
+					<div className="absolute -top-8 left-4">
+						<div className="relative">
+							<Avatar className="border-3 h-16 w-16 overflow-hidden rounded-xl border-white/20 shadow-lg">
+								<AvatarImage
+									src={entity.avatar}
+									alt={entity.displayname}
+									className="h-full w-full object-cover"
+								/>
+								<AvatarFallback className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-500 to-blue-500 text-lg font-bold text-white">
+									{entity.displayname.charAt(0)}
+								</AvatarFallback>
+							</Avatar>
 
-        <button
-          onClick={toggleLike}
-          className="w-10 h-10 flex justify-center items-center bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
-          aria-pressed={liked}
-          aria-label={liked ? "Unlike" : "Like"}
-          type="button"
-        >
-          {liked ? (
-            <FaHeart className="text-red-500" size={18} />
-          ) : (
-            <FaRegHeart
-              className="text-gray-500 dark:text-gray-400"
-              size={18}
-            />
-          )}
-        </button>
-      </div>
-    </motion.div>
-  );
+							{/* Status badges */}
+							<div className="absolute -bottom-1 -right-1 flex gap-1">
+								{entity.isVerified && (
+									<Tooltip.Root>
+										<Tooltip.Trigger asChild>
+											<div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-blue-500 shadow-sm">
+												<Shield className="h-2.5 w-2.5 fill-white text-white" />
+											</div>
+										</Tooltip.Trigger>
+										<Tooltip.Portal>
+											<Tooltip.Content className="rounded bg-black px-2 py-1 text-xs text-white">
+												Verified
+											</Tooltip.Content>
+										</Tooltip.Portal>
+									</Tooltip.Root>
+								)}
+
+								{entity.staff && (
+									<Tooltip.Root>
+										<Tooltip.Trigger asChild>
+											<div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-gradient-to-r from-yellow-400 to-orange-500 shadow-sm">
+												<Crown className="h-2.5 w-2.5 text-white" />
+											</div>
+										</Tooltip.Trigger>
+										<Tooltip.Portal>
+											<Tooltip.Content className="rounded bg-black px-2 py-1 text-xs text-white">
+												Staff
+											</Tooltip.Content>
+										</Tooltip.Portal>
+									</Tooltip.Root>
+								)}
+
+								{entity.isDeveloper && (
+									<Tooltip.Root>
+										<Tooltip.Trigger asChild>
+											<div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-green-500 shadow-sm">
+												<Code className="h-2.5 w-2.5 text-white" />
+											</div>
+										</Tooltip.Trigger>
+										<Tooltip.Portal>
+											<Tooltip.Content className="rounded bg-black px-2 py-1 text-xs text-white">
+												Developer
+											</Tooltip.Content>
+										</Tooltip.Portal>
+									</Tooltip.Root>
+								)}
+							</div>
+						</div>
+					</div>
+
+					{/* Profile Info */}
+					<div className="space-y-3 pt-10">
+						<div>
+							<div className="mb-1 flex items-center gap-2">
+								<h3 className="text-lg font-bold text-white">
+									{entity.displayname || entity.Username}
+								</h3>
+								<span className="text-sm text-purple-300">@{entity.Username}</span>
+							</div>
+							<p className="line-clamp-2 text-sm text-gray-300">{entity.about}</p>
+						</div>
+
+						{/* Quick stats */}
+						<div className="flex items-center justify-between text-xs text-gray-400">
+							<div className="flex items-center gap-1">
+								<span className="h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
+								<span>Online</span>
+							</div>
+							<div className="flex items-center gap-1">
+								<Eye className="h-3 w-3" />
+								<span>{entity.views?.length ?? 0} views</span>
+							</div>
+						</div>
+
+						{/* Primary role */}
+						{entity.roles.length > 0 && (
+							<div className="rounded-lg border border-purple-500/30 bg-gradient-to-r from-purple-500/20 to-blue-500/20 p-2">
+								<div className="text-sm font-medium text-purple-200">{entity.roles[0]}</div>
+							</div>
+						)}
+
+						{/* Action buttons */}
+						<div className="flex gap-2 pt-2">
+							<button
+								onClick={() => likeMutation.mutate(liked ? 'unlike' : 'like')}
+								className="flex items-center rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 px-3 py-2 text-sm font-medium text-white transition-all duration-200 hover:from-purple-600 hover:to-blue-600"
+							>
+								<Heart className={`mr-2 h-4 w-4 ${liked ? 'fill-current' : ''}`} />
+								{liked ? 'Liked' : 'Like'}
+							</button>
+							<Link
+								href={`/user/${entity.Username}`}
+								className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20"
+							>
+								<ExternalLink className="h-4 w-4" />
+							</Link>
+						</div>
+					</div>
+				</div>
+			</div>
+		</Tooltip.Provider>
+	);
 };
 
 export default UserCard;
