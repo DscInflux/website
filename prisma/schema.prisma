@@ -27,7 +27,6 @@ model Entity {
   isDeveloper        Boolean
   isPartner          Boolean
   email              String?
-  views              String[]
   isVerified         Boolean
   isShow             Boolean
   isEmailPrivate     Boolean
@@ -36,16 +35,18 @@ model Entity {
   isGenderPrivate    Boolean
   isPronounsPrivate  Boolean
   isSexualityPrivate Boolean?
-  isHeightPrivate    Boolean?
   roles              String[]
   likes              String[]
   skills             String[]
   socials            Json
-  height             Int?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   sexuality          String?
   timeZone           String?
+  height             Int?
+  isHeightPrivate    Boolean?
+  status             String?
+  views              Int       @default(0)
 
   @@map("entity")
 }
@@ -64,9 +65,10 @@ model User {
   mfa_enabled   Boolean
   banner        String
   SSOProvider   String[]
+  emailVerified DateTime?
   accounts      Account[]
   sessions      Session[]
-  emailVerified DateTime?
+  presence      Presence  @default(Offline)
 
   @@map("user")
 }
@@ -77,12 +79,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -107,4 +109,11 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_token")
+}
+
+enum Presence {
+  Online
+  DND
+  Idle
+  Offline
 }

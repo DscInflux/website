@@ -73,24 +73,74 @@ export async function GET(req: NextRequest) {
 
 	let orderBy: any = { createdAt: 'desc' };
 	if (sort === 'oldest') orderBy = { createdAt: 'asc' };
-	if (sort === 'popular') orderBy = { like: 'desc' };
+	if (sort === 'popular') orderBy = { likes: { _count: 'desc' } }; // Prisma doesn't support _count in orderBy directly, fallback below
+	// We'll handle popular sort manually below
 
-	// Random sort: fetch all ids, shuffle, then fetch by ids (inefficient for large sets)
 	if (sort === 'random') {
+		// Random: get all IDs, shuffle, slice, then fetch entities & users
+
 		const allIds = await prisma.entity.findMany({
 			select: { id: true },
 			where: filters
 		});
-		const shuffled = allIds
-			.map((e) => e.id)
-			.sort(() => Math.random() - 0.5)
-			.slice(0, take);
+
+		const shuffled = allIds.map(e => e.id).sort(() => Math.random() - 0.5).slice(0, take);
+
 		const entities = await prisma.entity.findMany({
 			where: { id: { in: shuffled } }
 		});
-		const total = allIds.length;
+
+		const userIds = entities.map(e => e.userId);
+		const users = await prisma.user.findMany({
+			where: { id: { in: userIds } },
+			select: { id: true, presence: true }
+		});
+
+		// Merge presence into entities
+		const userPresenceMap = new Map(users.map(u => [u.id, u.presence]));
+		const enrichedEntities = entities.map(e => ({
+			...e,
+			presence: userPresenceMap.get(e.userId) ?? null
+		}));
+
 		return NextResponse.json({
-			data: entities,
+			data: enrichedEntities,
+			pagination: {
+				page,
+				total: allIds.length,
+				totalPages: Math.ceil(allIds.length / take)
+			}
+		});
+	}
+
+	// For popular sorting fallback: sort entities by likes array length descending in JS
+	if (sort === 'popular') {
+		const [entities, total] = await Promise.all([
+			prisma.entity.findMany({
+				where: filters,
+				skip,
+				take
+			}),
+			prisma.entity.count({ where: filters })
+		]);
+
+		const userIds = entities.map(e => e.userId);
+		const users = await prisma.user.findMany({
+			where: { id: { in: userIds } },
+			select: { id: true, presence: true }
+		});
+		const userPresenceMap = new Map(users.map(u => [u.id, u.presence]));
+
+		// Sort entities by likes length desc
+		entities.sort((a, b) => (b.likes?.length ?? 0) - (a.likes?.length ?? 0));
+
+		const enrichedEntities = entities.map(e => ({
+			...e,
+			presence: userPresenceMap.get(e.userId) ?? null
+		}));
+
+		return NextResponse.json({
+			data: enrichedEntities,
 			pagination: {
 				page,
 				total,
@@ -99,6 +149,7 @@ export async function GET(req: NextRequest) {
 		});
 	}
 
+	// Default case: newest/oldest sorting with Prisma
 	const [entities, total] = await Promise.all([
 		prisma.entity.findMany({
 			where: filters,
@@ -106,13 +157,23 @@ export async function GET(req: NextRequest) {
 			take,
 			orderBy
 		}),
-		prisma.entity.count({
-			where: filters
-		})
+		prisma.entity.count({ where: filters })
 	]);
 
+	const userIds = entities.map(e => e.userId);
+	const users = await prisma.user.findMany({
+		where: { discordId: { in: userIds } },
+		select: { id: true, presence: true }
+	});
+	const userPresenceMap = new Map(users.map(u => [u.id, u.presence]));
+
+	const enrichedEntities = entities.map(e => ({
+		...e,
+		presence: userPresenceMap.get(e.userId) ?? null
+	}));
+
 	return NextResponse.json({
-		data: entities,
+		data: enrichedEntities,
 		pagination: {
 			page,
 			total,

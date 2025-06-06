@@ -173,7 +173,7 @@ const UserCard: React.FC<UserCardProps> = ({ entity, isSkeleton = false, isLiked
 							</div>
 							<div className="flex items-center gap-1">
 								<Eye className="h-3 w-3" />
-								<span>{entity.views?.length ?? 0} views</span>
+								<span>{entity.views} views</span>
 							</div>
 						</div>
 

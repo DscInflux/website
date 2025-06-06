@@ -3,107 +3,106 @@ import { prisma } from '@/lib/db/prisma';
 import { z } from 'zod';
 
 const querySchema = z.object({
-	page: z.coerce.number().min(1).optional().default(1),
-	sort: z.enum(['newest', 'oldest', 'popular', 'random']).optional(),
-	roles: z.string().optional(),
-	skills: z.string().optional(),
-	limit: z.coerce.number().min(1).max(100).optional()
+  page: z.coerce.number().min(1).optional().default(1),
+  sort: z.enum(['newest', 'oldest', 'popular', 'random']).optional().default('newest'),
+  roles: z.string().optional(),
+  skills: z.string().optional(),
+  limit: z.coerce.number().min(1).max(100).optional().default(20),
 });
 
 export async function GET(req: NextRequest) {
-	const url = new URL(req.url);
-	const parseResult = querySchema.safeParse(Object.fromEntries(url.searchParams.entries()));
+  const url = new URL(req.url);
+  const parseResult = querySchema.safeParse(Object.fromEntries(url.searchParams.entries()));
 
-	if (!parseResult.success) {
-		return NextResponse.json({ error: parseResult.error.flatten() }, { status: 400 });
-	}
+  if (!parseResult.success) {
+    return NextResponse.json({ error: parseResult.error.flatten() }, { status: 400 });
+  }
 
-	const { page, sort, roles, skills, limit } = parseResult.data;
+  const { page, sort, roles, skills, limit } = parseResult.data;
 
-	const filters: any = {};
+  const take = limit;
+  const skip = (page - 1) * take;
 
-	if (roles) {
-		filters.roles = {
-			hasSome: roles.split(',')
-		};
-	}
+  // Build filters
+  const where: any = {};
+  if (roles) where.roles = { hasSome: roles.split(',') };
+  if (skills) where.skills = { hasSome: skills.split(',') };
 
-	if (skills) {
-		filters.skills = {
-			hasSome: skills.split(',')
-		};
-	}
+  // Prisma orderBy
+  let orderBy: any = { createdAt: 'desc' }; // default newest
+  if (sort === 'oldest') orderBy = { createdAt: 'asc' };
+  else if (sort === 'popular') orderBy = { likes: { _count: 'desc' } };
 
-	const take = limit || 20;
-	const skip = (page - 1) * take;
+  // Handle random sort separately
+  if (sort === 'random') {
+    // Fetch all entity IDs with filters
+    const allEntities = await prisma.entity.findMany({
+      where,
+      select: { id: true },
+    });
+    const shuffledIds = allEntities
+      .map((e) => e.id)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, take);
 
-	if (sort === 'random') {
-		let whereClause = '';
-		const whereParams: any[] = [];
+    // Fetch entities by shuffled IDs
+    const entities = await prisma.entity.findMany({
+      where: { id: { in: shuffledIds } },
+    });
 
-		if (filters.roles) {
-			whereClause += whereClause ? ' AND ' : ' WHERE ';
-			whereClause += `roles && $1`;
-			whereParams.push(filters.roles.hasSome);
-		}
-		if (filters.skills) {
-			whereClause += whereClause ? ' AND ' : ' WHERE ';
-			whereClause += `skills && $${whereParams.length + 1}`;
-			whereParams.push(filters.skills.hasSome);
-		}
+    // Fetch users to get presence and isBanned
+    const userIds = [...new Set(entities.map((e) => e.userId))];
+    const users = await prisma.user.findMany({
+      where: { discordId: { in: userIds } },
+      select: { discordId: true, presence: true, is_banned: true },
+    });
+    const userMap = new Map(users.map((u) => [u.discordId, { presence: u.presence, isBanned: u.is_banned }]));
 
-		const query = `
-      SELECT * FROM "entity"
-      ${whereClause}
-      ORDER BY RANDOM()
-      OFFSET $${whereParams.length + 1}
-      LIMIT $${whereParams.length + 2}
-    `;
+    // Merge presence and isBanned into entities
+    const data = entities.map((e) => ({
+      ...e,
+      presence: userMap.get(e.userId)?.presence,
+      isBanned: userMap.get(e.userId)?.isBanned ?? false,
+    }));
 
-		const entities = await prisma.$queryRawUnsafe(query, ...whereParams, skip, take);
+    const total = allEntities.length;
+    const totalPages = Math.ceil(total / take);
 
-		const total = await prisma.entity.count({ where: filters });
+    return NextResponse.json({ data, pagination: { page, total, totalPages } });
+  }
 
-		return NextResponse.json({
-			data: entities,
-			pagination: {
-				page,
-				total,
-				totalPages: Math.ceil(total / take)
-			}
-		});
-	}
+  // For other sorts: fetch normally with pagination
+  const [entities, total] = await Promise.all([
+    prisma.entity.findMany({
+      where,
+      skip,
+      take,
+      orderBy,
+    }),
+    prisma.entity.count({ where }),
+  ]);
 
-	const orderBy = (() => {
-		switch (sort) {
-			case 'oldest':
-				return { createdAt: 'asc' };
-			case 'popular':
-				return { likes: 'desc' };
-			case 'newest':
-			default:
-				return { createdAt: 'desc' };
-		}
-	})();
+  const userIds = [...new Set(entities.map((e) => e.userId))];
+  const users = await prisma.user.findMany({
+    where: { discordId: { in: userIds } },
+    select: { discordId: true, presence: true, is_banned: true },
+  });
 
-	const [entities, total] = await Promise.all([
-		prisma.entity.findMany({
-			where: filters,
-			skip,
-			take,
-			orderBy
-		}),
-		prisma.entity.count({
-			where: filters
-		})
-	]);
+  const userMap = new Map(users.map((u) => [u.discordId, { presence: u.presence, isBanned: u.is_banned }]));
 
-	return NextResponse.json({
-		data: entities,
-		pagination: {
-			page,
-			total,
-			totalPages: Math.ceil(total / take)
-		}
-	});
+  // Merge presence and isBanned into entities
+  const data = entities.map((e) => ({
+    ...e,
+    presence: userMap.get(e.userId)?.presence,
+    isBanned: userMap.get(e.userId)?.isBanned ?? false,
+  }));
+
+  return NextResponse.json({
+    data,
+    pagination: {
+      page,
+      total,
+      totalPages: Math.ceil(total / take),
+    },
+  });
 }

@@ -1,50 +1,62 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db/prisma';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db/prisma";
+import { z } from "zod";
 
 const querySchema = z.object({
-	name: z.string().optional(),
-	userId: z.string().optional()
+  name: z.string().optional(),
+  userId: z.string().optional(),
 });
 
 export async function GET(req: NextRequest) {
-	const parsedUrl = new URL(req.url);
-	const parseResult = querySchema.safeParse(Object.fromEntries(parsedUrl.searchParams.entries()));
+  const parsedUrl = new URL(req.url);
+  const parseResult = querySchema.safeParse(
+    Object.fromEntries(parsedUrl.searchParams.entries()),
+  );
 
-	if (!parseResult.success) {
-		return NextResponse.json({ error: parseResult.error.flatten() }, { status: 400 });
-	}
+  if (!parseResult.success) {
+    return NextResponse.json(
+      { error: parseResult.error.flatten() },
+      { status: 400 },
+    );
+  }
 
-	const { name, userId } = parseResult.data;
+  const { name, userId } = parseResult.data;
 
-	try {
-		const orConditions = [{ url: name }] as any[];
-		if (userId) {
-			orConditions.push({ userId });
-		}
+  try {
+    // Build OR conditions for prisma query
+    const orConditions = [{ url: name }] as any[];
+    if (userId) {
+      orConditions.push({ userId });
+    }
 
-		const entity = await prisma.entity.findFirst({
-			where: {
-				OR: orConditions
-			}
-		});
+    const entity = await prisma.entity.findFirst({
+      where: {
+        OR: orConditions,
+      },
+    });
 
-		if (!entity) {
-			return NextResponse.json({ error: 'Entity not found' }, { status: 404 });
-		}
+    if (!entity) {
+      return NextResponse.json({ error: "Entity not found" }, { status: 404 });
+    }
 
-		// Get the user to check if banned
-		let isBanned = false;
-		if (entity.userId) {
-			const user = await prisma.user.findUnique({
-				where: { id: entity.userId }
-			});
-			isBanned = user?.is_banned ?? false;
-		}
+    let isBanned = false;
+    let presence: string | undefined = undefined;
 
-		return NextResponse.json({ ...entity, isBanned });
-	} catch (error) {
-		console.error('[GET_ENTITY_ERROR]', error);
-		return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-	}
+    if (entity.userId) {
+      const user = await prisma.user.findUnique({
+        where: { discordId: entity.userId },
+        select: { is_banned: true, presence: true },
+      });
+      isBanned = user?.is_banned ?? false;
+      presence = user?.presence;
+    }
+
+    return NextResponse.json({ ...entity, isBanned, presence });
+  } catch (error) {
+    console.error("[GET_ENTITY_ERROR]", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
 }

@@ -20,7 +20,7 @@ export interface Entity {
 	isDeveloper: boolean;
 	isPartner: boolean;
 	email?: string;
-	views: string[];
+	views: number;
 	isVerified: boolean;
 	timeZone?: string;
 	sexuality?: string;
@@ -45,9 +45,16 @@ export interface Entity {
 	updatedAt: Date;
 	deletedAt?: Date;
 
-	isLiked: boolean;
-	isSelf: boolean;
 	isTeamMember: boolean;
+	presence: Presence;
+	status: string;
+}
+
+enum Presence {
+    Online,
+    DND,
+    Idle,
+    Offline,
 }
 
 export interface Social {

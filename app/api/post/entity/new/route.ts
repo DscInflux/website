@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
 		isDeveloper: false,
 		isPartner: false,
 		isVerified: false,
-		views: [],
+		views: 0,
 		likes: [],
 		createdAt: existingEntity ? existingEntity.createdAt : now,
 		updatedAt: now,

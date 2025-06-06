@@ -179,7 +179,7 @@ export default function UserProfile({ username }: { username: string }) {
 								<div className="flex items-center gap-2 text-white">
 									<Eye className="h-5 w-5 text-blue-400" />
 									<div>
-										<div className="text-lg font-bold">{data.views.length}</div>
+										<div className="text-lg font-bold">{data.views}</div>
 										<div className="text-xs text-gray-300">Views</div>
 									</div>
 								</div>

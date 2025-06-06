@@ -5,6 +5,7 @@ import TwitterProvider from 'next-auth/providers/twitter';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/db/prisma';
 import type { Account, Profile, User as NextAuthUser, Session } from 'next-auth';
+import { Presence } from './node_modules/.prisma/client/index.d';
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
 	adapter: PrismaAdapter(prisma),
@@ -207,7 +208,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 							token_type: account.token_type,
 							scope: account.scope,
 							id_token: account.id_token,
-							session_state: account.session_state != null ? String(account.session_state) : null
+							session_state: account.session_state != null ? String(account.session_state) : null,
 						}
 					});
 				}
