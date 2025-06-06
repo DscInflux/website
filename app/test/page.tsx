@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
 
-// Move the useSearchParams hook into a client component
 import SearchWrapper from "./SearchWrapper";
 
 export default function TestPage() {
