@@ -1,30 +1,8 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { WidgetCard } from "@/components/cards/WidgetCard";
-
-function wrapPromise(promise: Promise<any>) {
-  let status = "pending";
-  let result: any;
-  let suspender = promise.then(
-    (res) => {
-      status = "success";
-      result = res;
-    },
-    (err) => {
-      status = "error";
-      result = err;
-    }
-  );
-  return {
-    read() {
-      if (status === "pending") throw suspender;
-      if (status === "error") throw result;
-      return result;
-    },
-  };
-}
 
 async function fetchUserData(username: string) {
   const res = await fetch(`https://dscinflux.xyz/api/get/entity?name=${username}`, {
@@ -34,22 +12,34 @@ async function fetchUserData(username: string) {
   return res.json();
 }
 
-function UserData({ resource }: { resource: { read: () => any } }) {
-  const data = resource.read();
-  return <WidgetCard profileData={data} />;
-}
-
-function UserWidget({ username }: { username: string }) {
-  const userDataPromise = fetchUserData(username);
-  const resource = wrapPromise(userDataPromise);
-  return <UserData resource={resource} />;
-}
-
 export default function SearchWrapper() {
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
 
-  if (!username) return <div>Please provide a username in query, e.g. /test?username=Ran</div>;
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  return <UserWidget username={username} />;
+  useEffect(() => {
+    if (!username) return;
+
+    setLoading(true);
+    setError(null);
+
+    fetchUserData(username)
+      .then((res) => {
+        setData(res);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message || "Unknown error");
+        setLoading(false);
+      });
+  }, [username]);
+
+  if (!username) return <div>Please provide a username in query, e.g. /test?username=Ran</div>;
+  if (loading) return <div>Loading user data...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return <WidgetCard profileData={data} />;
 }
