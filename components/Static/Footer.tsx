@@ -45,11 +45,11 @@ export default function Footer() {
 			<footer className="w-full max-w-7xl text-white">
 				<div className="w-full border-t border-zinc-800 pt-12">
 					<div className="mb-8 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-						<Link href="/" legacyBehavior>
-							<a className="text-2xl font-bold tracking-tight text-white transition hover:text-primary">
+						<Link href="/">
+							<div className="text-2xl font-bold tracking-tight text-white transition hover:text-primary">
 								Sociava
 								<span className="block text-sm font-normal text-zinc-400">by Purrquinox</span>
-							</a>
+							</div>
 						</Link>
 
 						<div className="flex space-x-3">
@@ -83,8 +83,8 @@ export default function Footer() {
 										<FaExternalLinkAlt className="inline-block text-xs" />
 									</a>
 								) : (
-									<Link href={link} legacyBehavior>
-										<a className="transition hover:text-white">{label}</a>
+									<Link href={link}>
+										<p className="transition hover:text-white">{label}</p>
 									</Link>
 								)}
 							</li>

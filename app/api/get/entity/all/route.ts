@@ -38,9 +38,9 @@ export async function GET(req: NextRequest) {
 	const skip = (page - 1) * take;
 
 	if (sort === 'random') {
-		// Build WHERE clause for filters (only roles and skills supported for random)
 		let whereClause = '';
 		const whereParams: any[] = [];
+
 		if (filters.roles) {
 			whereClause += whereClause ? ' AND ' : ' WHERE ';
 			whereClause += `roles && $1`;
@@ -51,12 +51,19 @@ export async function GET(req: NextRequest) {
 			whereClause += `skills && $${whereParams.length + 1}`;
 			whereParams.push(filters.skills.hasSome);
 		}
-		// Compose the query
-		const query = `SELECT "isShow", "userId", "Username", "displayname", "url", "about", "isVerified", "isDeveloper", "isPartner", "staff", "avatar", "createdAt", "id", "likes" FROM "entity"${whereClause} ORDER BY RANDOM() OFFSET $${
-			whereParams.length + 1
-		} LIMIT $${whereParams.length + 2}`;
+
+		const query = `
+      SELECT * FROM "entity"
+      ${whereClause}
+      ORDER BY RANDOM()
+      OFFSET $${whereParams.length + 1}
+      LIMIT $${whereParams.length + 2}
+    `;
+
 		const entities = await prisma.$queryRawUnsafe(query, ...whereParams, skip, take);
+
 		const total = await prisma.entity.count({ where: filters });
+
 		return NextResponse.json({
 			data: entities,
 			pagination: {
@@ -70,12 +77,12 @@ export async function GET(req: NextRequest) {
 	const orderBy = (() => {
 		switch (sort) {
 			case 'oldest':
-				return { createdAt: 'asc' as const };
+				return { createdAt: 'asc' };
 			case 'popular':
-				return { likes: 'desc' as const };
+				return { likes: 'desc' };
 			case 'newest':
 			default:
-				return { createdAt: 'desc' as const };
+				return { createdAt: 'desc' };
 		}
 	})();
 
@@ -84,23 +91,7 @@ export async function GET(req: NextRequest) {
 			where: filters,
 			skip,
 			take,
-			orderBy,
-			select: {
-				isShow: true,
-				userId: true,
-				Username: true,
-				displayname: true,
-				url: true,
-				about: true,
-				isVerified: true,
-				isDeveloper: true,
-				isPartner: true,
-				staff: true,
-				avatar: true,
-				createdAt: true,
-				id: true,
-				likes: true
-			}
+			orderBy
 		}),
 		prisma.entity.count({
 			where: filters

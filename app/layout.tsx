@@ -28,12 +28,15 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				<ConnectingDots
-					dotColor="rgba(255, 255, 255, 0.7)"
-					lineColor="rgba(255, 255, 255, 0.3)"
-					dotCount={200}
-					lineThreshold={150}
-				/>
+				<div className="opacity-25">
+					<ConnectingDots
+						dotColor="rgba(255, 255, 255, 0.7)"
+						lineColor="rgba(255, 255, 255, 0.3)"
+						dotCount={200}
+						lineThreshold={150}
+					/>
+				</div>
+
 				<ThemeProvider>
 					<SessionProviders>
 						<ReactQueryProviders>

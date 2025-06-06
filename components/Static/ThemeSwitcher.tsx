@@ -63,11 +63,11 @@ const ThemeSelector: React.FC = () => {
 		<div className="relative" ref={dropdownRef}>
 			<button
 				onClick={() => setIsOpen(!isOpen)}
-				className="hover:bg-accent group flex items-center justify-center rounded-full p-2 transition-all"
+				className="group flex items-center justify-center rounded-full p-2 transition-all hover:bg-accent"
 				aria-label="Change theme"
 			>
 				<div className="relative">
-					<PaletteIcon className="text-muted-foreground group-hover:text-foreground h-5 w-5 transition-colors" />
+					<PaletteIcon className="group-hover:text-foreground h-5 w-5 text-muted-foreground transition-colors" />
 				</div>
 			</button>
 
@@ -78,11 +78,11 @@ const ThemeSelector: React.FC = () => {
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						exit={{ opacity: 0, scale: 0.95, y: 10 }}
 						transition={{ duration: 0.15 }}
-						className="bg-card border-border absolute right-0 z-50 mt-2 w-72 rounded-lg border p-3 shadow-xl backdrop-blur-sm"
+						className="absolute right-0 z-50 mt-2 w-72 rounded-lg border border-border bg-card p-3 shadow-xl backdrop-blur-sm"
 					>
-						<div className="border-border mb-2 border-b pb-2">
+						<div className="mb-2 border-b border-border pb-2">
 							<h3 className="text-foreground text-sm font-medium">Select Theme</h3>
-							<p className="text-muted-foreground mt-1 text-xs">
+							<p className="mt-1 text-xs text-muted-foreground">
 								Customize your interface appearance
 							</p>
 						</div>

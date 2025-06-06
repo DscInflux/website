@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
 	const handleLogout = () => signOut({ callbackUrl: '/' });
 
 	const items = [
-		{ label: 'Home', icon: <FaHome />, link: '/' },
+		{ label: 'Home', icon: <FaHome />, link: '/#' },
 		{ label: 'Explore', icon: <FaCompass />, link: '/explore' },
 		{ label: 'Team', icon: <FaUsers />, link: '/team' }
 	];
@@ -179,7 +179,6 @@ const Navbar: React.FC = () => {
 					{isMobileOpen ? <FaTimes /> : <FaBars />}
 				</button>
 			</div>
-
 			{/* Mobile Dropdown */}
 			{isMobileOpen && (
 				<div className="space-y-4 bg-white px-4 pb-4 md:hidden dark:bg-black">
