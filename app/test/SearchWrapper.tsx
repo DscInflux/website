@@ -12,7 +12,7 @@ async function fetchUserData(username: string) {
   return res.json();
 }
 
-export default function SearchWrapper() {
+export default function ClientSearchWrapper() {
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
 

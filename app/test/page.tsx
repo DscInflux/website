@@ -1,6 +1,10 @@
-import React from "react";
-import SearchWrapper from "./SearchWrapper";
+import React, { Suspense } from "react";
+import ClientSearchWrapper from "./SearchWrapper";
 
 export default function TestPage() {
-  return <SearchWrapper />;
+  return (
+    <Suspense fallback={<div>Loading user data...</div>}>
+      <ClientSearchWrapper />
+    </Suspense>
+  );
 }
