@@ -1,3 +1,4 @@
+"use client";
 import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { WidgetCard } from "@/components/cards/WidgetCard";
