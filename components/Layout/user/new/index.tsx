@@ -109,14 +109,14 @@ export default function EditProfilePage({
 
 	// Fetch entity for the current user (if logged in) using React Query
 	const { data: entityData, isLoading: entityLoading } = useQuery({
-		queryKey: ['edit-entity', user?.id],
+		queryKey: ['edit-entity', user?.discordId],
 		queryFn: async () => {
-			if (!user?.id) return null;
-			const res = await fetch(`/api/get/entity?userId=${user.id}`);
+			if (!user?.discordId) return null;
+			const res = await fetch(`/api/get/entity?userId=${user.discordId}`);
 			if (!res.ok) throw new Error('Failed to fetch entity');
 			return res.json();
 		},
-		enabled: !!user?.id,
+		enabled: !!user?.discordId,
 		staleTime: 1000 * 60 * 10, // 10 minutes
 		refetchOnWindowFocus: false
 	});
