@@ -194,7 +194,7 @@ const UserCard: React.FC<UserCardProps> = ({ entity, isSkeleton = false, isLiked
 								{liked ? 'Liked' : 'Like'}
 							</button>
 							<Link
-								href={`/user/${entity.Username}`}
+								href={`/user/${entity.url}`}
 								className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20"
 							>
 								<ExternalLink className="h-4 w-4" />
