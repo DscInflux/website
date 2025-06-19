@@ -11,7 +11,8 @@
 		"db:generate": "prisma generate",
 		"db:studio": "prisma studio",
 		"lint": "next lint",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"postinstall": "npx prisma db push",
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.9.1",
