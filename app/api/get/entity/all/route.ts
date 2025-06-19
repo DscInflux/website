@@ -66,7 +66,7 @@ export async function GET(req: NextRequest) {
       select: { id: true },
     });
     const shuffledIds = allEntities
-      .map((e) => e.id)
+      .map((e: any) => e.id)
       .sort(() => Math.random() - 0.5)
       .slice(0, take);
 
