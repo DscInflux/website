@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
 			where: filters
 		});
 		const shuffled = allIds
-			.map((e) => e.id)
+			.map((e: any) => e.id)
 			.sort(() => Math.random() - 0.5)
 			.slice(0, take);
 		const entities = await prisma.entity.findMany({
