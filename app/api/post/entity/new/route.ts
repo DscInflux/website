@@ -28,7 +28,7 @@ const entitySchema = z.object({
 	sexuality: z.string().optional(),
 	timeZone: z.string().optional(),
 	height: z.number().min(0).max(300).optional(),
-  email: z.string().email().optional(),
+	email: z.string().email().optional(),
 	privacy: z
 		.object({
 			isShow: z.boolean().optional(),

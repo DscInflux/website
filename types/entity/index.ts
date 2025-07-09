@@ -51,10 +51,10 @@ export interface Entity {
 }
 
 enum Presence {
-    Online,
-    DND,
-    Idle,
-    Offline,
+	Online,
+	DND,
+	Idle,
+	Offline
 }
 
 export interface Social {

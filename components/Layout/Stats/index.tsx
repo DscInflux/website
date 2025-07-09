@@ -143,7 +143,7 @@ export default function StatsComponent() {
 					transition={{ duration: 0.6 }}
 				>
 					<h1 className="mb-3 text-4xl font-bold md:text-5xl">Stats</h1>
-					<p className="mx-auto max-w-3xl text-lg text-gray-600 md:text-xl dark:text-gray-300">
+					<p className="mx-auto max-w-3xl text-lg text-gray-600 dark:text-gray-300 md:text-xl">
 						View our stats aren't they good?
 					</p>
 				</motion.div>
