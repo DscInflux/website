@@ -67,7 +67,7 @@ export default function UserProfile({ username }: { username: string }) {
 
 	if (loading) {
 		return (
-			<div className="flex min-h-screen items-center justify-center bg-light dark:bg-dark">
+			<div className="bg-light dark:bg-dark flex min-h-screen items-center justify-center">
 				<motion.div
 					animate={{ rotate: 360 }}
 					transition={{
@@ -83,8 +83,8 @@ export default function UserProfile({ username }: { username: string }) {
 
 	if (error || !data) {
 		return (
-			<div className="flex min-h-screen items-center justify-center bg-light dark:bg-dark">
-				<div className="mx-auto max-w-md rounded-xl bg-white bg-opacity-50 p-8 text-center shadow-lg backdrop-blur-sm dark:bg-dark dark:bg-opacity-50">
+			<div className="bg-light dark:bg-dark flex min-h-screen items-center justify-center">
+				<div className="dark:bg-dark mx-auto max-w-md rounded-xl bg-white bg-opacity-50 p-8 text-center shadow-lg backdrop-blur-sm dark:bg-opacity-50">
 					<h1 className="mb-4 text-2xl font-bold text-primary">User Not Found</h1>
 					<p className="text-gray-600 dark:text-gray-300">
 						{error?.message || "The user you're looking for doesn't exist or has been removed."}
@@ -179,7 +179,7 @@ export default function UserProfile({ username }: { username: string }) {
 								<div className="flex items-center gap-2 text-white">
 									<Eye className="h-5 w-5 text-blue-400" />
 									<div>
-										<div className="text-lg font-bold">{data.views.length}</div>
+										<div className="text-lg font-bold">{data.views}</div>
 										<div className="text-xs text-gray-300">Views</div>
 									</div>
 								</div>

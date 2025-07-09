@@ -1,272 +1,285 @@
 'use client';
-
-import React, { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-	FaHome,
-	FaCompass,
-	FaUsers,
-	FaUserPlus,
+	FiHome,
+	FiSearch,
+	FiUser,
+	FiSettings,
+	FiMenu,
+	FiX,
+	FiChevronDown
+} from 'react-icons/fi';
+import {
+	FaSignInAlt,
 	FaSignOutAlt,
-	FaBars,
-	FaTimes,
-	FaEdit,
-	FaCogs,
 	FaEye,
-	FaSignInAlt
+	FaEdit,
+	FaUserPlus,
+	FaCogs
 } from 'react-icons/fa';
+import { signOut, signIn, useSession } from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-const Navbar: React.FC = () => {
-	const pathname = usePathname();
+interface NavbarProps {
+	className?: string;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const { data: session } = useSession();
 	const [entityUrl, setEntityUrl] = useState<string | null>(null);
-	const [isMobileOpen, setIsMobileOpen] = useState(false);
-	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-	const dropdownRef = useRef<HTMLDivElement>(null);
+	const [dropdownOpen, setDropdownOpen] = useState(false);
 
 	useEffect(() => {
-		if (!session) return;
-		if (session.user?.discordId) {
-			fetch(`/api/get/entity?userId=${session.user.discordId}`)
-				.then(async (res) => {
-					if (res.ok) {
-						const data = await res.json();
-						if (data?.url) setEntityUrl(data.url);
-						else setEntityUrl(null);
-					} else {
-						setEntityUrl(null);
-					}
-				})
-				.catch(() => setEntityUrl(null));
-		} else {
-			setEntityUrl(null);
-		}
+		if (!session?.user?.discordId) return;
+
+		fetch(`/api/get/entity?userId=${session.user.discordId}`)
+			.then(async (res) => {
+				if (res.ok) {
+					const data = await res.json();
+					setEntityUrl(data?.url || null);
+				} else {
+					setEntityUrl(null);
+				}
+			})
+			.catch(() => setEntityUrl(null));
 	}, [session]);
 
 	useEffect(() => {
-		const handleClickOutside = (e: MouseEvent) => {
-			if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-				setIsDropdownOpen(false);
-			}
-		};
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, []);
+		if (isMobileMenuOpen) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
+	}, [isMobileMenuOpen]);
 
-	const handleLogout = () => signOut({ callbackUrl: '/' });
+	const toggleMobileMenu = () => {
+		setIsMobileMenuOpen(!isMobileMenuOpen);
+	};
 
-	const items = [
-		{ label: 'Home', icon: <FaHome />, link: '/#' },
-		{ label: 'Explore', icon: <FaCompass />, link: '/explore' },
-		{ label: 'Team', icon: <FaUsers />, link: '/team' }
+	const navItems = [
+		{ icon: FiHome, label: 'Home', isActive: false },
+		{ icon: FiSearch, label: 'Search', isActive: false },
+		{ icon: FiUser, label: 'Profile', isActive: false },
+		{ icon: FiSettings, label: 'Settings', isActive: false }
 	];
 
-	return (
-		<nav className="relative z-50 w-full bg-white dark:bg-black">
-			<div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-				<Link href="/" className="text-2xl font-bold text-black dark:text-white">
-					Sociava
-				</Link>
+	const NavItem: React.FC<{
+		icon: React.ElementType;
+		label: string;
+		isActive?: boolean;
+		onClick?: () => void;
+	}> = ({ icon: Icon, label, isActive = false, onClick }) => (
+		<motion.div
+			whileHover={{ scale: 1.1 }}
+			whileTap={{ scale: 0.95 }}
+			onClick={onClick}
+			className={`flex cursor-pointer items-center space-x-2 transition-colors duration-200 ${
+				isActive ? 'text-white' : 'text-gray-400 hover:text-white'
+			}`}
+			role="button"
+			tabIndex={0}
+			aria-label={label}
+		>
+			<Icon size={20} />
+			<span className="text-sm font-medium md:hidden">{label}</span>
+		</motion.div>
+	);
 
-				{/* Desktop Menu */}
-				<div className="hidden items-center space-x-6 md:flex">
-					{/* Navigation Items */}
-					{items.map(({ label, icon, link }) => (
-						<Link
-							key={label}
-							href={link}
-							className={`flex items-center space-x-1 font-medium hover:text-indigo-600 dark:hover:text-indigo-400 ${
-								pathname === link
-									? 'text-indigo-600 dark:text-indigo-400'
-									: 'text-gray-800 dark:text-gray-300'
-							}`}
-						>
-							{icon}
-							<span>{label}</span>
-						</Link>
-					))}
-
-					{/* User session */}
-					{session ? (
-						<div className="relative" ref={dropdownRef}>
-							<button
-								onClick={() => setIsDropdownOpen((prev) => !prev)}
-								className="flex items-center space-x-2 focus:outline-none"
-							>
-								<img
-									src={session.user?.avatar || ''}
-									alt="avatar"
-									className="h-8 w-8 rounded-full object-cover"
-								/>
-								<span className="font-medium text-gray-800 dark:text-white">
-									{session.user?.display_name || session.user?.username || 'User'}
-								</span>
-							</button>
-
-							{isDropdownOpen && (
-								<div className="absolute right-0 z-50 mt-2 w-48 rounded-md border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
-									{entityUrl ? (
-										<>
-											<Link
-												href={`/user/${entityUrl}`}
-												className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
-											>
-												<FaEye className="mr-2" />
-												View Profile
-											</Link>
-											<Link
-												href="/user/new"
-												className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
-											>
-												<FaEdit className="mr-2" />
-												Edit Profile
-											</Link>
-										</>
-									) : (
-										<button
-											onClick={() => (window.location.href = '/user/new')}
-											className="flex w-full items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
-										>
-											<FaUserPlus className="mr-2" />
-											Register Profile
-										</button>
-									)}
-									{/* Admin Option */}
-									{session.user?.is_admin && (
-										<Link
-											href="/admin"
-											className="flex items-center px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-gray-100 dark:text-indigo-400 dark:hover:bg-zinc-700"
-										>
-											<FaCogs className="mr-2" />
-											Admin
-										</Link>
-									)}
-									<button
-										onClick={() => (window.location.href = '/user/settings')}
-										className="flex w-full items-center px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900"
-									>
-										User Settings
-									</button>
-									<button
-										onClick={handleLogout}
-										className="flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900"
-									>
-										<FaSignOutAlt className="mr-2" />
-										Logout
-									</button>
-								</div>
-							)}
-						</div>
-					) : (
-						<button
-							onClick={() => (window.location.href = '/auth/signin')}
-							className="flex items-center space-x-2 rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
-						>
-							<FaSignInAlt />
-							<span>Login</span>
-						</button>
-					)}
-				</div>
-
-				{/* Mobile toggle */}
-				<button
-					className="text-2xl text-gray-800 md:hidden dark:text-white"
-					onClick={() => setIsMobileOpen(!isMobileOpen)}
-					aria-label="Toggle Menu"
+	const UserDropdown = () => {
+		if (!session) {
+			return (
+				<motion.button
+					whileHover={{ scale: 1.05 }}
+					whileTap={{ scale: 0.95 }}
+					onClick={() => signIn()}
+					aria-label="Login"
+					className="rounded-full bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-gray-100"
 				>
-					{isMobileOpen ? <FaTimes /> : <FaBars />}
-				</button>
-			</div>
-			{/* Mobile Dropdown */}
-			{isMobileOpen && (
-				<div className="space-y-4 bg-white px-4 pb-4 md:hidden dark:bg-black">
-					{/* Navigation Items */}
-					{items.map(({ label, icon, link }) => (
-						<Link
-							key={label}
-							href={link}
-							className={`flex items-center space-x-2 font-medium text-gray-700 hover:text-indigo-600 dark:text-zinc-200 dark:hover:text-indigo-400 ${
-								pathname === link ? 'text-indigo-600 dark:text-indigo-400' : ''
-							}`}
-							onClick={() => setIsMobileOpen(false)}
-						>
-							{icon}
-							<span>{label}</span>
-						</Link>
-					))}
+					<FaSignInAlt className="mr-2 inline-block" />
+					Login
+				</motion.button>
+			);
+		}
 
-					{session ? (
-						<>
-							{entityUrl ? (
-								<>
-									<Link
-										href="/user/new"
-										className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 dark:text-zinc-200"
-										onClick={() => setIsMobileOpen(false)}
-									>
-										<FaEdit />
-										<span>Edit Profile</span>
-									</Link>
-									<Link
-										href={`/user/${entityUrl}`}
-										className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 dark:text-zinc-200"
-										onClick={() => setIsMobileOpen(false)}
-									>
-										<FaEye />
-										<span>View Profile</span>
-									</Link>
-								</>
-							) : (
-								<button
-									onClick={() => {
-										setIsMobileOpen(false);
-										window.location.href = '/user/new';
-									}}
-									className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 dark:text-zinc-200"
-								>
-									<FaUserPlus />
-									<span>Register Profile</span>
-								</button>
-							)}
-							{/* Admin Option */}
-							{session.user?.is_admin && (
-								<Link
-									href="/admin"
-									className="flex items-center px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-gray-100 dark:text-indigo-400 dark:hover:bg-zinc-700"
-									onClick={() => setIsMobileOpen(false)}
-								>
-									<FaCogs className="mr-2" />
-									Admin
-								</Link>
-							)}
-							<button
-								onClick={() => {
-									setIsMobileOpen(false);
-									handleLogout();
-								}}
-								className="flex items-center space-x-2 text-red-600 hover:text-red-800"
-							>
-								<FaSignOutAlt />
-								<span>Logout</span>
-							</button>
-						</>
-					) : (
-						<button
-							onClick={() => {
-								setIsMobileOpen(false);
-								window.location.href = '/auth/signin';
-							}}
-							className="flex items-center space-x-2 rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
+		return (
+			<div className="relative">
+				<button
+					onClick={() => setDropdownOpen((prev) => !prev)}
+					aria-label="User menu"
+					className="flex items-center space-x-2 rounded-full border border-gray-700 p-1 pr-3 transition hover:bg-gray-800"
+				>
+					<Image
+						src={session.user?.avatar || ''}
+						alt="User Avatar"
+						width={32}
+						height={32}
+						className="rounded-full"
+					/>
+					<motion.div
+						initial={false}
+						animate={{ rotate: dropdownOpen ? 180 : 0 }}
+						transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+						className="inline-block origin-center text-white"
+					>
+						<FiChevronDown size={16} aria-hidden="true" />
+					</motion.div>
+				</button>
+
+				<AnimatePresence>
+					{dropdownOpen && (
+						<motion.div
+							initial={{ opacity: 0, y: -10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -10 }}
+							className="absolute right-0 z-50 mt-2 w-56 rounded-md border border-gray-800 bg-black text-white shadow-lg"
+							aria-label="User dropdown menu"
 						>
-							<FaSignInAlt />
-							<span>Login</span>
-						</button>
+							<div className="py-2">
+								{entityUrl ? (
+									<>
+										<Link
+											href={`/user/${entityUrl}`}
+											className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
+											aria-label="View Profile"
+										>
+											<FaEye className="mr-2" />
+											View Profile
+										</Link>
+										<Link
+											href="/user/new"
+											className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
+											aria-label="Edit Profile"
+										>
+											<FaEdit className="mr-2" />
+											Edit Profile
+										</Link>
+									</>
+								) : (
+									<button
+										onClick={() => (window.location.href = '/user/new')}
+										className="flex w-full items-center px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700"
+										aria-label="Register Profile"
+									>
+										<FaUserPlus className="mr-2" />
+										Register Profile
+									</button>
+								)}
+
+								{session.user?.is_admin && (
+									<Link
+										href="/admin"
+										className="flex items-center px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-gray-100 dark:text-indigo-400 dark:hover:bg-zinc-700"
+										aria-label="Admin Panel"
+									>
+										<FaCogs className="mr-2" />
+										Admin
+									</Link>
+								)}
+
+								<button
+									onClick={() => signOut()}
+									className="flex w-full items-center px-4 py-2 text-sm text-red-500 hover:bg-red-500/10"
+									aria-label="Logout"
+								>
+									<FaSignOutAlt className="mr-2" />
+									Logout
+								</button>
+							</div>
+						</motion.div>
 					)}
+				</AnimatePresence>
+			</div>
+		);
+	};
+
+	return (
+		<>
+			{/* Desktop Navbar */}
+			<motion.nav
+				initial={{ y: -100, opacity: 0 }}
+				animate={{ y: 0, opacity: 1 }}
+				transition={{ duration: 0.6, ease: 'easeOut' }}
+				className={`fixed left-1/2 top-4 z-50 hidden -translate-x-1/2 transform md:block ${className}`}
+				aria-label="Desktop navigation bar"
+			>
+				<div className="rounded-full border border-gray-800 bg-black/90 px-6 py-3 shadow-2xl backdrop-blur-md lg:px-8 lg:py-4">
+					<div className="flex items-center space-x-6 lg:space-x-8">
+						{navItems.map((item, index) => (
+							<NavItem key={index} icon={item.icon} label={item.label} isActive={item.isActive} />
+						))}
+						<UserDropdown />
+					</div>
 				</div>
-			)}
-		</nav>
+			</motion.nav>
+
+			{/* Mobile Navbar */}
+			<motion.nav
+				initial={{ y: -100, opacity: 0 }}
+				animate={{ y: 0, opacity: 1 }}
+				transition={{ duration: 0.6, ease: 'easeOut' }}
+				className={`fixed left-4 right-4 top-4 z-50 md:hidden ${className}`}
+				aria-label="Mobile navigation bar"
+			>
+				<div className="rounded-2xl border border-gray-800 bg-black/90 px-4 py-3 shadow-2xl backdrop-blur-md">
+					<div className="flex items-center justify-between">
+						<motion.div whileHover={{ scale: 1.05 }} className="flex items-center">
+							<img src="https://sociava.xyz/logo.webp" alt="Sociava Logo" className="h-8 w-auto" />
+						</motion.div>
+
+						<motion.button
+							whileHover={{ scale: 1.1 }}
+							whileTap={{ scale: 0.95 }}
+							onClick={toggleMobileMenu}
+							className="rounded-full p-2 text-white transition-colors hover:bg-gray-800"
+							aria-label="Toggle mobile menu"
+						>
+							{isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+						</motion.button>
+					</div>
+				</div>
+			</motion.nav>
+
+			{/* Mobile Menu Overlay */}
+			<AnimatePresence>
+				{isMobileMenuOpen && (
+					<>
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							onClick={() => setIsMobileMenuOpen(false)}
+							className="fixed left-4 right-4 top-[80px] z-50 mt-2 rounded-2xl border border-gray-800 bg-black/90 px-4 py-6 shadow-2xl backdrop-blur-md md:hidden"
+							aria-label="Mobile menu overlay"
+						/>
+						<motion.div
+							initial={{ y: -20, opacity: 0 }}
+							animate={{ y: 0, opacity: 1 }}
+							exit={{ y: -20, opacity: 0 }}
+							transition={{ duration: 0.3 }}
+							className="fixed left-4 right-4 top-[80px] z-50 rounded-2xl border border-gray-800 bg-black/90 px-4 py-6 shadow-2xl backdrop-blur-md md:hidden"
+						>
+							<div className="space-y-4">
+								{navItems.map((item, index) => (
+									<NavItem
+										key={index}
+										icon={item.icon}
+										label={item.label}
+										isActive={item.isActive}
+										onClick={() => setIsMobileMenuOpen(false)}
+									/>
+								))}
+								<div>
+									<UserDropdown />
+								</div>
+							</div>
+						</motion.div>
+					</>
+				)}
+			</AnimatePresence>
+		</>
 	);
 };
 

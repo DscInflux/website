@@ -28,6 +28,7 @@ const entitySchema = z.object({
 	sexuality: z.string().optional(),
 	timeZone: z.string().optional(),
 	height: z.number().min(0).max(300).optional(),
+	email: z.string().email().optional(),
 	privacy: z
 		.object({
 			isShow: z.boolean().optional(),
@@ -110,7 +111,7 @@ export async function POST(req: NextRequest) {
 		isDeveloper: false,
 		isPartner: false,
 		isVerified: false,
-		views: [],
+		views: 0,
 		likes: [],
 		createdAt: existingEntity ? existingEntity.createdAt : now,
 		updatedAt: now,
@@ -121,7 +122,7 @@ export async function POST(req: NextRequest) {
 		isGenderPrivate: data.privacy?.isGenderPrivate ?? true,
 		isPronounsPrivate: data.privacy?.isPronounsPrivate ?? true,
 		isSexualityPrivate: data.privacy?.isSexualityPrivate ?? true,
-		email: session.user.email ?? undefined,
+		email: data.email ?? undefined,
 		sexuality: data.sexuality ?? undefined
 	};
 

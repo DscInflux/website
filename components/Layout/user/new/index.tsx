@@ -109,14 +109,14 @@ export default function EditProfilePage({
 
 	// Fetch entity for the current user (if logged in) using React Query
 	const { data: entityData, isLoading: entityLoading } = useQuery({
-		queryKey: ['edit-entity', user?.id],
+		queryKey: ['edit-entity', user?.discordId],
 		queryFn: async () => {
-			if (!user?.id) return null;
-			const res = await fetch(`/api/get/entity?userId=${user.id}`);
+			if (!user?.discordId) return null;
+			const res = await fetch(`/api/get/entity?userId=${user.discordId}`);
 			if (!res.ok) throw new Error('Failed to fetch entity');
 			return res.json();
 		},
-		enabled: !!user?.id,
+		enabled: !!user?.discordId,
 		staleTime: 1000 * 60 * 10, // 10 minutes
 		refetchOnWindowFocus: false
 	});
@@ -1234,7 +1234,7 @@ export default function EditProfilePage({
 
 												<div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
 													{socials.length === 0 ? (
-														<div className="flex h-24 items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 md:col-span-2 dark:border-gray-700 dark:bg-gray-900/50">
+														<div className="flex h-24 items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900/50 md:col-span-2">
 															<p className="text-sm text-gray-500 dark:text-gray-400">
 																No social links added yet
 															</p>

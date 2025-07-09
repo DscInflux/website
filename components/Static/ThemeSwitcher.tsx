@@ -67,7 +67,7 @@ const ThemeSelector: React.FC = () => {
 				aria-label="Change theme"
 			>
 				<div className="relative">
-					<PaletteIcon className="group-hover:text-foreground h-5 w-5 text-muted-foreground transition-colors" />
+					<PaletteIcon className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-foreground" />
 				</div>
 			</button>
 
@@ -81,7 +81,7 @@ const ThemeSelector: React.FC = () => {
 						className="absolute right-0 z-50 mt-2 w-72 rounded-lg border border-border bg-card p-3 shadow-xl backdrop-blur-sm"
 					>
 						<div className="mb-2 border-b border-border pb-2">
-							<h3 className="text-foreground text-sm font-medium">Select Theme</h3>
+							<h3 className="text-sm font-medium text-foreground">Select Theme</h3>
 							<p className="mt-1 text-xs text-muted-foreground">
 								Customize your interface appearance
 							</p>

@@ -18,6 +18,7 @@ const entityEditSchema = z.object({
 	website: z.string().optional(),
 	roles: z.array(z.string()).optional(),
 	skills: z.array(z.string()).optional(),
+	email: z.string().email().optional(),
 	socials: z.array(z.any()).optional(),
 	sexuality: z.string().optional(),
 	timeZone: z.string().optional(),

@@ -4,10 +4,10 @@ import { z } from 'zod';
 
 const querySchema = z.object({
 	page: z.coerce.number().min(1).optional().default(1),
-	sort: z.enum(['newest', 'oldest', 'popular', 'random']).optional(),
+	sort: z.enum(['newest', 'oldest', 'popular', 'random']).optional().default('newest'),
 	roles: z.string().optional(),
 	skills: z.string().optional(),
-	limit: z.coerce.number().min(1).max(100).optional()
+	limit: z.coerce.number().min(1).max(100).optional().default(20)
 });
 
 export async function GET(req: NextRequest) {
@@ -20,86 +20,268 @@ export async function GET(req: NextRequest) {
 
 	const { page, sort, roles, skills, limit } = parseResult.data;
 
-	const filters: any = {};
-
-	if (roles) {
-		filters.roles = {
-			hasSome: roles.split(',')
-		};
-	}
-
-	if (skills) {
-		filters.skills = {
-			hasSome: skills.split(',')
-		};
-	}
-
-	const take = limit || 20;
+	const take = limit;
 	const skip = (page - 1) * take;
 
+	// Build filters
+	const where: any = {};
+	if (roles) where.roles = { hasSome: roles.split(',') };
+	if (skills) where.skills = { hasSome: skills.split(',') };
+
+	// Prisma orderBy
+	let orderBy: any = { createdAt: 'desc' }; // default newest
+	if (sort === 'oldest') orderBy = { createdAt: 'asc' };
+	else if (sort === 'popular')
+		orderBy = { likes: { _count: 'desc' } }; // sort by likes count
+	else if (sort === 'random') orderBy = { id: 'asc' }; // random sort will be handled separately
+	// Function to redact private data
+	const redactPrivateData = (entity: any) => {
+		return {
+			...entity,
+			// Always include privacy flags
+			isEmailPrivate: entity.isEmailPrivate,
+			isBirthdayPrivate: entity.isBirthdayPrivate,
+			isLocationPrivate: entity.isLocationPrivate,
+			isGenderPrivate: entity.isGenderPrivate,
+			isPronounsPrivate: entity.isPronounsPrivate,
+			isSexualityPrivate: entity.isSexualityPrivate,
+			isHeightPrivate: entity.isHeightPrivate,
+
+			// Redact private data based on privacy settings
+			email: entity.isEmailPrivate ? null : entity.email,
+			birthday: entity.isBirthdayPrivate ? null : entity.birthday,
+			location: entity.isLocationPrivate ? null : entity.location,
+			gender: entity.isGenderPrivate ? null : entity.gender,
+			pronouns: entity.isPronounsPrivate ? null : entity.pronouns,
+			sexuality: entity.isSexualityPrivate ? null : entity.sexuality,
+			height: entity.isHeightPrivate ? null : entity.height,
+			timeZone: entity.timeZone, // Add timezone if needed
+			status: entity.status // Add status if needed
+		};
+	};
+
+	// Handle random sort separately
 	if (sort === 'random') {
-		let whereClause = '';
-		const whereParams: any[] = [];
+		const allEntities = await prisma.entity.findMany({
+			where,
+			select: { id: true }
+		});
+		const shuffledIds = allEntities
+			.map((e: any) => e.id)
+			.sort(() => Math.random() - 0.5)
+			.slice(0, take);
 
-		if (filters.roles) {
-			whereClause += whereClause ? ' AND ' : ' WHERE ';
-			whereClause += `roles && $1`;
-			whereParams.push(filters.roles.hasSome);
-		}
-		if (filters.skills) {
-			whereClause += whereClause ? ' AND ' : ' WHERE ';
-			whereClause += `skills && $${whereParams.length + 1}`;
-			whereParams.push(filters.skills.hasSome);
-		}
-
-		const query = `
-      SELECT * FROM "entity"
-      ${whereClause}
-      ORDER BY RANDOM()
-      OFFSET $${whereParams.length + 1}
-      LIMIT $${whereParams.length + 2}
-    `;
-
-		const entities = await prisma.$queryRawUnsafe(query, ...whereParams, skip, take);
-
-		const total = await prisma.entity.count({ where: filters });
-
-		return NextResponse.json({
-			data: entities,
-			pagination: {
-				page,
-				total,
-				totalPages: Math.ceil(total / take)
+		const entities = await prisma.entity.findMany({
+			where: { id: { in: shuffledIds } },
+			select: {
+				id: true,
+				userId: true,
+				Username: true,
+				displayname: true,
+				url: true,
+				banner: true,
+				avatar: true,
+				about: true,
+				occupation: true,
+				staff: true,
+				birthday: true,
+				location: true,
+				gender: true,
+				pronouns: true,
+				language: true,
+				website: true,
+				isDeveloper: true,
+				isPartner: true,
+				email: true,
+				isVerified: true,
+				isShow: true,
+				// Privacy flags
+				isEmailPrivate: true,
+				isBirthdayPrivate: true,
+				isLocationPrivate: true,
+				isGenderPrivate: true,
+				isPronounsPrivate: true,
+				isSexualityPrivate: true,
+				isHeightPrivate: true,
+				roles: true,
+				likes: true,
+				skills: true,
+				socials: true,
+				createdAt: true,
+				updatedAt: true,
+				sexuality: true,
+				timeZone: true,
+				height: true,
+				status: true,
+				views: true
 			}
 		});
+
+		const userIds = [...new Set(entities.map((e) => e.userId))];
+		const users = await prisma.user.findMany({
+			where: { discordId: { in: userIds } },
+			select: { discordId: true, presence: true, is_banned: true }
+		});
+
+		const userMap = new Map(
+			users.map((u) => [u.discordId, { presence: u.presence, isBanned: u.is_banned }])
+		);
+
+		const data = entities.map((e) => ({
+			...redactPrivateData(e),
+			presence: userMap.get(e.userId)?.presence,
+			isBanned: userMap.get(e.userId)?.isBanned ?? false
+		}));
+
+		const total = allEntities.length;
+		const totalPages = Math.ceil(total / take);
+
+		return NextResponse.json({ data, pagination: { page, total, totalPages } });
 	}
 
-	const orderBy = (() => {
-		switch (sort) {
-			case 'oldest':
-				return { createdAt: 'asc' };
-			case 'popular':
-				return { likes: 'desc' };
-			case 'newest':
-			default:
-				return { createdAt: 'desc' };
-		}
-	})();
+	// Handle popular sort separately (sort by most likes)
+	if (sort === 'popular') {
+		const allEntities = await prisma.entity.findMany({
+			where,
+			select: {
+				id: true,
+				userId: true,
+				Username: true,
+				displayname: true,
+				url: true,
+				banner: true,
+				avatar: true,
+				about: true,
+				occupation: true,
+				staff: true,
+				birthday: true,
+				location: true,
+				gender: true,
+				pronouns: true,
+				language: true,
+				website: true,
+				isDeveloper: true,
+				isPartner: true,
+				email: true,
+				isVerified: true,
+				isShow: true,
+				// Privacy flags
+				isEmailPrivate: true,
+				isBirthdayPrivate: true,
+				isLocationPrivate: true,
+				isGenderPrivate: true,
+				isPronounsPrivate: true,
+				isSexualityPrivate: true,
+				isHeightPrivate: true,
+				roles: true,
+				likes: true,
+				skills: true,
+				socials: true,
+				createdAt: true,
+				updatedAt: true,
+				sexuality: true,
+				timeZone: true,
+				height: true,
+				status: true,
+				views: true
+			}
+		});
+
+		// Sort by likes count descending
+		allEntities.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
+		const pagedEntities = allEntities.slice(skip, skip + take);
+
+		const userIds = [...new Set(pagedEntities.map((e) => e.userId))];
+		const users = await prisma.user.findMany({
+			where: { discordId: { in: userIds } },
+			select: { discordId: true, presence: true, is_banned: true }
+		});
+		const userMap = new Map(
+			users.map((u) => [u.discordId, { presence: u.presence, isBanned: u.is_banned }])
+		);
+
+		const data = pagedEntities.map((e) => ({
+			...redactPrivateData(e),
+			presence: userMap.get(e.userId)?.presence,
+			isBanned: userMap.get(e.userId)?.isBanned ?? false
+		}));
+
+		const total = allEntities.length;
+		const totalPages = Math.ceil(total / take);
+
+		return NextResponse.json({ data, pagination: { page, total, totalPages } });
+	}
 
 	const [entities, total] = await Promise.all([
 		prisma.entity.findMany({
-			where: filters,
+			where,
 			skip,
 			take,
-			orderBy
+			orderBy,
+			select: {
+				id: true,
+				userId: true,
+				Username: true,
+				displayname: true,
+				url: true,
+				banner: true,
+				avatar: true,
+				about: true,
+				occupation: true,
+				staff: true,
+				birthday: true,
+				location: true,
+				gender: true,
+				pronouns: true,
+				language: true,
+				website: true,
+				isDeveloper: true,
+				isPartner: true,
+				email: true,
+				isVerified: true,
+				isShow: true,
+				// Privacy flags
+				isEmailPrivate: true,
+				isBirthdayPrivate: true,
+				isLocationPrivate: true,
+				isGenderPrivate: true,
+				isPronounsPrivate: true,
+				isSexualityPrivate: true,
+				isHeightPrivate: true,
+				roles: true,
+				likes: true,
+				skills: true,
+				socials: true,
+				createdAt: true,
+				updatedAt: true,
+				sexuality: true,
+				timeZone: true,
+				height: true,
+				status: true,
+				views: true
+			}
 		}),
-		prisma.entity.count({
-			where: filters
-		})
+		prisma.entity.count({ where })
 	]);
 
+	const userIds = [...new Set(entities.map((e) => e.userId))];
+	const users = await prisma.user.findMany({
+		where: { discordId: { in: userIds } },
+		select: { discordId: true, presence: true, is_banned: true }
+	});
+
+	const userMap = new Map(
+		users.map((u) => [u.discordId, { presence: u.presence, isBanned: u.is_banned }])
+	);
+
+	const data = entities.map((e) => ({
+		...redactPrivateData(e),
+		presence: userMap.get(e.userId)?.presence,
+		isBanned: userMap.get(e.userId)?.isBanned ?? false
+	}));
+
 	return NextResponse.json({
-		data: entities,
+		data,
 		pagination: {
 			page,
 			total,

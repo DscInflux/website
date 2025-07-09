@@ -98,7 +98,7 @@ function ErrorContent() {
 						initial={{ opacity: 0, y: 50 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.6, ease: 'easeOut' }}
-						className="rounded-3xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-xl md:p-12 dark:border-white/10 dark:bg-black/20"
+						className="rounded-3xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-black/20 md:p-12"
 					>
 						{/* Error icon with animation */}
 						<motion.div

@@ -112,7 +112,7 @@ const TeamPage = () => {
 					>
 						<div className="mb-4 flex items-center justify-center">
 							<FaUsers className="mr-3 text-4xl text-primary" />
-							<h1 className="font-jakarta bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent md:text-5xl dark:from-indigo-400 dark:to-purple-400">
+							<h1 className="font-jakarta bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-4xl font-bold text-transparent dark:from-indigo-400 dark:to-purple-400 md:text-5xl">
 								Our Team
 							</h1>
 						</div>
@@ -154,7 +154,7 @@ const TeamPage = () => {
 												<img
 													src={member.avatar}
 													alt={member.username}
-													className="h-28 w-28 cursor-pointer rounded-full border-4 border-white object-cover md:h-32 md:w-32 dark:border-gray-800"
+													className="h-28 w-28 cursor-pointer rounded-full border-4 border-white object-cover dark:border-gray-800 md:h-32 md:w-32"
 													onClick={() =>
 														openModal(
 															member.avatar,

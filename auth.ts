@@ -5,6 +5,7 @@ import TwitterProvider from 'next-auth/providers/twitter';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/db/prisma';
 import type { Account, Profile, User as NextAuthUser, Session } from 'next-auth';
+import { Presence } from './node_modules/.prisma/client/index.d';
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
 	adapter: PrismaAdapter(prisma),
