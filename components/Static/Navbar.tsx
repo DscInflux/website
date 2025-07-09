@@ -1,8 +1,23 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiHome, FiSearch, FiUser, FiSettings, FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
-import { FaSignInAlt, FaSignOutAlt, FaEye, FaEdit, FaUserPlus, FaCogs } from 'react-icons/fa';
+import {
+	FiHome,
+	FiSearch,
+	FiUser,
+	FiSettings,
+	FiMenu,
+	FiX,
+	FiChevronDown
+} from 'react-icons/fi';
+import {
+	FaSignInAlt,
+	FaSignOutAlt,
+	FaEye,
+	FaEdit,
+	FaUserPlus,
+	FaCogs
+} from 'react-icons/fa';
 import { signOut, signIn, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -31,6 +46,14 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 			})
 			.catch(() => setEntityUrl(null));
 	}, [session]);
+
+	useEffect(() => {
+		if (isMobileMenuOpen) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
+	}, [isMobileMenuOpen]);
 
 	const toggleMobileMenu = () => {
 		setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -95,7 +118,6 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 						height={32}
 						className="rounded-full"
 					/>
-					{/* Chevron Icon from react-icons */}
 					<motion.div
 						initial={false}
 						animate={{ rotate: dropdownOpen ? 180 : 0 }}
@@ -223,14 +245,38 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 			{/* Mobile Menu Overlay */}
 			<AnimatePresence>
 				{isMobileMenuOpen && (
-					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						onClick={() => setIsMobileMenuOpen(false)}
-						className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden"
-						aria-label="Mobile menu overlay"
-					/>
+					<>
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							onClick={() => setIsMobileMenuOpen(false)}
+							className="fixed left-4 right-4 top-[80px] z-50 mt-2 rounded-2xl border border-gray-800 bg-black/90 px-4 py-6 shadow-2xl backdrop-blur-md md:hidden"
+							aria-label="Mobile menu overlay"
+						/>
+						<motion.div
+							initial={{ y: -20, opacity: 0 }}
+							animate={{ y: 0, opacity: 1 }}
+							exit={{ y: -20, opacity: 0 }}
+							transition={{ duration: 0.3 }}
+							className="fixed left-4 right-4 top-[80px] z-50 rounded-2xl border border-gray-800 bg-black/90 px-4 py-6 shadow-2xl backdrop-blur-md md:hidden"
+						>
+							<div className="space-y-4">
+								{navItems.map((item, index) => (
+									<NavItem
+										key={index}
+										icon={item.icon}
+										label={item.label}
+										isActive={item.isActive}
+										onClick={() => setIsMobileMenuOpen(false)}
+									/>
+								))}
+								<div>
+									<UserDropdown />
+								</div>
+							</div>
+						</motion.div>
+					</>
 				)}
 			</AnimatePresence>
 		</>

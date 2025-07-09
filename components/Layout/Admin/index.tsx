@@ -339,7 +339,7 @@ export default function EntityManagement() {
 							className="rounded-2xl border border-gray-700/50 bg-gray-800/50 p-6 shadow-xl backdrop-blur-sm"
 						>
 							<div className="mb-6">
-								<UserCard entity={entity} />
+								<UserCard user={entity} />
 							</div>
 
 							<div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -350,24 +350,7 @@ export default function EntityManagement() {
 									</h3>
 									<div className="space-y-3 text-gray-300">
 										<div className="flex justify-between">
-											<span className="text-gray-400">Discord ID:</span>
-											<span className="font-medium">{entity.userId}</span>
-										</div>
-										<div className="flex justify-between">
-											<span className="text-gray-400">Username:</span>
-											<span className="font-medium">{entity.Username}</span>
-										</div>
-										<div className="flex justify-between">
-											<span className="text-gray-400">Display Name:</span>
-											<span className="font-medium">{entity.displayname}</span>
-										</div>
-										<div className="flex justify-between">
-											<span className="text-gray-400">URL:</span>
-											<span className="font-medium">{entity.url}</span>
-										</div>
-										<div className="flex justify-between">
-											<span className="text-gray-400">Email:</span>
-											<span className="font-medium">{entity.email}</span>
+ 
 										</div>
 									</div>
 								</div>

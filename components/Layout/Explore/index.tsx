@@ -665,7 +665,7 @@ export default function ExplorePage() {
 									visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
 								}}
 							>
-								<UserCard entity={user} />
+								<UserCard user={user} />
 							</motion.div>
 						))}
 					</motion.div>
