@@ -59,19 +59,21 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 		setIsMobileMenuOpen(!isMobileMenuOpen);
 	};
 
-	const navItems = [
-		{ icon: FiHome, label: 'Home', isActive: false },
-		{ icon: FiSearch, label: 'Search', isActive: false },
-		{ icon: FiUser, label: 'Profile', isActive: false },
-		{ icon: FiSettings, label: 'Settings', isActive: false }
-	];
+const navItems = [
+	{ icon: FiHome, label: 'Home', href: '/', isActive: false },
+	{ icon: FiSearch, label: 'Search', href: '/explore', isActive: false },
+	{ icon: FiUser, label: 'Stats', href: '/stats', isActive: false },
+	{ icon: FiSettings, label: 'Settings', href: '/user/new', isActive: false }
+];
 
 	const NavItem: React.FC<{
 		icon: React.ElementType;
 		label: string;
 		isActive?: boolean;
+		href: string;
 		onClick?: () => void;
-	}> = ({ icon: Icon, label, isActive = false, onClick }) => (
+	}> = ({ icon: Icon, label, isActive = false, href, onClick }) => (
+		<Link href={href} onClick={onClick} className="block">
 		<motion.div
 			whileHover={{ scale: 1.1 }}
 			whileTap={{ scale: 0.95 }}
@@ -86,6 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 			<Icon size={20} />
 			<span className="text-sm font-medium md:hidden">{label}</span>
 		</motion.div>
+		</Link>
 	);
 
 	const UserDropdown = () => {
