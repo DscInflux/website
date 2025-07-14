@@ -1,4 +1,4 @@
-# Sociava
+# Sociava!
 
 Sociava is a modern web platform for discovering and connecting with people who share your interests, primarily focused on Discord users. Built with Next.js, Prisma, and Tailwind CSS, it offers a beautiful, responsive UI and a rich set of features for both end-users and administrators.
 
