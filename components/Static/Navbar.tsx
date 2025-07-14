@@ -60,32 +60,35 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 	};
 
 	const navItems = [
-		{ icon: FiHome, label: 'Home', isActive: false },
-		{ icon: FiSearch, label: 'Search', isActive: false },
-		{ icon: FiUser, label: 'Profile', isActive: false },
-		{ icon: FiSettings, label: 'Settings', isActive: false }
+		{ icon: FiHome, label: 'Home', href: '/', isActive: false },
+		{ icon: FiSearch, label: 'Search', href: '/explore', isActive: false },
+		{ icon: FiUser, label: 'Stats', href: '/stats', isActive: false },
+		{ icon: FiSettings, label: 'Settings', href: '/user/new', isActive: false }
 	];
 
 	const NavItem: React.FC<{
 		icon: React.ElementType;
 		label: string;
 		isActive?: boolean;
+		href: string;
 		onClick?: () => void;
-	}> = ({ icon: Icon, label, isActive = false, onClick }) => (
-		<motion.div
-			whileHover={{ scale: 1.1 }}
-			whileTap={{ scale: 0.95 }}
-			onClick={onClick}
-			className={`flex cursor-pointer items-center space-x-2 transition-colors duration-200 ${
-				isActive ? 'text-white' : 'text-gray-400 hover:text-white'
-			}`}
-			role="button"
-			tabIndex={0}
-			aria-label={label}
-		>
-			<Icon size={20} />
-			<span className="text-sm font-medium md:hidden">{label}</span>
-		</motion.div>
+	}> = ({ icon: Icon, label, isActive = false, href, onClick }) => (
+		<Link href={href} onClick={onClick} className="block">
+			<motion.div
+				whileHover={{ scale: 1.1 }}
+				whileTap={{ scale: 0.95 }}
+				onClick={onClick}
+				className={`flex cursor-pointer items-center space-x-2 transition-colors duration-200 ${
+					isActive ? 'text-white' : 'text-gray-400 hover:text-white'
+				}`}
+				role="button"
+				tabIndex={0}
+				aria-label={label}
+			>
+				<Icon size={20} />
+				<span className="text-sm font-medium md:hidden">{label}</span>
+			</motion.div>
+		</Link>
 	);
 
 	const UserDropdown = () => {
@@ -208,7 +211,13 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 				<div className="rounded-full border border-gray-800 bg-black/90 px-6 py-3 shadow-2xl backdrop-blur-md lg:px-8 lg:py-4">
 					<div className="flex items-center space-x-6 lg:space-x-8">
 						{navItems.map((item, index) => (
-							<NavItem key={index} icon={item.icon} label={item.label} isActive={item.isActive} />
+							<NavItem
+								key={index}
+								icon={item.icon}
+								label={item.label}
+								isActive={item.isActive}
+								href={item.href}
+							/>
 						))}
 						<UserDropdown />
 					</div>
@@ -268,6 +277,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 										icon={item.icon}
 										label={item.label}
 										isActive={item.isActive}
+										href={item.href}
 										onClick={() => setIsMobileMenuOpen(false)}
 									/>
 								))}
