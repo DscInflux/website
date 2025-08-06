@@ -396,8 +396,8 @@ export default function ExplorePage() {
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}
 				>
-					<HiOutlineAdjustments className="text-lg" />
-					<span>{mobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}</span>
+					<HiOutlineAdjustments className="text-lg text-black" />
+					<span className='text-black'>{mobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}</span>
 				</motion.button>
 			</div>
 
@@ -651,7 +651,7 @@ export default function ExplorePage() {
 											skills: undefined
 										});
 									}}
-									className="rounded-lg bg-primary px-4 py-2 text-white transition-colors hover:bg-primary/90"
+									className="rounded-lg bg-primary px-4 py-2 text-black transition-colors hover:bg-primary/90"
 								>
 									Reset all filters
 								</button>
@@ -674,7 +674,7 @@ export default function ExplorePage() {
 					{filteredItems.length > 0 && (
 						<div className="mt-10 text-center">
 							<motion.button
-								className="rounded-xl bg-primary px-6 py-3 text-white shadow-md transition-all hover:shadow-lg"
+								className="rounded-xl bg-primary px-6 py-3 text-black text-bold shadow-md transition-all hover:shadow-lg"
 								whileHover={{ scale: 1.03 }}
 								whileTap={{ scale: 0.97 }}
 							>
