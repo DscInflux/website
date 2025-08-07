@@ -397,7 +397,7 @@ export default function ExplorePage() {
 					whileTap={{ scale: 0.95 }}
 				>
 					<HiOutlineAdjustments className="text-lg text-black" />
-					<span className='text-black'>{mobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}</span>
+					<span className="text-black">{mobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}</span>
 				</motion.button>
 			</div>
 
@@ -674,7 +674,7 @@ export default function ExplorePage() {
 					{filteredItems.length > 0 && (
 						<div className="mt-10 text-center">
 							<motion.button
-								className="rounded-xl bg-primary px-6 py-3 text-black text-bold shadow-md transition-all hover:shadow-lg"
+								className="text-bold rounded-xl bg-primary px-6 py-3 text-black shadow-md transition-all hover:shadow-lg"
 								whileHover={{ scale: 1.03 }}
 								whileTap={{ scale: 0.97 }}
 							>

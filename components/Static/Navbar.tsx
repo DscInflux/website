@@ -11,14 +11,7 @@ import {
 	FiX,
 	FiChevronDown
 } from 'react-icons/fi';
-import {
-	FaSignInAlt,
-	FaSignOutAlt,
-	FaEye,
-	FaEdit,
-	FaUserPlus,
-	FaCogs
-} from 'react-icons/fa';
+import { FaSignInAlt, FaSignOutAlt, FaEye, FaEdit, FaUserPlus, FaCogs } from 'react-icons/fa';
 import { signOut, signIn, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -74,8 +67,8 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 		href: string;
 		onClick?: () => void;
 	}> = ({ icon: Icon, label, isActive = false, href, onClick }) => (
-		<Link 
-			href={href} 
+		<Link
+			href={href}
 			onClick={onClick}
 			aria-label={label}
 			className={`flex cursor-pointer items-center space-x-2 transition-colors duration-200 ${
@@ -274,10 +267,14 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 							whileTap={{ scale: 0.95 }}
 							onClick={toggleMobileMenu}
 							className="rounded-full p-2 text-white transition-colors hover:bg-gray-800"
-							aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+							aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
 							aria-expanded={isMobileMenuOpen}
 						>
-							{isMobileMenuOpen ? <FiX size={24} aria-hidden="true" /> : <FiMenu size={24} aria-hidden="true" />}
+							{isMobileMenuOpen ? (
+								<FiX size={24} aria-hidden="true" />
+							) : (
+								<FiMenu size={24} aria-hidden="true" />
+							)}
 						</motion.button>
 					</div>
 				</div>

@@ -349,9 +349,7 @@ export default function EntityManagement() {
 										Basic Information
 									</h3>
 									<div className="space-y-3 text-gray-300">
-										<div className="flex justify-between">
- 
-										</div>
+										<div className="flex justify-between"></div>
 									</div>
 								</div>
 
